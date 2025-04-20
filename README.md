@@ -1,4 +1,4 @@
-# PrivacyGuard
+# 🕵️ Privacy Lens
 
 A comprehensive privacy assessment system for user agreements of popular websites, consisting of a Chrome plugin and a backend service with admin dashboard.
 
