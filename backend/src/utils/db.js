@@ -303,9 +303,42 @@ const updateSuggestedPolicyUrls = async (url, policyUrls) => {
   return data;
 };
 
+/**
+ * Get all assessments
+ * @returns {Promise<Object>} - Object with domains as keys and assessments as values
+ */
+const getAllAssessments = async () => {
+  console.log('[DB] Getting all assessments');
+  
+  const { data, error } = await supabase
+    .from("websites")
+    .select("*");
+  
+  if (error) {
+    throw error;
+  }
+  
+  // Transform the data into a domain-keyed object
+  const assessments = {};
+  
+  for (const item of data) {
+    assessments[item.url] = {
+      riskLevel: item.privacy_assessment.riskLevel,
+      categories: item.privacy_assessment.categories,
+      summary: item.privacy_assessment.summary,
+      lastUpdated: item.last_updated
+    };
+  }
+  
+  console.log(`[DB] Retrieved ${Object.keys(assessments).length} assessments`);
+  
+  return assessments;
+};
+
 module.exports = {
   supabase,
   getAssessment,
+  getAllAssessments,
   upsertAssessment,
   addToUnassessedQueue,
   getUnassessedUrls,

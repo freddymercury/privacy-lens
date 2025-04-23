@@ -2,9 +2,38 @@
 
 // Import utility functions
 import { getNormalizedDomain, normalizeUrl } from "./utils.js";
+import { 
+  checkAndInitializeDatabase, 
+  getAssessment, 
+  updateAssessmentInDB 
+} from "./db.js";
+import { 
+  initializeUserTier, 
+  isUserPaidTier 
+} from "./auth.js";
+import { 
+  transformServerResponse 
+} from "./transform.js";
 
 // Configuration
 const API_BASE_URL = "http://localhost:3000/api"; // Change in production
+
+// Initialize extension on install or update
+chrome.runtime.onInstalled.addListener(async (details) => {
+  console.log(`[PrivacyGuard BG] Extension ${details.reason}ed`);
+  
+  try {
+    // Initialize database with pre-packaged data
+    await checkAndInitializeDatabase();
+    console.log('[PrivacyGuard BG] Database initialized');
+    
+    // Initialize user tier
+    await initializeUserTier();
+    console.log('[PrivacyGuard BG] User tier initialized');
+  } catch (error) {
+    console.error('[PrivacyGuard BG] Error during initialization:', error);
+  }
+});
 
 // Listen for tab updates to detect URL changes
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -89,7 +118,7 @@ async function fetchWithRetry(url, options = {}, retries = 2, timeout = 15000) {
   }
 }
 
-// Query the service layer for privacy assessment
+// Query the service layer for privacy assessment and update local database
 async function checkPrivacyAssessment(url, tabId) {
   try {
     // Extract domain from URL for assessment lookup and remove 'www.' prefix
@@ -99,96 +128,145 @@ async function checkPrivacyAssessment(url, tabId) {
       `[PrivacyGuard BG] Checking assessment for domain: ${fullHostname}, Normalized: ${domain}`
     );
 
-    // Query the backend service
-    console.log(
-      `[PrivacyGuard BG] Fetching from: ${API_BASE_URL}/assessment?url=${encodeURIComponent(
-        domain
-      )}`
-    );
-
-    const response = await fetchWithRetry(
-      `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
-    );
-
-    const data = await response.json();
-    console.log(`[PrivacyGuard BG] Assessment API response:`, data);
-
-    // Update the extension icon based on assessment
-    if (data.status === "success") {
-      if (data.assessment) {
+    // First check if we have this domain in our local database
+    try {
+      const localAssessment = await getAssessment(domain);
+      
+      if (localAssessment) {
         console.log(
-          `[PrivacyGuard BG] Assessment found with risk level: ${data.assessment.riskLevel}`
+          `[PrivacyGuard BG] Assessment found in local database with risk level: ${localAssessment.assessment.riskLevel}`
         );
-        // Assessment exists, update icon based on risk level
-        updateIcon(tabId, data.assessment.riskLevel);
-        // Store assessment data for popup
-        chrome.storage.local.set({ [domain]: data.assessment });
-        console.log(`[PrivacyGuard BG] Assessment stored in local storage`);
-      } else {
-        console.log(
-          `[PrivacyGuard BG] No assessment available for ${domain}, reporting as unassessed`
-        );
-        // No assessment available
+        // Update icon based on risk level from local database
+        updateIcon(tabId, localAssessment.assessment.riskLevel);
+        return localAssessment;
+      }
+    } catch (dbError) {
+      console.error("[PrivacyGuard BG] Error reading from local database:", dbError);
+      // Continue to try server if local DB fails, but only for paid users
+    }
+    
+    // Only try to fetch from server if user is in paid tier
+    try {
+      // Check if user is in paid tier
+      const isPaidTier = await isUserPaidTier();
+      
+      if (!isPaidTier) {
+        console.log("[PrivacyGuard BG] Free tier user - no server fetch attempted");
+        // Free tier users just get "unknown" if no local data
         updateIcon(tabId, "unknown");
-        // Report URL for future assessment
-        await reportUnassessedUrl(domain);
+        return null;
+      }
+      
+      // If not in local database and user is paid tier, query the backend service
+      console.log(
+        `[PrivacyGuard BG] No local data, paid user - fetching from: ${API_BASE_URL}/assessment?url=${encodeURIComponent(
+          domain
+        )}`
+      );
 
-        // Immediately trigger assessment for this URL
-        try {
+      const response = await fetchWithRetry(
+        `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
+      );
+
+      const data = await response.json();
+      console.log(`[PrivacyGuard BG] Assessment API response:`, data);
+
+      // Update the extension icon based on assessment
+      if (data.status === "success") {
+        if (data.assessment) {
           console.log(
-            `[PrivacyGuard BG] Triggering immediate assessment for ${domain}`
+            `[PrivacyGuard BG] Assessment found with risk level: ${data.assessment.riskLevel}`
           );
+          
+          // Transform server response to database format
+          const transformedData = transformServerResponse(domain, data);
+          
+          // Store in local database
+          await updateAssessmentInDB(transformedData);
+          
+          // Update icon based on risk level
+          updateIcon(tabId, data.assessment.riskLevel);
+          
+          console.log(`[PrivacyGuard BG] Assessment stored in local database`);
+          return transformedData;
+        } else {
+          console.log(
+            `[PrivacyGuard BG] No assessment available for ${domain}, reporting as unassessed`
+          );
+          // No assessment available
+          updateIcon(tabId, "unknown");
+          // Report URL for future assessment
+          await reportUnassessedUrl(domain);
 
-          const triggerResponse = await fetchWithRetry(
-            `${API_BASE_URL}/trigger-assessment/${encodeURIComponent(domain)}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+          // Immediately trigger assessment for this URL
+          try {
+            console.log(
+              `[PrivacyGuard BG] Triggering immediate assessment for ${domain}`
+            );
+
+            const triggerResponse = await fetchWithRetry(
+              `${API_BASE_URL}/trigger-assessment/${encodeURIComponent(domain)}`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            const triggerData = await triggerResponse.json();
+            console.log(
+              `[PrivacyGuard BG] Trigger assessment response:`,
+              triggerData
+            );
+
+            if (triggerData.status === "success" && triggerData.assessment) {
+              console.log(
+                `[PrivacyGuard BG] Immediate assessment successful with risk level: ${triggerData.assessment.riskLevel}`
+              );
+              
+              // Transform server response to database format
+              const transformedData = transformServerResponse(domain, triggerData);
+              
+              // Store in local database
+              await updateAssessmentInDB(transformedData);
+              
+              // Update icon based on risk level
+              updateIcon(tabId, triggerData.assessment.riskLevel);
+              
+              console.log(
+                `[PrivacyGuard BG] Immediate assessment stored in local database`
+              );
+              return transformedData;
+            } else {
+              console.log(
+                `[PrivacyGuard BG] Immediate assessment did not return an assessment object`
+              );
             }
-          );
-
-          const triggerData = await triggerResponse.json();
-          console.log(
-            `[PrivacyGuard BG] Trigger assessment response:`,
-            triggerData
-          );
-
-          if (triggerData.status === "success" && triggerData.assessment) {
-            console.log(
-              `[PrivacyGuard BG] Immediate assessment successful with risk level: ${triggerData.assessment.riskLevel}`
-            );
-            // Update icon based on risk level
-            updateIcon(tabId, triggerData.assessment.riskLevel);
-            // Store assessment data for popup
-            chrome.storage.local.set({ [domain]: triggerData.assessment });
-            console.log(
-              `[PrivacyGuard BG] Immediate assessment stored in local storage`
-            );
-          } else {
-            console.log(
-              `[PrivacyGuard BG] Immediate assessment did not return an assessment object`
-            );
-          }
-        } catch (triggerError) {
-          // Provide more detailed error logging
-          if (triggerError instanceof DOMException) {
-            console.error(
-              `[PrivacyGuard BG] Error triggering assessment: DOMException - ${triggerError.name}: ${triggerError.message}`
-            );
-          } else {
-            console.error(
-              "[PrivacyGuard BG] Error triggering assessment:",
-              triggerError
-            );
+          } catch (triggerError) {
+            // Provide more detailed error logging
+            if (triggerError instanceof DOMException) {
+              console.error(
+                `[PrivacyGuard BG] Error triggering assessment: DOMException - ${triggerError.name}: ${triggerError.message}`
+              );
+            } else {
+              console.error(
+                "[PrivacyGuard BG] Error triggering assessment:",
+                triggerError
+              );
+            }
           }
         }
+      } else {
+        console.error(`[PrivacyGuard BG] Error in API response:`, data);
+        // Error in API response
+        updateIcon(tabId, "error");
       }
-    } else {
-      console.error(`[PrivacyGuard BG] Error in API response:`, data);
-      // Error in API response
-      updateIcon(tabId, "error");
+    } catch (fetchError) {
+      console.error("[PrivacyGuard BG] Error fetching from server:", fetchError);
+      
+      // If we have no local data and can't fetch, show unknown
+      updateIcon(tabId, "unknown");
     }
   } catch (error) {
     console.error(
@@ -197,6 +275,8 @@ async function checkPrivacyAssessment(url, tabId) {
     );
     updateIcon(tabId, "error");
   }
+  
+  return null;
 }
 
 // Update the extension badge based on risk level

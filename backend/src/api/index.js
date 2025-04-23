@@ -15,6 +15,13 @@ const unassessedController = require("../controllers/unassessedController");
 router.get("/assessment", assessmentController.getAssessment);
 
 /**
+ * @route GET /api/all-assessments
+ * @desc Get all privacy assessments
+ * @access Public
+ */
+router.get("/all-assessments", assessmentController.getAllAssessments);
+
+/**
  * @route POST /api/report-unassessed
  * @desc Report an unassessed URL
  * @access Public

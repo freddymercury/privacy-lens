@@ -2,6 +2,23 @@
 
 // Import utility functions
 import { getNormalizedDomain, normalizeUrl } from "./utils.js";
+import { 
+  getAssessment, 
+  updateAssessmentInDB, 
+  checkAndInitializeDatabase 
+} from "./db.js";
+import { 
+  isUserPaidTier, 
+  hasFeature, 
+  initializeUserTier,
+  upgradeToPaidTier,
+  downgradeToFreeTier
+} from "./auth.js";
+import {
+  transformServerResponse,
+  formatCategoryName,
+  addSourceInfoToAssessment
+} from "./transform.js";
 
 // Check if URL is valid for assessment
 function isValidUrl(url) {
@@ -55,17 +72,15 @@ function updateAssessmentDisplay(status, message) {
   assessmentDetails.innerHTML = "";
 }
 
-// Format category name for display
-function formatCategoryName(category) {
-  if (!category) return "";
-  return category
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (str) => str.toUpperCase())
-    .trim();
-}
+// Note: formatCategoryName is now imported from transform.js
 
 // Display assessment data
-function displayAssessment(assessment) {
+function displayAssessment(assessmentData) {
+  // If we have a full database record with metadata, use it
+  // Otherwise, assume it's just the assessment part
+  const assessment = assessmentData.assessment || assessmentData;
+  const metadata = assessmentData.metadata || null;
+  
   // Handle different possible structures of the risk level
   let riskLevel;
   if (typeof assessment.riskLevel === "string") {
@@ -136,6 +151,131 @@ function displayAssessment(assessment) {
   }
 
   assessmentDetails.appendChild(categoryList);
+  
+  // Display data source information if available
+  const dataSourceInfo = document.getElementById("data-source-info");
+  if (metadata && metadata.source) {
+    const sourceDate = new Date(metadata.timestamp).toLocaleDateString();
+    let sourceText = "";
+    
+    if (metadata.source === "prepackaged") {
+      sourceText = `Data from pre-packaged database (as of ${sourceDate})`;
+    } else if (metadata.source === "server") {
+      sourceText = `Data from server (fetched on ${sourceDate})`;
+    }
+    
+    dataSourceInfo.textContent = sourceText;
+    dataSourceInfo.style.display = "block";
+  } else {
+    dataSourceInfo.style.display = "none";
+  }
+}
+
+// Update the user tier display
+async function updateUserTierDisplay() {
+  try {
+    const isPaid = await isUserPaidTier();
+    const tierIndicator = document.getElementById("user-tier-indicator");
+    const tierBadge = tierIndicator.querySelector(".tier-badge");
+    
+    if (isPaid) {
+      tierBadge.textContent = "Paid Tier";
+      tierBadge.className = "tier-badge paid";
+    } else {
+      tierBadge.textContent = "Free Tier";
+      tierBadge.className = "tier-badge free";
+    }
+  } catch (error) {
+    console.error("[PrivacyGuard] Error updating user tier display:", error);
+  }
+}
+
+// Update UI based on user tier
+async function updateUIForUserTier() {
+  try {
+    const canFetchFromServer = await hasFeature("serverFetch");
+    const serverFetchContainer = document.getElementById("server-fetch-container");
+    
+    if (canFetchFromServer) {
+      serverFetchContainer.style.display = "block";
+    } else {
+      serverFetchContainer.style.display = "none";
+    }
+    
+    await updateUserTierDisplay();
+  } catch (error) {
+    console.error("[PrivacyGuard] Error updating UI for user tier:", error);
+  }
+}
+
+// Fetch assessment from server and update local database
+async function fetchFromServer(domain, tabId) {
+  const API_BASE_URL = "http://localhost:3000/api";
+  
+  try {
+    // Verify user has server fetch feature
+    const canFetchFromServer = await hasFeature("serverFetch");
+    if (!canFetchFromServer) {
+      throw new Error("Server fetch feature not available in your tier");
+    }
+    
+    // Query the backend service
+    console.log(
+      `[PrivacyGuard] Fetching from server: ${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
+    );
+    
+    const response = await fetchWithRetry(
+      `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
+    );
+    const data = await response.json();
+    
+    if (data.status === "success" && data.assessment) {
+      // Transform server response to database format
+      const transformedData = transformServerResponse(domain, data);
+      
+      // Update local database
+      await updateAssessmentInDB(transformedData);
+      
+      // Update badge
+      updateBadge(tabId, data.assessment.riskLevel);
+      
+      console.log(`[PrivacyGuard] Server data stored in local database`);
+      return transformedData;
+    } else {
+      throw new Error("Invalid server response or no assessment available");
+    }
+  } catch (error) {
+    console.error("[PrivacyGuard] Error fetching from server:", error);
+    throw error;
+  }
+}
+
+// Set up server fetch button
+function setupServerFetchButton(domain, tabId) {
+  const serverFetchBtn = document.getElementById("server-fetch-btn");
+  
+  serverFetchBtn.addEventListener("click", async () => {
+    // Disable button and show loading state
+    serverFetchBtn.disabled = true;
+    serverFetchBtn.textContent = "Fetching...";
+    
+    try {
+      // Fetch from server and update local database
+      const updatedData = await fetchFromServer(domain, tabId);
+      
+      // Display updated assessment
+      displayAssessment(updatedData);
+      
+      console.log("[PrivacyGuard] Assessment updated from server");
+    } catch (error) {
+      console.error("[PrivacyGuard] Error in server fetch:", error);
+      updateAssessmentDisplay("error", "Error fetching from server");
+    } finally {
+      // Reset button state
+      serverFetchBtn.disabled = false;
+      serverFetchBtn.textContent = "Fetch from Server";
+    }
+  });
 }
 
 // Export functions for testing
@@ -145,126 +285,243 @@ export {
   displayAssessment,
   formatCategoryName,
   checkPrivacyAssessment,
+  updateUIForUserTier,
+  fetchFromServer
 };
 
 // Main initialization
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", async () => {
-    // Get DOM elements
-    const currentUrlElement = document.getElementById("current-url");
-    const riskIndicator = document.getElementById("risk-indicator");
-    const riskText = document.getElementById("risk-text");
-    const assessmentDetails = document.getElementById("assessment-details");
-    const refreshBtn = document.getElementById("refresh-btn");
-    const activeToggle = document.getElementById("active-toggle");
+    try {
+      // Initialize database and user tier
+      await checkAndInitializeDatabase();
+      await initializeUserTier();
+      
+      // Update UI based on user tier
+      await updateUIForUserTier();
+      
+      // Get DOM elements
+      const currentUrlElement = document.getElementById("current-url");
+      const riskIndicator = document.getElementById("risk-indicator");
+      const riskText = document.getElementById("risk-text");
+      const assessmentDetails = document.getElementById("assessment-details");
+      const refreshBtn = document.getElementById("refresh-btn");
+      const activeToggle = document.getElementById("active-toggle");
+      const dataSourceInfo = document.getElementById("data-source-info");
 
-    // Get current tab
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    const currentTab = tabs[0];
-    const currentUrl = currentTab.url;
+      // Get current tab
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      const currentTab = tabs[0];
+      const currentUrl = currentTab.url;
 
-    // Display current URL
-    currentUrlElement.textContent = currentUrl;
+      // Display current URL
+      currentUrlElement.textContent = currentUrl;
 
-    // Check if URL is valid for assessment
-    if (!isValidUrl(currentUrl)) {
-      updateAssessmentDisplay("invalid", "This page cannot be assessed");
-      return;
-    }
+      // Check if URL is valid for assessment
+      if (!isValidUrl(currentUrl)) {
+        updateAssessmentDisplay("invalid", "This page cannot be assessed");
+        return;
+      }
 
-    // Get domain from URL and remove 'www.' prefix
-    const fullHostname = new URL(currentUrl).hostname;
-    const domain = normalizeUrl(currentUrl); // Use normalizeUrl to ensure 'www.' is removed
-    console.log(
-      `[PrivacyGuard] URL: ${currentUrl}, Hostname: ${fullHostname}, Normalized Domain: ${domain}`
-    );
+      // Get domain from URL and remove 'www.' prefix
+      const fullHostname = new URL(currentUrl).hostname;
+      const domain = normalizeUrl(currentUrl); // Use normalizeUrl to ensure 'www.' is removed
+      console.log(
+        `[PrivacyGuard] URL: ${currentUrl}, Hostname: ${fullHostname}, Normalized Domain: ${domain}`
+      );
 
-    // Load plugin state from storage
-    const storageData = await chrome.storage.local.get(["pluginActive"]);
-    const pluginActive = storageData.pluginActive !== false; // Default to true
-    activeToggle.checked = pluginActive;
+      // Load plugin state from storage
+      const storageData = await chrome.storage.local.get(["pluginActive"]);
+      const pluginActive = storageData.pluginActive !== false; // Default to true
+      activeToggle.checked = pluginActive;
 
-    // If plugin is not active, show inactive state
-    if (!pluginActive) {
-      updateAssessmentDisplay("inactive", "Plugin is inactive");
-      return;
-    }
+      // If plugin is not active, show inactive state
+      if (!pluginActive) {
+        updateAssessmentDisplay("inactive", "Plugin is inactive");
+        return;
+      }
 
-    // Load assessment data from storage
-    const assessmentData = await chrome.storage.local.get([domain]);
-
-    if (assessmentData[domain]) {
-      // Display assessment data
-      displayAssessment(assessmentData[domain]);
-    } else {
-      // No assessment available
-      updateAssessmentDisplay("unknown", "No assessment available");
-    }
-
-    // Event Listeners
-
-    // Refresh button
-    refreshBtn.addEventListener("click", async () => {
-      refreshBtn.textContent = "Refreshing...";
-      refreshBtn.disabled = true;
+      // Set up server fetch button
+      setupServerFetchButton(domain, currentTab.id);
 
       try {
-        // Force a new assessment check
-        await checkPrivacyAssessment(currentUrl, currentTab.id);
+        // Load assessment data from local database
+        const assessmentData = await getAssessment(domain);
 
-        // Reload assessment data from storage
-        const newAssessmentData = await chrome.storage.local.get([domain]);
-
-        if (newAssessmentData[domain]) {
-          // Display updated assessment data
-          displayAssessment(newAssessmentData[domain]);
+        if (assessmentData) {
+          // Display assessment data from local database
+          displayAssessment(assessmentData);
+          console.log("[PrivacyGuard] Using assessment from local database");
         } else {
-          // Still no assessment available
+          // No assessment available in local database
           updateAssessmentDisplay("unknown", "No assessment available");
+          console.log("[PrivacyGuard] No assessment found in local database");
+          
+          // Don't automatically try to fetch from server here
+          // Let the user click the refresh button if they want to check the server
         }
-      } catch (error) {
-        console.error("Error refreshing assessment:", error);
-        updateAssessmentDisplay("error", "Error refreshing assessment");
-      } finally {
-        refreshBtn.textContent = "Refresh Assessment";
-        refreshBtn.disabled = false;
+      } catch (dbError) {
+        console.error("[PrivacyGuard] Error reading from local database:", dbError);
+        updateAssessmentDisplay("error", "Error reading local database");
       }
-    });
 
-    // Active toggle
-    activeToggle.addEventListener("change", async () => {
-      const isActive = activeToggle.checked;
+      // Event Listeners
 
-      // Save plugin state to storage
-      await chrome.storage.local.set({ pluginActive: isActive });
+      // Refresh button
+      refreshBtn.addEventListener("click", async () => {
+        refreshBtn.textContent = "Refreshing...";
+        refreshBtn.disabled = true;
 
-      if (isActive) {
         try {
-          // If turning on, check for assessment
-          const assessment = await checkPrivacyAssessment(
-            currentUrl,
-            currentTab.id
-          );
-
-          // Reload assessment data from storage
-          const newAssessmentData = await chrome.storage.local.get([domain]);
-
-          if (newAssessmentData[domain]) {
-            // Display assessment data
-            displayAssessment(newAssessmentData[domain]);
+          // First try to get from local database again
+          const localData = await getAssessment(domain);
+          
+          if (localData) {
+            // If we have local data, display it
+            displayAssessment(localData);
+            console.log("[PrivacyGuard] Using assessment from local database");
           } else {
-            // No assessment available
-            updateAssessmentDisplay("unknown", "No assessment available");
+            // If no local data, check if user is in paid tier before trying server
+            const isPaidTier = await isUserPaidTier();
+            
+            if (isPaidTier) {
+              // Only paid users can fetch from server
+              try {
+                // Force a new assessment check from server
+                const serverData = await checkPrivacyAssessment(currentUrl, currentTab.id);
+                
+                if (serverData) {
+                  // If server fetch successful, display the data
+                  displayAssessment(serverData);
+                  console.log("[PrivacyGuard] Using assessment from server");
+                } else {
+                  // If server fetch returned null, show unknown
+                  updateAssessmentDisplay("unknown", "No assessment available");
+                }
+              } catch (serverError) {
+                console.error("[PrivacyGuard] Error fetching from server:", serverError);
+                updateAssessmentDisplay("error", "Error fetching from server");
+              }
+            } else {
+              // Free tier users just get "No assessment available"
+              console.log("[PrivacyGuard] Free tier user - no server fetch attempted");
+              updateAssessmentDisplay("unknown", "No assessment available");
+            }
           }
         } catch (error) {
-          console.error("Error activating plugin:", error);
-          updateAssessmentDisplay("error", "Error activating plugin");
+          console.error("[PrivacyGuard] Error refreshing assessment:", error);
+          updateAssessmentDisplay("error", "Error refreshing assessment");
+        } finally {
+          refreshBtn.textContent = "Refresh Assessment";
+          refreshBtn.disabled = false;
         }
-      } else {
-        // If turning off, show inactive state
-        updateAssessmentDisplay("inactive", "Plugin is inactive");
-      }
-    });
+      });
+
+      // Active toggle
+      activeToggle.addEventListener("change", async () => {
+        const isActive = activeToggle.checked;
+
+        // Save plugin state to storage
+        await chrome.storage.local.set({ pluginActive: isActive });
+
+        if (isActive) {
+          try {
+            // First try to get from local database
+            const localData = await getAssessment(domain);
+            
+            if (localData) {
+              // If we have local data, display it
+              displayAssessment(localData);
+              console.log("[PrivacyGuard] Using assessment from local database");
+            } else {
+              // If no local data, check if user is in paid tier before trying server
+              const isPaidTier = await isUserPaidTier();
+              
+              if (isPaidTier) {
+                // Only paid users can fetch from server
+                try {
+                  // If turning on, check for assessment
+                  const assessment = await checkPrivacyAssessment(
+                    currentUrl,
+                    currentTab.id
+                  );
+  
+                  // Reload assessment data from local database
+                  const newAssessmentData = await getAssessment(domain);
+  
+                  if (newAssessmentData) {
+                    // Display assessment data
+                    displayAssessment(newAssessmentData);
+                  } else {
+                    // No assessment available
+                    updateAssessmentDisplay("unknown", "No assessment available");
+                  }
+                } catch (serverError) {
+                  console.error("[PrivacyGuard] Error fetching from server:", serverError);
+                  updateAssessmentDisplay("error", "Error fetching from server");
+                }
+              } else {
+                // Free tier users just get "No assessment available"
+                console.log("[PrivacyGuard] Free tier user - no server fetch attempted");
+                updateAssessmentDisplay("unknown", "No assessment available");
+              }
+            }
+          } catch (error) {
+            console.error("[PrivacyGuard] Error activating plugin:", error);
+            updateAssessmentDisplay("error", "Error activating plugin");
+          }
+        } else {
+          // If turning off, show inactive state
+          updateAssessmentDisplay("inactive", "Plugin is inactive");
+        }
+      });
+      
+      // FOR TESTING: Add buttons to upgrade/downgrade tier (remove in production)
+      const settingsDiv = document.querySelector('.settings');
+      
+      // Create upgrade button
+      const upgradeBtn = document.createElement('button');
+      upgradeBtn.textContent = 'TEST: Upgrade to Paid';
+      upgradeBtn.style.marginTop = '10px';
+      upgradeBtn.style.backgroundColor = '#4CAF50';
+      upgradeBtn.style.color = 'white';
+      upgradeBtn.style.border = 'none';
+      upgradeBtn.style.padding = '5px 10px';
+      upgradeBtn.style.borderRadius = '4px';
+      upgradeBtn.style.cursor = 'pointer';
+      upgradeBtn.style.fontSize = '12px';
+      
+      // Create downgrade button
+      const downgradeBtn = document.createElement('button');
+      downgradeBtn.textContent = 'TEST: Downgrade to Free';
+      downgradeBtn.style.marginTop = '5px';
+      downgradeBtn.style.backgroundColor = '#f44336';
+      downgradeBtn.style.color = 'white';
+      downgradeBtn.style.border = 'none';
+      downgradeBtn.style.padding = '5px 10px';
+      downgradeBtn.style.borderRadius = '4px';
+      downgradeBtn.style.cursor = 'pointer';
+      downgradeBtn.style.fontSize = '12px';
+      
+      // Add event listeners
+      upgradeBtn.addEventListener('click', async () => {
+        await upgradeToPaidTier(30); // 30 days
+        await updateUIForUserTier();
+      });
+      
+      downgradeBtn.addEventListener('click', async () => {
+        await downgradeToFreeTier();
+        await updateUIForUserTier();
+      });
+      
+      // Add buttons to the DOM
+      settingsDiv.appendChild(upgradeBtn);
+      settingsDiv.appendChild(downgradeBtn);
+      
+    } catch (error) {
+      console.error("[PrivacyGuard] Error in popup initialization:", error);
+      updateAssessmentDisplay("error", "Error initializing plugin");
+    }
   });
 }
 
@@ -342,11 +599,18 @@ async function fetchWithRetry(url, options = {}, retries = 2, timeout = 5000) {
   }
 }
 
-// Query the service layer for privacy assessment (similar to background.js)
+// Query the service layer for privacy assessment and update local database
+// This should ONLY be called for paid tier users
 async function checkPrivacyAssessment(url, tabId) {
   const API_BASE_URL = "http://localhost:3000/api"; // Should match background.js
 
   try {
+    // First check if user is in paid tier
+    const isPaidTier = await isUserPaidTier();
+    if (!isPaidTier) {
+      console.log("[PrivacyGuard] Server fetch attempted by free tier user - not allowed");
+      throw new Error("Server fetch is only available for paid tier users");
+    }
     // Extract domain from URL for assessment lookup and remove 'www.' prefix
     const fullHostname = new URL(url).hostname;
     const domain = normalizeUrl(url); // Use normalizeUrl to ensure 'www.' is removed
@@ -371,13 +635,18 @@ async function checkPrivacyAssessment(url, tabId) {
         console.log(
           `[PrivacyGuard] Assessment found with risk level: ${data.assessment.riskLevel}`
         );
-        // Assessment exists, update badge and store data
+        
+        // Transform server response to database format
+        const transformedData = transformServerResponse(domain, data);
+        
+        // Update local database
+        await updateAssessmentInDB(transformedData);
+        
+        // Update badge
         updateBadge(tabId, data.assessment.riskLevel);
-
-        // Store assessment data for popup
-        await chrome.storage.local.set({ [domain]: data.assessment });
-        console.log(`[PrivacyGuard] Assessment stored in local storage`);
-        return data.assessment;
+        
+        console.log(`[PrivacyGuard] Assessment stored in local database`);
+        return transformedData;
       } else {
         console.log(
           `[PrivacyGuard] No assessment available for ${domain}, reporting as unassessed`
@@ -425,15 +694,20 @@ async function checkPrivacyAssessment(url, tabId) {
             console.log(
               `[PrivacyGuard] Immediate assessment successful with risk level: ${triggerData.assessment.riskLevel}`
             );
-            // Update badge and store data with the new assessment
+            
+            // Transform server response to database format
+            const transformedData = transformServerResponse(domain, triggerData);
+            
+            // Update local database
+            await updateAssessmentInDB(transformedData);
+            
+            // Update badge
             updateBadge(tabId, triggerData.assessment.riskLevel);
-            await chrome.storage.local.set({
-              [domain]: triggerData.assessment,
-            });
+            
             console.log(
-              `[PrivacyGuard] Immediate assessment stored in local storage`
+              `[PrivacyGuard] Immediate assessment stored in local database`
             );
-            return triggerData.assessment;
+            return transformedData;
           } else {
             console.log(
               `[PrivacyGuard] Immediate assessment did not return an assessment object`
