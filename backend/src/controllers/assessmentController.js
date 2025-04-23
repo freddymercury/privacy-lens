@@ -311,8 +311,37 @@ const deleteAssessment = async (req, res) => {
   }
 };
 
+/**
+ * Get all assessments
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const getAllAssessments = async (req, res) => {
+  try {
+    console.log('[AssessmentController] Getting all assessments');
+    
+    // Get all assessments from database
+    const assessments = await db.getAllAssessments();
+    
+    console.log(`[AssessmentController] Retrieved ${Object.keys(assessments).length} assessments`);
+    
+    return res.status(200).json({
+      status: "success",
+      assessments: assessments
+    });
+  } catch (error) {
+    console.error("[AssessmentController] Error getting all assessments:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Failed to get assessments",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};
+
 module.exports = {
   getAssessment,
+  getAllAssessments,
   triggerAssessment,
   updateAssessment,
   deleteAssessment,
