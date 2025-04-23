@@ -1,4 +1,4 @@
-// API Routes for PrivacyGuard backend
+// API Routes for PrivacyLens backend
 
 const express = require("express");
 const router = express.Router();
@@ -53,7 +53,7 @@ router.put(
 router.get("/health", (req, res) => {
   res.status(200).json({
     status: "success",
-    message: "PrivacyGuard API is running",
+    message: "PrivacyLens API is running",
   });
 });
 

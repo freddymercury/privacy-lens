@@ -1,12 +1,12 @@
-# Domain Normalization in PrivacyGuard
+# Domain Normalization in PrivacyLens
 
 ## Overview
 
-This document describes the implementation of domain normalization in PrivacyGuard. Domain normalization ensures that subdomains (e.g., "legal.yahoo.com") are treated as part of their parent domain (e.g., "yahoo.com") for assessment purposes.
+This document describes the implementation of domain normalization in PrivacyLens. Domain normalization ensures that subdomains (e.g., "legal.yahoo.com") are treated as part of their parent domain (e.g., "yahoo.com") for assessment purposes.
 
 ## Motivation
 
-Previously, PrivacyGuard treated each subdomain as a separate entity, resulting in:
+Previously, PrivacyLens treated each subdomain as a separate entity, resulting in:
 
 1. Duplicate assessments for the same organization (e.g., "mail.google.com" and "drive.google.com" would have separate assessments)
 2. Inefficient use of resources as the same privacy policy was evaluated multiple times

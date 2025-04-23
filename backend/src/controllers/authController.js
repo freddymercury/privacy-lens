@@ -1,4 +1,4 @@
-// Authentication Controller for PrivacyGuard admin dashboard
+// Authentication Controller for PrivacyLens admin dashboard
 
 const bcrypt = require("bcrypt");
 const db = require("../utils/db");
@@ -16,7 +16,7 @@ const loginPage = (req, res) => {
 
   // Render login page
   res.render("login", {
-    title: "PrivacyGuard Admin - Login",
+    title: "PrivacyLens Admin - Login",
     error: req.query.error,
   });
 };

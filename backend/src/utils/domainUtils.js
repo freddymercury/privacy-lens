@@ -1,4 +1,4 @@
-// Domain utility functions for PrivacyGuard
+// Domain utility functions for PrivacyLens
 
 /**
  * Extract the effective top-level domain plus one level from a hostname

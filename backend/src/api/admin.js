@@ -1,4 +1,4 @@
-// Admin Routes for PrivacyGuard backend
+// Admin Routes for PrivacyLens backend
 
 const express = require("express");
 const router = express.Router();

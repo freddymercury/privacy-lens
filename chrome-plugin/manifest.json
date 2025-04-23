@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "PrivacyGuard",
+  "name": "PrivacyLens",
   "version": "2.0.0",
   "description": "Assesses privacy risks of user agreements for popular websites",
   "permissions": ["activeTab", "storage", "tabs"],
@@ -11,7 +11,7 @@
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PrivacyGuard"
+    "default_title": "PrivacyLens"
   },
   "web_accessible_resources": [
     {
