@@ -1,5 +1,5 @@
 {
-  "name": "privacy-guard-backend",
+  "name": "privacy-lens-backend",
   "version": "1.0.0",
   "description": "Backend service and admin dashboard for PrivacyLens",
   "main": "src/index.js",
