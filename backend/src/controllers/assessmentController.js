@@ -32,6 +32,7 @@ const getAssessment = async (req, res) => {
           categories: assessment.privacy_assessment.categories,
           summary: assessment.privacy_assessment.summary,
           lastUpdated: assessment.last_updated,
+          policyUrl: assessment.user_agreement_url, // Add this line
         },
       });
     } else {
@@ -142,6 +143,7 @@ const triggerAssessment = async (req, res) => {
           categories: savedAssessment.privacy_assessment.categories,
           summary: savedAssessment.privacy_assessment.summary,
           lastUpdated: savedAssessment.last_updated,
+          policyUrl: savedAssessment.user_agreement_url, // Add this line
         },
       });
     } else {
@@ -173,6 +175,7 @@ const triggerAssessment = async (req, res) => {
               categories: assessment.privacy_assessment.categories,
               summary: assessment.privacy_assessment.summary,
               lastUpdated: assessment.last_updated,
+              policyUrl: assessment.user_agreement_url, // Add this line
             },
           });
         } else {
@@ -259,6 +262,7 @@ const updateAssessment = async (req, res) => {
         categories: updatedAssessment.privacy_assessment.categories,
         summary: updatedAssessment.privacy_assessment.summary,
         lastUpdated: updatedAssessment.last_updated,
+        policyUrl: updatedAssessment.user_agreement_url, // Add this line
       },
     });
   } catch (error) {

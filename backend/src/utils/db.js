@@ -326,7 +326,8 @@ const getAllAssessments = async () => {
       riskLevel: item.privacy_assessment.riskLevel,
       categories: item.privacy_assessment.categories,
       summary: item.privacy_assessment.summary,
-      lastUpdated: item.last_updated
+      lastUpdated: item.last_updated,
+      policyUrl: item.user_agreement_url // Add this line
     };
   }
   

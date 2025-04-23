@@ -169,6 +169,17 @@ function displayAssessment(assessmentData) {
   } else {
     dataSourceInfo.style.display = "none";
   }
+  
+  // Display privacy policy link if available
+  const policyContainer = document.getElementById("privacy-policy-container");
+  const policyLink = document.getElementById("privacy-policy-url");
+  
+  if (assessment.policyUrl) {
+    policyLink.href = assessment.policyUrl;
+    policyContainer.style.display = "block";
+  } else {
+    policyContainer.style.display = "none";
+  }
 }
 
 // Update the user tier display
