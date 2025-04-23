@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": 1745386463646,
+  "generatedAt": 1745427966849,
   "assessments": {
     "docs.cline.bot": {
       "assessment": {
@@ -32,10 +32,11 @@
           }
         },
         "summary": "The privacy policy does not provide sufficient information on any of the key categories, making it impossible to assess the privacy risks for users. It is recommended that the company provide a comprehensive and transparent privacy policy.",
-        "lastUpdated": "2025-04-08T05:41:18.646+00:00"
+        "lastUpdated": "2025-04-08T05:41:18.646+00:00",
+        "policyUrl": "https://docs.cline.bot/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -69,10 +70,11 @@
           }
         },
         "summary": "The IRS privacy policy has a medium overall risk level. While it does a good job of protecting user data and limiting third-party sharing, there are potential concerns regarding the extent of user control over their data and the lack of explicit mention of AI or automated decision-making processes.",
-        "lastUpdated": "2025-04-08T05:41:37.195+00:00"
+        "lastUpdated": "2025-04-08T05:41:37.195+00:00",
+        "policyUrl": "https://www.irs.gov/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -106,10 +108,11 @@
           }
         },
         "summary": "This privacy policy is vague and lacks specific details about data collection, use, storage, and third-party sharing. While it emphasizes user control over data, it does not provide information about AI use or policy updates. The overall risk level is unknown due to the lack of information.",
-        "lastUpdated": "2025-04-08T05:41:59.795+00:00"
+        "lastUpdated": "2025-04-08T05:41:59.795+00:00",
+        "policyUrl": "https://mail.google.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -143,10 +146,11 @@
           }
         },
         "summary": "The privacy policy presents high risks in data collection and third-party sharing, with a wide range of personal and usage information being collected and potentially shared with third parties. While some safeguards are in place for data security, there are potential risks in data transmission. User control is somewhat limited, and the use of AI is not mentioned. Policy updates are handled in a user-friendly manner.",
-        "lastUpdated": "2025-04-08T05:42:38.32+00:00"
+        "lastUpdated": "2025-04-08T05:42:38.32+00:00",
+        "policyUrl": "https://www.chase.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -180,10 +184,11 @@
           }
         },
         "summary": "The privacy policy lacks explicit information about key aspects of data privacy, making it impossible to accurately assess the risk level. Users should be cautious and seek additional information.",
-        "lastUpdated": "2025-04-08T05:43:47.181+00:00"
+        "lastUpdated": "2025-04-08T05:43:47.181+00:00",
+        "policyUrl": "https://nextdoor.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -217,10 +222,11 @@
           }
         },
         "summary": "The privacy policy presents high risks in terms of data collection, third-party sharing, and data security. There is some indication of user control and policy updates, but overall the policy lacks clear information on many aspects of privacy.",
-        "lastUpdated": "2025-04-08T05:44:06.067+00:00"
+        "lastUpdated": "2025-04-08T05:44:06.067+00:00",
+        "policyUrl": "https://sfist.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -254,10 +260,11 @@
           }
         },
         "summary": "Proton's privacy policy appears to be very user-friendly and privacy-conscious. They use end-to-end encryption, do not share or sell user data, and are based in Switzerland, which has strong privacy laws. However, the policy does not mention the use of AI or how changes to the policy will be communicated.",
-        "lastUpdated": "2025-04-08T16:58:29.103+00:00"
+        "lastUpdated": "2025-04-08T16:58:29.103+00:00",
+        "policyUrl": "https://proton.me/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -291,10 +298,11 @@
           }
         },
         "summary": "DuckDuckGo's privacy policy is user-friendly and privacy-conscious. They collect minimal data, do not share personal information with third parties, and provide users with control over their data. The risk level for users is low.",
-        "lastUpdated": "2025-04-08T17:09:10.014+00:00"
+        "lastUpdated": "2025-04-08T17:09:10.014+00:00",
+        "policyUrl": "https://duckduckgo.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -328,10 +336,11 @@
           }
         },
         "summary": "Craigslist's privacy policy demonstrates a low overall risk to user privacy. They collect necessary data for service operation, do not sell user data, and provide users with rights to their data. However, while they make efforts to store data securely, they do not guarantee absolute security. The use of AI or automated decision-making is not mentioned.",
-        "lastUpdated": "2025-04-08T19:12:52.902+00:00"
+        "lastUpdated": "2025-04-08T19:12:52.902+00:00",
+        "policyUrl": "https://sfbay.craigslist.org/about/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -365,10 +374,11 @@
           }
         },
         "summary": "The policy has a high risk in data collection and use due to lack of explicit details, and unknown risks in third-party sharing, AI use, and policy updates due to lack of information. However, it scores low risk in user rights and control, and medium risk in data storage and security, leading to an overall medium risk level.",
-        "lastUpdated": "2025-04-08T19:33:56.213+00:00"
+        "lastUpdated": "2025-04-08T19:33:56.213+00:00",
+        "policyUrl": "https://google.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -402,10 +412,11 @@
           }
         },
         "summary": "The policy indicates a high level of risk due to extensive data collection and sharing with third parties, including for targeted advertising. The lack of specific information about data storage and security also contributes to the high risk level. While there are some user controls and clear communication about policy updates, these factors do not sufficiently mitigate the overall privacy risks.",
-        "lastUpdated": "2025-04-08T19:52:38.426+00:00"
+        "lastUpdated": "2025-04-08T19:52:38.426+00:00",
+        "policyUrl": "https://cline.bot/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -439,10 +450,11 @@
           }
         },
         "summary": "Reddit's privacy policy presents a low risk to users. They collect minimal data, do not sell personal data to third parties, and provide users with significant control over their data. However, the use of AI or automated decision-making is not explicitly mentioned.",
-        "lastUpdated": "2025-04-08T21:37:14.407+00:00"
+        "lastUpdated": "2025-04-08T21:37:14.407+00:00",
+        "policyUrl": "https://reddit.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -476,10 +488,11 @@
           }
         },
         "summary": "This privacy policy does not provide any information on data collection, use, storage, security, third-party sharing, user rights, AI use, or policy updates. The risk to users cannot be assessed due to lack of information.",
-        "lastUpdated": "2025-04-09T17:21:35.809+00:00"
+        "lastUpdated": "2025-04-09T17:21:35.809+00:00",
+        "policyUrl": "https://github.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -513,10 +526,11 @@
           }
         },
         "summary": "The privacy policy of OpenRouter, Inc. presents a medium risk to users. While it provides some control to users over their data, it also shares data with third parties and can change the policy at any time without notice. The lack of explicit information about data storage and security also presents potential concerns.",
-        "lastUpdated": "2025-04-08T21:42:48.112+00:00"
+        "lastUpdated": "2025-04-08T21:42:48.112+00:00",
+        "policyUrl": "https://openrouter.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -550,10 +564,11 @@
           }
         },
         "summary": "This privacy policy does not provide any information on how user data is collected, used, stored, or shared. It also does not mention user rights, the use of AI, or policy updates. This lack of transparency poses an unknown risk to users.",
-        "lastUpdated": "2025-04-09T16:50:05.019+00:00"
+        "lastUpdated": "2025-04-09T16:50:05.019+00:00",
+        "policyUrl": "https://bandsintown.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -587,10 +602,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy explains that Supabase collects personal information from users for various purposes, including account administration and service provision. The company does not share personal information with third parties for their own marketing purposes or sell personal information. Users have some control over their information, but the full extent of user rights and control is not clear from this chunk. The company also provides region-specific disclosures. Information on data storage and security, the use of AI and automated decision-making, and policy changes and updates is not provided in this chunk. This section of the privacy policy reveals that the company collects a wide range of personal data for various purposes, including marketing. They share data with third-party service providers and other companies under common ownership. Users have control over their data and can modify their account information and unsubscribe from marketing emails. This chunk of the privacy policy discusses the company's practices regarding data collection and use, third-party sharing, data storage and security, user rights and control, and policy changes and updates. The overall risk is medium due to the use of tracking technologies, potential sharing with third parties, and the inability to guarantee 100% data security. However, the company does provide some control to users over their data and promises to notify users of significant policy changes. This chunk of the privacy policy details the types of data collected, how it is used, and with whom it is shared. It mentions the use of AI for responding to queries, but does not provide information on data storage, security, policy changes, or updates. User consent is required for some uses of data, but user rights are not explicitly detailed. This chunk of the privacy policy details the types of personal information collected by the service, how this information is used, and with whom it is shared. The service shares personal information with a number of third parties, and may also share information in connection with a business transaction. Users have some control over their personal information, but the policy does not detail how users can exercise their rights. The policy does not mention the use of AI or automated decision-making, or how changes to the policy will be communicated. This chunk of the privacy policy discusses how the company collects, uses, stores, and shares personal information. It also outlines the rights users have in respect to their personal information. The company shares personal information with third parties for legal reasons and in the event of a business transaction. All personal information is stored on secure servers and the company provides several rights to users, including the right to access, rectify, and erase their personal information. This chunk of the privacy policy primarily discusses data collection and use, data storage and security, and user rights and control. The company uses cookies for analytics and record-keeping purposes, but only with user consent. The company also protects user data and is SOC2 Type 2 and HIPAA compliant. Users have control over their cookie preferences. Information on third-party sharing and selling, AI and automated decision-making, and policy changes and updates is not provided in this chunk.",
-        "lastUpdated": "2025-04-10T18:45:40.029+00:00"
+        "lastUpdated": "2025-04-10T18:45:40.029+00:00",
+        "policyUrl": "https://supabase.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -624,10 +640,11 @@
           }
         },
         "summary": "Amazon collects a significant amount of personal data from users and shares this data with third parties for various purposes. While it has robust data security measures in place and provides users with some control over their data, the extensive data collection and use, as well as the use of AI and automated decision-making, present moderate privacy risks for users.",
-        "lastUpdated": "2025-04-08T05:41:04.719+00:00"
+        "lastUpdated": "2025-04-08T05:41:04.719+00:00",
+        "policyUrl": "https://www.amazon.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -661,10 +678,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy outlines the types of information collected from users, including personal and payment information. It emphasizes user control over this information but does not mention third-party sharing, data storage and security, the use of AI, or policy updates. This chunk of the policy indicates a high level of data collection and third-party sharing, with some user control over their data. There is no mention of data storage and security, AI use, or policy updates. This chunk of the privacy policy indicates a high level of risk due to extensive data collection and use, as well as broad sharing of user data with third parties. While users have some control over their data, the policy suggests that opting out of data sharing may not be straightforward. The use of data for AI training is also a potential concern. The policy does not provide specific details about data storage and security measures, and does not mention policy changes or updates. This chunk of the privacy policy discusses how user data is collected, used, shared, and stored. It also outlines the rights users have over their data. However, it does not mention the use of AI or automated decision-making, nor does it explain how changes to the policy will be communicated. This section of the privacy policy outlines the company's practices regarding data collection, storage, and sharing, particularly in relation to international data transfers. It also provides information on how users can contact the company and exercise their rights. The company takes measures to protect user data and does not knowingly collect data from children under 13. The policy can be revised, and users will be notified of significant changes.",
-        "lastUpdated": "2025-04-10T17:52:09.058+00:00"
+        "lastUpdated": "2025-04-10T17:52:09.058+00:00",
+        "policyUrl": "https://x.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -698,10 +716,11 @@
           }
         },
         "summary": "The policy indicates a high level of risk due to extensive data collection and sharing practices. While some user controls are provided, their extent is not fully clear. The policy does not explicitly mention the use of AI or automated decision-making, and data security details are vague.",
-        "lastUpdated": "2025-04-08T05:39:54.15+00:00"
+        "lastUpdated": "2025-04-08T05:39:54.15+00:00",
+        "policyUrl": "https://www.yahoo.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -735,10 +754,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy explains that Quiver Quantitative collects a variety of personal data from users, both directly and automatically. The data is used to improve the service and customize user experience. Users can choose not to use the service if they disagree with the privacy practices. The policy may change over time, and users are encouraged to check for updates. The policy does not mention third-party sharing, data storage and security, or the use of AI. This chunk of the privacy policy details how the company collects and uses personal data, including through the use of cookies and web beacons. It also outlines how this data may be shared with third parties. However, it does not provide information about data storage and security, AI use, or policy changes and updates. This chunk of the privacy policy discusses the circumstances under which personal data may be disclosed, the measures taken to secure personal data, the control users have over their personal data, and how changes to the privacy policy will be communicated. The overall risk is medium due to potential third-party data aggregation and the inherent risks of data transmission over the internet. This chunk of the privacy policy provides contact information for users to raise any concerns, complaints, or suggestions regarding the privacy notice, or to make requests related to their personal data. It does not provide information on other categories such as data collection and use, third-party sharing and selling, data storage and security, AI and automated decision-making, and policy changes and updates.",
-        "lastUpdated": "2025-04-10T18:57:56.528+00:00"
+        "lastUpdated": "2025-04-10T18:57:56.528+00:00",
+        "policyUrl": "https://www.quiverquant.com/privacypolicy/"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966849,
         "version": "1.0.0"
       }
     },
@@ -772,10 +792,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This privacy policy indicates that Luma collects and uses personal data for service provision and improvement. Data is shared with third parties for necessary services, but the company has no control over how these third parties use the data. While security measures are in place, absolute security cannot be guaranteed. Users have some control over their data and will be notified of any changes to the privacy policy.",
-        "lastUpdated": "2025-04-14T16:10:54.135+00:00"
+        "lastUpdated": "2025-04-14T16:10:54.135+00:00",
+        "policyUrl": "https://lu.ma/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -809,10 +830,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of the privacy policy outlines the types of personal data the company collects, including through the use of cookies. It also states that the policy may change over time. However, it does not provide information on third-party sharing, data storage and security, user rights and control, or the use of AI. This section of the privacy policy details how the company collects, uses, and shares personal data. It also discusses data security measures and user control over their data. However, there are potential concerns about broad data use, third-party data handling, and internet security risks. This chunk of the privacy policy explains the types of personal information the company does not collect, how it uses and discloses personal information, and the rights users have regarding their personal information. The company may sell personal information, but users can opt-out of these sales. The company does not mention data storage and security, AI and automated decision-making, or policy changes and updates in this section. This section of the privacy policy primarily addresses user rights and control, with a low risk rating. It also mentions policy changes and updates, with a medium risk rating due to the responsibility placed on the user to check for updates. Other categories are not addressed in this section.",
-        "lastUpdated": "2025-04-12T20:22:01.942+00:00"
+        "lastUpdated": "2025-04-12T20:22:01.942+00:00",
+        "policyUrl": "https://jetspizza.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -846,10 +868,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy indicates a high level of risk due to extensive data collection and sharing with third parties. While some measures are taken to protect user data, specific security measures are not detailed. User rights are acknowledged but not fully explained. This chunk of the privacy policy outlines the company's practices regarding data collection and use, third-party sharing and selling, data storage and security, and user rights and control. The company collects a wide range of personal information and shares and sells this information with third parties. However, it also provides users with various rights and controls over their information. The use of AI and policy changes are not mentioned. This chunk of the privacy policy indicates that personal data is collected and shared with third parties, including for marketing purposes. Standard security measures are in place, but the policy acknowledges potential security risks. User rights are partially addressed, but not comprehensively. The policy does not mention the use of AI or automated decision-making. Updates to the policy will be communicated to users.",
-        "lastUpdated": "2025-04-19T16:31:33.917+00:00"
+        "lastUpdated": "2025-04-19T16:31:33.917+00:00",
+        "policyUrl": "https://info.ticketweb.com/privacy-policy/"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -883,10 +906,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy discusses how DataStax collects and uses personal information. The company collects various types of data, including business contact information, support data, payment data, and content and files. The legal basis for processing includes user consent, performance of a contract, and legitimate interests. However, the policy does not mention third-party sharing, data storage and security, AI use, or policy updates. This section of the privacy policy outlines the types of personal information the company collects, how it uses this data, and who it shares it with. It indicates that users have some control over their data, but does not provide information on data storage and security or policy updates. The overall risk level is medium. This section of the policy discusses the use of cookies and similar technologies for data collection, which is used for various purposes including analytics and advertising. Data may be shared with third parties, and some control over data is provided through cookie preferences and opt-out options. However, there is no information on data storage and security, use of AI, or policy updates. This chunk of the privacy policy discusses how personal information is collected, processed, and stored, as well as the security measures in place to protect this information. It also outlines the rights users have in relation to their personal information. However, it acknowledges that no data transmissions over the Internet can be guaranteed to be 100% secure, and it does not accept responsibility for third-party websites or services. This section of the privacy policy outlines the rights of users, including the right to request deletion, correction, and disclosure of personal information. It also provides information on how to exercise these rights. The company does not sell or share personal information for monetary consideration and does not disclose personal information to third parties for their direct marketing purposes. The policy also states that any changes will be prominently posted or directly sent to users. This chunk does not contain any information related to privacy policy. It seems to be more about the company's partnerships, trademarks, and subscription services.",
-        "lastUpdated": "2025-04-19T16:34:57.15+00:00"
+        "lastUpdated": "2025-04-19T16:34:57.15+00:00",
+        "policyUrl": "https://datastax.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -920,10 +944,11 @@
           }
         },
         "summary": "The provided text does not contain a privacy policy, hence all aspects of privacy risk are unknown.",
-        "lastUpdated": "2025-04-22T17:17:41.375+00:00"
+        "lastUpdated": "2025-04-22T17:17:41.375+00:00",
+        "policyUrl": "https://medium.com/legal/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -957,10 +982,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of LinkedIn's Privacy Policy details the extensive data collection practices, including personal data provided by users, data from others, data from partners, and service use data. Users have some control over the data they provide, but less control over data collected from other sources. LinkedIn provides notice of changes to the Privacy Policy. Information on data storage and security, and AI use is not provided in this chunk. This chunk of the privacy policy indicates extensive data collection and use, with some user control options. There is potential third-party involvement and use of AI and automated systems. Users will be notified of significant policy changes. This section of the policy discusses extensive data collection and use, including for personalization and advertising. It mentions sharing some data with third parties, with consent where required. Users have some control over their data, but cannot opt out of all communications or ads. The use of automated systems is mentioned, but not in detail. Information on data storage and security, and policy changes and updates, is not provided in this section. This chunk of the privacy policy indicates a high level of risk due to extensive data collection and use, as well as sharing with third parties. Users have some control over their data, but the policy suggests that a significant amount of data is visible to others and shared with third parties. The specifics of data storage and security measures are not detailed in this chunk. This section of the privacy policy discusses how data is collected, used, and shared with third parties, including in the event of a sale or merger. It also details the user's rights and control over their data. However, it does not detail the security measures in place to protect data, nor does it mention policy changes or updates. This section of the privacy policy discusses the company's security measures, data storage and transfer practices, lawful bases for data processing, and user rights. It states that data is not shared with third parties for direct marketing without user consent, and users can withdraw their consent at any time. However, it also acknowledges that no security system is completely secure.",
-        "lastUpdated": "2025-04-14T16:14:32.928+00:00"
+        "lastUpdated": "2025-04-14T16:14:32.928+00:00",
+        "policyUrl": "https://www.linkedin.com/legal/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -994,10 +1020,11 @@
           }
         },
         "summary": "This privacy policy does not provide any information on any of the evaluated categories. Therefore, the risk cannot be assessed.",
-        "lastUpdated": "2025-04-19T16:30:42.566+00:00"
+        "lastUpdated": "2025-04-19T16:30:42.566+00:00",
+        "policyUrl": "https://localgoods.io/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1031,10 +1058,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy is generally user-friendly and privacy-conscious. It clearly outlines data collection, use, and sharing practices, and provides users with control over their data. However, there are some concerns regarding the use of data for AI training. This chunk of the privacy policy does not provide sufficient information on most of the categories. However, it does indicate that the policy is updated regularly.",
-        "lastUpdated": "2025-04-19T16:38:49.996+00:00"
+        "lastUpdated": "2025-04-19T16:38:49.996+00:00",
+        "policyUrl": "https://lovable.dev/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1068,10 +1096,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy reveals that Vuori collects a wide range of personal information from various sources. It mentions that users have choices regarding their information, but does not provide specific details. The company commits to notifying users of changes to the privacy policy. Information about third-party sharing, data storage and security, and the use of AI is not provided in this chunk. This chunk of the privacy policy outlines how the company collects, uses, and shares personal information. It also discusses data retention and user rights. However, it does not provide details on data security measures or policy updates, and it does not mention the use of AI or automated decision-making. This chunk of the privacy policy discusses how the company collects, uses, and stores personal information, and the rights users have regarding their personal information. It does not mention third-party sharing or selling of data, AI or automated decision-making, or policy changes and updates. This section of the privacy policy outlines the company's practices regarding data collection and use, third-party sharing, data storage and security, and user rights and control. The company collects and shares personal information for various purposes, and while it is committed to protecting the security of personal information, it transfers data to the U.S., which may not provide equivalent data protection. Users have certain rights, but the company may decline requests to delete information if there is a lawful basis for retaining it. The use of AI and policy changes are not mentioned. This chunk of the privacy policy indicates a high risk to user privacy. It suggests that user data may be used in unspecified ways and potentially shared with or sold by third parties. It does not mention any user rights or controls over their data, nor does it provide information about data storage and security or policy updates.",
-        "lastUpdated": "2025-04-19T17:35:22.011+00:00"
+        "lastUpdated": "2025-04-19T17:35:22.011+00:00",
+        "policyUrl": "https://vuoriclothing.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1105,10 +1134,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy discusses the types of data collected, including personal data, non-identifiable data, and device information. It mentions that this data may be shared with affiliates, agents, and business partners. However, it does not provide information on data storage and security, the use of AI, or how updates to the policy will be communicated. This section of the privacy policy discusses how personal information is collected and used, including for marketing and risk screening. It also mentions sharing data with third parties for business purposes. Users have the right to opt-out and request information about their data. However, there is no information on data storage and security, AI use, or policy updates. This section of the privacy policy reveals that the company collects a wide range of personal information and shares and sells this information to third parties. Users have some control over their data, but the company may deny requests under certain circumstances. The policy does not mention data storage and security, AI and automated decision-making, or policy changes and updates. This chunk of the privacy policy discusses the company's practices regarding data collection and use, third-party sharing, data storage and security, user rights and control, and policy changes and updates. The overall risk is medium due to the company's data sharing practices and the inherent risks of data transmission, despite the company's security measures and user-friendly policies regarding user rights and control.",
-        "lastUpdated": "2025-04-19T17:39:56.247+00:00"
+        "lastUpdated": "2025-04-19T17:39:56.247+00:00",
+        "policyUrl": "https://www.marinelayer.com/pages/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1142,10 +1172,11 @@
           }
         },
         "summary": "Napkin AI's privacy policy presents a medium risk to users. While it collects a variety of data and shares it with third parties, it also provides users with control over their data and employs security measures. However, the use of AI and the potential for data transfer in the event of a business transaction could present concerns.",
-        "lastUpdated": "2025-04-19T17:41:06.884+00:00"
+        "lastUpdated": "2025-04-19T17:41:06.884+00:00",
+        "policyUrl": "https://napkin.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1179,10 +1210,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy introduces the document, outlines its scope, and mentions the collection and use of personal information. However, it does not provide specific details about data practices. It also mentions that changes to the policy will be communicated to users. This section of the privacy policy details the extensive personal information the company collects from various sources and how it uses this data, including for drawing inferences about the user. Some user control over data is mentioned, but details on data storage and security, third-party sharing, and policy updates are lacking. This chunk of the privacy policy details how J.Crew collects, uses, and shares personal information for various purposes. It also discusses data retention based on business needs and legal requirements. Some user control is mentioned, but the extent is not fully detailed. There is no mention of AI use, automated decision-making, or policy changes. This chunk of the privacy policy discusses how J.Crew collects and uses data for analysis and targeted advertising, often in collaboration with third-party vendors. It also mentions the security measures in place to protect this data, but places some responsibility on the user for maintaining account security. Users have control over their data and can opt out of promotional communications. The policy does not mention AI, automated decision-making, or policy changes. This section of the privacy policy provides detailed information on the company's data collection and use practices, third-party sharing, and user rights and control. However, it lacks information on data storage and security, and policy changes and updates. The company provides users with several rights regarding their personal information, but it is not clear whether the company sells personal information to third parties. This chunk of the privacy policy indicates a high level of data collection and use, with personal information being shared with third-party digital businesses. While some data security measures are mentioned, there is no information on user rights and control, AI and automated decision-making, or policy changes and updates. This section of the privacy policy discusses the company's practices regarding data collection and use, third-party sharing and selling of personal information, and user rights and control. The company collects personal information for various purposes and may sell or share it for targeted advertising. However, users are provided with several rights including the right to opt-out of sale/sharing/targeting of personal information. Data storage and security, AI and automated decision-making, and policy changes and updates are not mentioned in this section. This chunk of the privacy policy outlines the company's practices regarding data collection and use, third-party sharing and selling, and user rights and control. It provides detailed information on how users can exercise their rights, including the right to delete and correct personal information. However, it does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This chunk primarily contains links to various services and information about the company. It mentions 'California Do Not Sell My Personal Information', indicating some user control over their data, but does not provide information on other privacy aspects such as data collection, storage, security, third-party sharing, AI use, or policy updates.",
-        "lastUpdated": "2025-04-19T17:42:58.671+00:00"
+        "lastUpdated": "2025-04-19T17:42:58.671+00:00",
+        "policyUrl": "https://www.jcrew.com/help/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1216,10 +1248,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This privacy policy indicates that the website collects both non-personally identifying and personally-identifying information, and that it takes measures to protect this information. Personal information may be shared with third parties in certain circumstances, but the website does not sell or rent this information unless the user has opted in. The policy does not mention the use of AI or automated decision-making, or how or when it may be updated. This chunk of the privacy policy discusses the use of cookies for targeted advertising and implies third-party data sharing, which presents a high risk. It does not provide information on data storage and security or the use of AI, making these risks unknown. However, it does suggest that users have some control and awareness over policy changes, presenting a low risk in these areas. Overall, the risk level is medium.",
-        "lastUpdated": "2025-04-19T17:48:01.603+00:00"
+        "lastUpdated": "2025-04-19T17:48:01.603+00:00",
+        "policyUrl": "https://sf.funcheap.com/privacy-policy/"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1253,10 +1286,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy mainly focuses on the collection and use of attendee's data, with a medium risk due to the lack of clarity on data storage, security, and third-party sharing. The policy can be changed at any time, but it is unclear how users will be notified of these changes. This section of the privacy policy primarily addresses the terms and conditions of attending the event, including the attendee's rights and responsibilities regarding personal content, the event schedule, and prohibited items. It does not mention data collection, storage, or third-party sharing, but does limit user control over their own content and allows for changes to the event without notice. This chunk primarily focuses on the risks associated with attending an event, including exposure to COVID-19 and other health risks. It also outlines expected behavior and unacceptable behavior at the event. There is no mention of data collection, storage, third-party sharing, AI use, or policy updates. This chunk of the privacy policy primarily discusses the arbitration agreement, which may limit the user's rights and control over disputes. It does not mention data collection, third-party sharing, data storage, AI use, or policy updates.",
-        "lastUpdated": "2025-04-19T17:57:04.333+00:00"
+        "lastUpdated": "2025-04-19T17:57:04.333+00:00",
+        "policyUrl": "https://sanfranciscoartfair.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1290,10 +1324,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of Substack's privacy policy outlines the types of personal information the company collects and how it uses and shares this information. It also mentions user rights regarding direct marketing communications and the company's approach to privacy policy updates. However, it does not provide details on data storage and security or the use of AI and automated decision-making. This section of the privacy policy outlines how personal information is collected, used, and shared, including with third parties. It also discusses data storage and security, and user rights and control over their personal information. However, it does not mention the use of AI or automated decision-making, or how policy changes and updates are handled. This section of Substack's privacy policy outlines their practices regarding data collection and use, third-party sharing, data storage and security, user rights and control, and AI and automated decision-making. The overall risk is medium, with the highest risks in data collection and use, data storage and security, and AI and automated decision-making. This section of the privacy policy primarily discusses the use of cookies for data collection and tracking, and the ability for users to manage these cookies. It also mentions third-party cookies set by creators on Substack, but does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates.",
-        "lastUpdated": "2025-04-19T17:58:00.507+00:00"
+        "lastUpdated": "2025-04-19T17:58:00.507+00:00",
+        "policyUrl": "https://substack.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1327,10 +1362,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of the MLB Privacy Policy mentions that personal data is collected when users use certain features of the MLB Properties, and that users can exercise their rights under various state privacy acts. However, it does not provide specific details on what data is collected, how it is used, stored, or secured, or if it is shared or sold to third parties. The policy does indicate that it is updated and those updates are communicated. This section of the privacy policy discusses the types of personal information collected, how it is used, and with whom it may be shared. It also mentions some user control over data collection. However, it does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This section of the privacy policy discusses extensive data collection practices, including the use of cookies and similar technologies, and sharing of data with third parties for advertising purposes. Users have some control over their data, with options to opt out of targeted advertising and request that their data not be sold or shared. However, the policy does not mention data storage and security practices, the use of AI or automated decision-making, or policy changes and updates. This section of the policy discusses the collection and use of various types of personal data, including biometric data and video content. It mentions sharing data with third parties for advertising and analytics, and the possibility of transferring data across borders. Users have some control over their data, but certain information is necessary for enhanced functionality. The policy does not mention the use of AI or policy updates. This chunk of the privacy policy provides detailed information about user rights and control over their personal data, including the ability to review, revise, and delete personal information. It also mentions data retention policies. However, it does not provide specific information about data collection and use, third-party sharing and selling, AI and automated decision-making, or policy changes and updates. This chunk of the privacy policy provides detailed information on user rights and control over their personal data, including the right to know, delete, correct inaccuracies, and opt-out of sale or sharing of their personal information. It also provides information on how to exercise these rights. However, it does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This chunk of the privacy policy discusses the user's right to appeal decisions and contact their state attorney general if they have concerns. It also mentions that MLB has disclosed, sold or shared personal information to parties for a business or commercial purpose in the past 12 months. However, it does not provide information on data storage and security, the use of AI or automated decision-making, or policy changes and updates. This section of the privacy policy details the extensive collection and use of personal data by MLB Entities, as well as the sharing and selling of this data to a variety of third parties. There is no information provided on data storage and security, user rights and control, the use of AI or automated decision-making, or policy changes and updates. This section of the privacy policy outlines the collection and use of sensitive personal information, the sharing of this information with third parties, and the security measures in place. It also provides details on user rights and control, but does not mention the use of AI or how policy changes are communicated. This chunk of the privacy policy discusses the collection and use of personal and payment information for certain services. It also mentions user rights and control, particularly in relation to children under the age of thirteen. The policy also outlines how users will be notified of important changes to the policy. However, it does not discuss third-party sharing and selling of data, data storage and security, or AI and automated decision-making.",
-        "lastUpdated": "2025-04-20T00:21:52.338+00:00"
+        "lastUpdated": "2025-04-20T00:21:52.338+00:00",
+        "policyUrl": "https://mlb.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1364,10 +1400,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of Substack's privacy policy outlines the types of personal information the company collects and how it uses and shares this information. It also mentions user rights regarding direct marketing communications and the company's approach to privacy policy updates. However, it does not provide details on data storage and security or the use of AI and automated decision-making. This section of the privacy policy outlines how personal information is collected, used, and shared, including with third parties. It also discusses data storage and security, and user rights and control over their personal information. However, it does not mention the use of AI or automated decision-making, or how policy changes and updates are handled. This section of Substack's privacy policy outlines their practices regarding data collection and use, third-party sharing, data storage and security, user rights and control, and AI and automated decision-making. The overall risk is medium, with the highest risks in data collection and use, data storage and security, and AI and automated decision-making. This section of the privacy policy primarily discusses the use of cookies for data collection and tracking, and the ability for users to manage these cookies. It also mentions third-party cookies set by creators on Substack, but does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates.",
-        "lastUpdated": "2025-04-20T00:38:39.388+00:00"
+        "lastUpdated": "2025-04-20T00:38:39.388+00:00",
+        "policyUrl": "https://lennysnewsletter.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1401,10 +1438,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of the privacy policy describes the collection and use of personal data, including sensitive biometric data, for providing services and communication. It mentions sharing data with financial partners but does not mention selling data to third parties. User rights are acknowledged, but detailed information on how to exercise these rights is not provided. The use of automated identity verification is mentioned. Data storage, security, and policy updates are not addressed in this section. This chunk of the privacy policy indicates a high level of data collection and sharing with third parties, including for advertising purposes. While users have some control over the sharing of their data, the use of this data by business users is governed by their own privacy policies. The use of technology for fraud detection suggests the use of automated decision-making. Information on data storage and security, and policy changes and updates is not provided in this chunk. This chunk of the privacy policy indicates a high level of risk due to extensive data collection and sharing with third parties, including sensitive data. The use of AI for identity verification is also mentioned. There is no information on data storage and security or policy updates, and user control over their data is unclear. This chunk of the privacy policy reveals that the company collects a wide range of personal data for various purposes, including risk management, advertising, and service improvement. It shares personal data with various third parties but does not sell it. The company uses machine learning models, implying automated decision-making. Information on data storage and security, user rights and control, and policy changes and updates is not provided in this chunk. This chunk of the privacy policy discusses the collection and use of personal data for various purposes, including marketing, fraud prevention, and legal compliance. It also mentions the sharing of personal data with third parties, including service providers and financial partners. Some control over data sharing appears to be given to users, but specific details about user rights and data security measures are not provided in this chunk. This section of the privacy policy discusses the company's data collection and use practices, third-party sharing, data storage and security measures, and user rights and control over their personal data. The company collects and processes personal data for various purposes, may share data with third parties, and uses measures to protect data. Users have various rights regarding their data. The use of AI and policy changes are not mentioned. This chunk of the privacy policy discusses the retention and potential sharing of personal data, the transfer of data to other countries, and the rights of users from different jurisdictions. It also mentions how updates to the policy will be communicated to users. The overall risk is medium due to the potential sharing and international transfer of personal data. This section of the privacy policy outlines the company's practices regarding data collection and use, third-party sharing and selling, user rights and control, and AI and automated decision-making. The company requires user consent for data collection and processing, provides data to third-party partners with the option for users to opt out, and respects user rights to information and control over their data. The policy does not provide information about data storage and security or policy changes and updates. This section of the privacy policy details how Stripe collects, uses, and shares user data. It also outlines the security measures in place to protect this data and the rights users have to limit some of this data sharing. However, the policy does not mention the use of AI or automated decision-making, or how policy changes and updates are communicated to users. This chunk of the privacy policy does not contain any information relevant to the categories of interest. It appears to be a list of countries and languages, likely indicating the regions where the service is available and the languages in which the policy is provided.",
-        "lastUpdated": "2025-04-22T17:23:55.172+00:00"
+        "lastUpdated": "2025-04-22T17:23:55.172+00:00",
+        "policyUrl": "https://link.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1438,10 +1476,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy reveals that the company collects a wide range of personal information, uses third-party services, and allows users to opt out of marketing communications. However, it does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This chunk of the privacy policy explains how personal information is collected and used, how it is shared with third parties, and how it is processed across borders. It also outlines the rights that users have in relation to their personal information. However, it does not provide specific details about data storage and security measures, and it does not mention AI or automated decision-making or policy changes and updates. This section of the policy discusses the types of data collected, how it's used, and how long it's retained. It also mentions third-party links, data security measures, user rights, and policy changes. However, it does not discuss the use of AI or automated decision-making. This section of the privacy policy primarily deals with the use of cookies for data collection and user control over this. It provides detailed instructions on how users can limit online tracking and control the use of cookies. Information about third-party sharing, data storage and security, AI and automated decision-making, and policy changes and updates is not provided in this section.",
-        "lastUpdated": "2025-04-20T00:46:20.952+00:00"
+        "lastUpdated": "2025-04-20T00:46:20.952+00:00",
+        "policyUrl": "https://langchain.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1475,10 +1514,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy provides detailed information about how data is collected and used, and emphasizes user control over their data. It also mentions that Snap has a philosophy of deleting content by default. However, it does not mention third-party sharing or selling of data, AI or automated decision-making, or policy changes or updates. This chunk of the privacy policy details extensive data collection and use practices, including the use of AI features. It also outlines several user control options. However, it does not provide information about data storage and security, or policy changes and updates. This chunk of the privacy policy explains how the company collects and uses user data for various purposes, including personalization, advertising, and improving services. It also mentions the use of AI and machine learning models. However, it does not provide information on data storage and security, policy changes and updates, and only provides limited information on user rights and control. This chunk of the privacy policy discusses how Snapchat collects and uses data, shares data with third parties, stores and secures data, and provides users with control over their information. The policy does not mention the use of AI or automated decision-making, or how changes and updates to the policy will be communicated to users. This chunk of the privacy policy explains the company's data retention practices, stating that retention depends on the specific feature, user settings, and how the services are used. It also mentions that users can request deletion of certain data and download their data to see what is retained. The policy states that users will be notified of any changes. However, it does not provide specific details about all types of data collected, and it does not mention third-party sharing or selling of data or AI and automated decision-making.",
-        "lastUpdated": "2025-04-20T02:47:20.055+00:00"
+        "lastUpdated": "2025-04-20T02:47:20.055+00:00",
+        "policyUrl": "https://snapchat.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1512,10 +1552,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy outlines the types of data collected by Teamblind, how it is used, stored, and shared. The company does not collect personally identifiable information and all data is encrypted. Data may be shared with third parties for service provision only. Users are responsible for maintaining the secrecy of their account information. The policy does not mention the use of AI or automated decision-making, and does not detail how changes to the policy will be communicated. This chunk of the privacy policy provides detailed information about data collection and use, third-party sharing, user rights and control, and policy updates. The company does not sell personal information to third parties and provides users with various rights over their data. However, it lacks specific details about data storage and security measures. The overall risk is low.",
-        "lastUpdated": "2025-04-20T02:48:46.931+00:00"
+        "lastUpdated": "2025-04-20T02:48:46.931+00:00",
+        "policyUrl": "https://us.teamblind.com/setting/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1549,10 +1590,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy introduces the policy, mentions data collection, use, and sharing, user data rights, and policy updates. However, it does not provide specific details about these practices. This chunk of the privacy policy indicates a high level of data collection and sharing with third parties. While users have some control over their data, opting out may limit the services available to them. There is no information provided on data storage and security, AI use, or policy updates. This chunk of the privacy policy discusses extensive data collection practices, including the use of various technologies and third-party sources. Data is shared with advertisers and other third parties for personalized advertising. Users have some control over their data, but the policy does not cover practices of vendors outside of the Services. Data storage, security practices, the use of AI, and policy updates are not mentioned. This section of the privacy policy discusses data collection and use, third-party sharing, and user rights and control. It provides options for users to opt out of data collection and personalized advertising, and to unsubscribe from marketing communications. However, it does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This chunk of the privacy policy indicates a high level of risk due to the company's practices of data collection and sharing with third parties. The company retains user data for an unspecified period and users have some control over their data, but the company may verify their identity before responding to requests. There is no mention of AI and automated decision-making or policy changes and updates. This chunk of the privacy policy discusses the collection and use of a wide range of personal data, the sharing and 'selling' of this data with third parties, and the storage and security of this data. It also mentions user rights under the CCPA, but these are specific to California residents. The policy can be changed as business needs require, with changes posted and users notified. This chunk of the privacy policy provides detailed information on how users can exercise their rights under the CCPA, including the right to know, delete, correct their personal information, and opt out of the sale or sharing of their personal information. It also mentions the use of personal information for personalized advertising and the sharing of personal information with data vendors. This section of the privacy policy discusses data collection and use, third-party sharing and selling, user rights and control, and policy changes and updates. The company collects and uses precise geolocation data, and may share this data with specific vendors. Users have the right to opt out of the sale or sharing of personal information, and to limit the use of their sensitive personal information. The company will continue to update its policies as laws and rules change. This chunk of the privacy policy provides detailed information on how users' personal data is used and shared, particularly with Advertising Vendors. It also outlines the rights of users to access, correct, or delete their data, and how to opt out of targeted advertising and the sale or sharing of personal information. However, it does not provide information on data storage and security, or policy changes and updates. This chunk of the privacy policy addresses data collection and use, data storage and security, and user rights and control. The company commits to not reidentify de-identified data and bases data processing on user consent or necessity for service provision. Data is stored in the U.S. with cross-border transfers governed by EU Standard Contractual Clauses. Users have extensive rights to control their data, including the right to restrict processing, withdraw consent, and request access, correction, anonymization, blocking, and deletion of their data. However, the specific security measures for data storage and information about third-party sharing, AI use, and policy updates are not provided. This chunk of the privacy policy discusses data collection and use, third-party sharing, user rights and control, and the effective date of the policy. It does not provide information on data storage and security, AI and automated decision-making, or how policy changes and updates will be communicated. This section of the privacy policy discusses the types of data collected, how it is used, and the potential for sharing with third parties. It also mentions user rights and control over their data. However, it does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This chunk of the privacy policy discusses extensive data collection practices, including the use of various technologies and third-party sources. It also mentions sharing data with third-party advertisers and vendors. Some control is given to users over their data, but the policy does not cover the practices of vendors outside of the Services. There is no mention of data storage and security, AI or automated decision-making, or policy changes and updates. This chunk of the privacy policy discusses data collection and use, third-party sharing, and user rights and control. It provides various options for users to control their data. However, it also mentions that data may be shared with third parties, and the company is not responsible for these third parties' information collection practices. The policy does not provide information about data storage and security, AI or automated decision-making, or policy changes and updates. This chunk of the privacy policy reveals high risk in data collection and third-party sharing, with user data being collected and shared extensively. The company retains user data indefinitely and shares it with various third parties. Users have some control over their data, but the company may not delete data used for certain purposes. The policy does not mention AI use or policy updates. This chunk of the privacy policy reveals that the company collects a wide range of personal data and shares it with third parties, including for targeted advertising. While the company has implemented security measures, it acknowledges that it cannot guarantee complete security. Users have certain rights under the CCPA, but the company does share data with third parties for targeted advertising. The company will notify users of significant changes to the policy. This chunk of the privacy policy provides detailed information on how users can exercise their rights under the CCPA, including the right to know, delete, correct their personal information, and opt out of sale or sharing of their personal information. It also mentions that personal information, including sensitive geolocation data, is collected and used for advertising purposes and to create audience segments. However, users can opt out of this. This section of the privacy policy discusses data collection and use, third-party sharing and selling, user rights and control, and policy changes and updates. It provides options for users to opt out and limit the use of their sensitive personal information, but also mentions that geolocation data may be disclosed to specific data vendors. The policy does not provide information on data storage and security, or AI and automated decision-making. This section of the privacy policy discusses the company's practices in the U.S. It shares personal data with Advertising Vendors, which is considered a 'sale' under certain state data privacy laws. However, users can opt out of this. Users also have the right to access, correct, or delete their data. The company does not use personal data for profiling decisions that produce legal or similarly significant effects. This chunk of the privacy policy addresses data collection and use, data storage and security, and user rights and control. It provides details about the company's commitment to maintaining and using de-identified data, the basis for processing personal data, and the rights of users under GDPR and LGPD. It also mentions that the company stores data in the United States and destroys personal information using technical and physical methods. However, it does not mention third-party sharing or selling of data, AI or automated decision-making, or policy changes or updates. This chunk of the privacy policy discusses the company's data collection and use, third-party sharing, data storage, and user rights. The company collects personal information and shares it with third-party service providers. Users have certain rights regarding their data, but the company retains some data for specific purposes. The use of AI or automated decision-making is not mentioned, and policy changes or updates are not addressed in this chunk.",
-        "lastUpdated": "2025-04-20T02:56:07.776+00:00"
+        "lastUpdated": "2025-04-20T02:56:07.776+00:00",
+        "policyUrl": "https://weather.com/en-US/twc/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1586,10 +1628,11 @@
           }
         },
         "summary": "Adobe's privacy policy is somewhat vague, with no clear details on data collection, storage, security, and third-party sharing. While they provide users with privacy choices, it's not clear how these can be exercised. The use of AI and policy updates are not mentioned.",
-        "lastUpdated": "2025-04-20T03:04:49.415+00:00"
+        "lastUpdated": "2025-04-20T03:04:49.415+00:00",
+        "policyUrl": "https://adobe.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1623,10 +1666,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the policy mentions that Walt Disney collects a wide range of personal, anonymous, and aggregate information. It also states that information provided on third-party platforms may be separately collected by the third-party. However, it does not mention data storage and security, AI and automated decision-making, or policy changes and updates. This section of the privacy policy indicates extensive data collection and sharing practices, with some user control over data collection. Data storage, security, AI use, and policy updates are not addressed. This chunk of the privacy policy discusses how data is collected and used, and how it may be shared with third parties in certain circumstances. It also outlines the controls and choices users have regarding their data. However, it does not provide information on data storage and security, the use of AI, or policy changes and updates. This chunk of the privacy policy discusses how personal information is collected and used, including anonymous information that can be associated with personal information. It mentions sharing information with other companies for promotional purposes, but users can control this. The company has implemented security measures to protect user information, and users have several controls and choices regarding their information. However, the policy does not mention AI, automated decision-making, policy changes, or updates. This section of the privacy policy provides information on how personal information is treated, the companies within The Walt Disney Family of Companies, and how personal information may be transferred, stored, and processed. It also outlines the rights of users, including US, UK, EU, EMEA, and Brazilian residents, and how changes to the privacy policy will be communicated.",
-        "lastUpdated": "2025-04-20T03:06:13.847+00:00"
+        "lastUpdated": "2025-04-20T03:06:13.847+00:00",
+        "policyUrl": "https://hulu.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1660,10 +1704,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of Netflix's privacy policy outlines the types of personal information the company collects and mentions user privacy rights, but does not provide detailed information about data storage and security, third-party sharing and selling, use of AI and automated decision-making, or policy changes and updates. This section of the privacy policy details the extensive data collection practices of Netflix, including the collection of personal information, advertising information, device and network information, and communication details. It also mentions that this data is collected from a variety of sources and used for a range of purposes, including supporting advertisements. However, it does not provide information on data storage and security, user rights and control, or policy changes and updates. This chunk of the privacy policy indicates a high level of risk due to extensive data collection and sharing with third parties. While some user control is mentioned, details about data storage and security measures are lacking. The policy does not mention the use of AI or automated decision-making, nor does it explain how changes to the policy will be communicated. This section of the privacy policy discusses Netflix's data collection and use, third-party sharing, data storage and security, and user rights and control. It does not mention policy changes or updates. The overall risk is medium due to the sharing of personal information with third parties and the transfer of personal information to other countries. This chunk of the privacy policy discusses how the company uses pseudonymization technologies to protect users' contact information, but still collects and uses data for marketing and advertising purposes. It also shares privacy-protected contact information with third parties. Users have control over their data and can change their privacy settings. The company uses cookies and similar technologies to store data on users' devices. This section of Netflix's privacy policy discusses the use of various technologies for data collection and the purposes for which this data is used. It also mentions third-party services and the sharing of user information. While it provides some options for user control over data collection, it does not respond to 'do not track' signals. The policy outlines measures for data security and retention, but does not mention AI use or policy updates. This chunk of the privacy policy discusses the collection and use of personal information when users play Netflix games. It also mentions that this information may be disclosed to third parties in response to legal requests. Users have the right to cancel their account if they do not agree with any updates to the Privacy Statement. The policy will be updated as necessary and users will be notified of these changes. This section of the policy discusses extensive data collection and sharing practices, including the sale of personal information. It does not provide detailed information about data storage, security practices, or how users can control their data. The overall risk is high due to the extensive data collection and sharing practices. This section of the privacy policy discusses the company's practices regarding data collection and use, third-party sharing and selling, data storage and security, and user rights and control. The company collects and shares personal information for various purposes but provides users with options to opt out. The company also provides users with various rights regarding their personal information. However, there is no mention of AI and automated decision-making or policy changes and updates. This section of the privacy policy discusses potential 'selling' or use of personal information for 'targeted advertising' purposes, but provides options for users to opt-out. The company de-identifies personal information for business operations and does not attempt to re-identify such information, except as permitted under applicable law. Users have several rights regarding their personal information, including the right to confirm, access, delete, correct, update, and opt-out of certain uses. The policy does not mention AI or automated decision-making.",
-        "lastUpdated": "2025-04-20T03:08:06.015+00:00"
+        "lastUpdated": "2025-04-20T03:08:06.015+00:00",
+        "policyUrl": "https://netflix.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1697,10 +1742,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of Yelp's privacy policy reveals that the company collects, uses, and shares a significant amount of user information for various purposes. While users have some control over their data, they cannot opt out of certain communications. The policy does not mention data security measures, AI usage, or policy updates. This chunk of the privacy policy reveals that the service collects a wide range of personal and sensitive data, which is used for various purposes including processing transactions, analytics, improving services, and advertising. The service shares data with third parties and allows third-party partners to use and display public content. While users have some control over their data, the policy does not provide detailed information about data storage and security measures, and does not mention the use of AI or automated decision-making. This section of Yelp's privacy policy reveals that the company collects and shares a significant amount of data about its users, including with third parties. While users have some control over their data, the extent of data collection and sharing presents a high privacy risk. Information on data storage and security, AI use, and policy updates is not provided in this section. This chunk of the privacy policy addresses data collection and use, third-party sharing and selling, data storage and security, user rights and control, and policy changes and updates. The service collects various categories of personal information and retains it for as long as necessary. It does not sell user personal information and provides users with control over their data. However, it acknowledges that no method of data storage is 100% secure. The service may modify its Privacy Policy from time to time and will notify users of any changes. This section of Yelp's privacy policy discusses the types of data Yelp collects, how it uses and shares this data, and the rights users have in relation to their data. Yelp does not sell user data and provides users with control over their data, including the right to access, correct, and delete their data. The policy does not mention the use of AI or automated decision-making, and does not specify how changes to the policy will be communicated. This section of the privacy policy explains the legal basis for data collection and use, which includes user consent, contract performance, legitimate interests, legal obligation, and protection of vital interests. However, it does not provide information on third-party sharing, data storage and security, AI use, and policy updates. While it implies some level of user control over their data, it does not explicitly mention user rights.",
-        "lastUpdated": "2025-04-20T03:10:31.67+00:00"
+        "lastUpdated": "2025-04-20T03:10:31.67+00:00",
+        "policyUrl": "https://terms.yelp.com/privacy/en_us/20220831_en_us/"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1734,10 +1780,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy discusses extensive data collection practices, including personal information provided directly by the user, information collected automatically, and information obtained from partners and other sources. It also mentions some level of third-party sharing and user control over their data. The policy does not provide information about data storage and security practices or the use of AI. Changes to the policy will be communicated to users. This section of the privacy policy details the company's extensive collection and use of personal information, including sharing with third parties for various purposes. The company retains data for as long as necessary, but does not detail specific security measures. Some user control is mentioned, but not fully detailed. AI use and policy updates are not mentioned. This section of the policy reveals high risk in data collection and third-party sharing, with the company collecting a wide range of personal information for analytics and targeted advertising. It also engages third parties for these purposes. The company does have safeguards for data security, but users are responsible for their account security. Users have some control over their data, but certain information may be retained even after account deletion. The policy does not mention AI use or policy updates. This chunk of the privacy policy details the reasons for data collection and processing, and outlines user rights under EEA/U.K. law. It suggests the use of automated decision-making but does not provide specific details. The policy does not provide information on third-party sharing or selling of data, specific data storage and security measures, or policy changes or updates. This chunk of the privacy policy details the types of personal information the company collects and the purposes for which it uses this information. The company shares some personal information with third parties, including vendors and third-party digital businesses. The company retains personal information for varying periods and converts personal information to de-identified information. The company does not mention user rights and control, the use of AI or automated decision-making, or policy changes and updates. This section of the privacy policy discusses the collection and use of personal information for various purposes, including advertising and marketing. It also mentions the sharing of personal information with third parties, but users have the option to opt-out. The policy outlines the rights of users to access their personal information and limit its use. However, it does not provide information on data storage and security, the use of AI, or policy changes and updates. This section of the policy provides information on user rights and control over personal information, including the ability to opt-out of targeted advertising and the sale/sharing of personal information. It also mentions the collection of personal information for financial incentives and the sharing of personal information under certain circumstances. However, it does not mention data storage and security, AI and automated decision-making, or policy changes and updates. This section of the policy outlines the company's practices regarding data collection and use, third-party sharing, and user rights and control. It does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates.",
-        "lastUpdated": "2025-04-20T03:11:50.534+00:00"
+        "lastUpdated": "2025-04-20T03:11:50.534+00:00",
+        "policyUrl": "https://madewell.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1771,10 +1818,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of Priceline's privacy policy outlines their practices regarding data collection, use, storage, and sharing. They collect a wide range of personal data for various purposes, including service provision and marketing. They share data with third parties and transfer it cross-border. They have measures in place to protect data and allow users some control over their data. The policy may be updated to reflect changes. This section of the policy outlines the company's practices regarding data collection and use, third-party sharing, and user rights and control. It does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This section of the privacy policy discusses the site's use of cookies and other tracking technologies for data collection and advertising purposes. It also mentions third-party involvement in ad targeting and data collection. Users have some control over the use of cookies and can opt-out of marketing communications. However, information on data storage and security, AI and automated decision-making, and policy changes and updates is not provided in this section. This section of the privacy policy discusses how data is collected and used, including for advertising purposes. It also provides information on how users can exercise their data rights. However, there is no mention of AI use or policy updates, and data is shared with third parties for advertising purposes. This section of the privacy policy outlines the company's data collection and use practices, third-party sharing and selling practices, data storage and security measures, user rights and control, and policy changes and updates. The company collects a wide range of personal data, including sensitive personal information, and shares this information with third parties. However, users have the right to opt-out of these 'sales' and California residents are granted several rights under California law. The company retains user information for as long as necessary and will notify users of any material changes to the privacy policy.",
-        "lastUpdated": "2025-04-20T03:35:02.107+00:00"
+        "lastUpdated": "2025-04-20T03:35:02.107+00:00",
+        "policyUrl": "https://priceline.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1808,10 +1856,11 @@
           }
         },
         "summary": "The privacy policy is vague and does not provide specific details about data collection, use, storage, and security. It also does not mention third-party sharing, use of AI, or policy updates. While it mentions user control tools, it does not provide specifics. The overall risk is unknown due to lack of information.",
-        "lastUpdated": "2025-04-20T03:55:20.269+00:00"
+        "lastUpdated": "2025-04-20T03:55:20.269+00:00",
+        "policyUrl": "https://tiktok.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1845,10 +1894,11 @@
           }
         },
         "summary": "The provided text does not seem to contain a privacy policy. It does not provide any information about data collection, use, storage, security, third-party sharing, user rights, AI use, or policy changes. Therefore, the risk to users cannot be assessed and is marked as unknown.",
-        "lastUpdated": "2025-04-20T04:05:13.169+00:00"
+        "lastUpdated": "2025-04-20T04:05:13.169+00:00",
+        "policyUrl": "https://alibaba.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1882,10 +1932,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy outlines the types of data collected by the company, how it is used, and how it is shared with third parties. It also mentions that users can modify their cookie settings and opt-out of Google Analytics. However, it does not provide information on data storage and security, the use of AI or automated decision-making, or how changes to the policy will be communicated. This chunk of the privacy policy reveals that user data may be transferred to and stored in the U.S., which could pose a risk due to differing data protection laws. Users can update their registration information, but it's not clear what other control they have over their data. The company will notify users of significant changes to the policy.",
-        "lastUpdated": "2025-04-20T04:13:22.285+00:00"
+        "lastUpdated": "2025-04-20T04:13:22.285+00:00",
+        "policyUrl": "https://anvilogic.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1919,10 +1970,11 @@
           }
         },
         "summary": "Spotify's privacy policy reveals high data collection practices, with data received from third-party sources and potential for user control over their data. However, the policy lacks information on data storage and security, AI and automated decision-making, and policy changes and updates, leading to an overall medium risk.",
-        "lastUpdated": "2025-04-20T04:14:20.03+00:00"
+        "lastUpdated": "2025-04-20T04:14:20.03+00:00",
+        "policyUrl": "https://spotify.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1956,10 +2008,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of the privacy policy outlines the types of personal information that iHeart collects, how it is collected, and the use of third-party analytics. It mentions user rights and choices, but does not provide specific details. There is no information on data storage and security, AI and automated decision-making, or policy changes and updates. This section of the privacy policy indicates a high level of risk due to extensive data collection and use, as well as broad third-party sharing and selling of personal information. While there are some options for users to opt out of certain data uses, the policy still allows for tracking even when users opt out of Interest Based Advertising. Information on data storage and security, AI and automated decision-making, and policy changes and updates is not provided in this section. This section of the privacy policy outlines the types of data collected and the purposes for its use. It also details the steps taken to protect this data, although it acknowledges that no system is 100% secure. Users have several rights and controls over their data, and there are additional disclosures for California residents. The policy can be changed at the company's discretion. This chunk of the privacy policy indicates a high level of risk due to the extensive collection and use of personal data, including sensitive information, and the selling or sharing of this data with third parties. While user rights are acknowledged, there is a lack of information about data security and policy updates. This section of the privacy policy provides detailed information on the types of personal data collected, the purposes for which it is used, and the third parties with whom it may be shared or sold. It also outlines the rights of users with respect to their personal data and how they can exercise these rights. However, it does not provide information on data storage and security or policy changes and updates. This chunk of the privacy policy provides information on user rights and control, particularly the ability to opt out of targeted advertising and sales. However, the process is complex and may be difficult for users to maintain. There is no information on data collection and use, data storage and security, AI and automated decision-making, or policy changes and updates.",
-        "lastUpdated": "2025-04-20T04:14:32.133+00:00"
+        "lastUpdated": "2025-04-20T04:14:32.133+00:00",
+        "policyUrl": "https://iheart.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -1993,10 +2046,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy discusses the types of information collected by mabl, including Personal and Non-Personal Information. It also mentions that this information is collected through various methods, including direct user input and technology like cookies. The policy also mentions that this data may be used for a variety of purposes, including marketing and business relationships. However, it does not provide specific details about data storage and security, AI and automated decision-making, or policy changes and updates. This section of the privacy policy discusses the use of technologies to collect personal and non-personal information, the sharing of data with third parties, and the user's ability to control their data. There is a high risk due to the extensive data collection and sharing with third parties. This chunk of the privacy policy discusses how the company collects and uses personal and non-personal information, shares information with third parties, stores and secures data, and respects user rights and control. The company is based in the U.S. and may transfer personal information outside the EEA. The policy does not mention the use of AI or automated decision-making, or how changes and updates to the policy will be communicated. This chunk of the privacy policy provides detailed information on user rights and control, including the right to object to processing, withdraw consent, and lodge complaints. It also mentions the collection of technical information for providing performance metrics and statistics to the user. The policy mentions partnering with ad networks for advertising, which may involve sharing user data. However, there is no information on data storage and security, AI and automated decision-making, or policy changes and updates. This section of the policy discusses the use of Technical Information, which may include Personal Information, for service improvement and development. It also outlines potential sharing of this information with third parties for various services, as well as potential disclosure due to legal requirements or business transactions. The policy outlines measures to protect this information but acknowledges that security risks cannot be fully eliminated. Users have the right to access their Personal Information, but may need to inquire with the customer who submitted it. This chunk of the privacy policy mainly deals with consent and changes to the policy. It states that by using the services, users agree to the terms of the policy. The company will notify users of any material changes to the policy. If users do not agree with the changes, they have the option to deactivate their account. The policy does not provide specific information about data collection, third-party sharing, data storage, AI use, or user rights beyond account deactivation.",
-        "lastUpdated": "2025-04-22T00:35:16.09+00:00"
+        "lastUpdated": "2025-04-22T00:35:16.09+00:00",
+        "policyUrl": "https://mabl.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2030,10 +2084,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of Superhuman's privacy policy outlines the types of data the company collects, how it is collected, and who it is shared with. It also explains that users have some control over their data, but does not provide information on data storage and security, the use of AI, or policy updates. This chunk of the privacy policy details how the service uses and shares personal data, including for marketing and advertising, and with third parties. It also outlines user rights and choices regarding their personal data. However, it lacks specific information about data storage and security, and does not mention policy changes and updates. This chunk of the privacy policy discusses user rights and control, data collection and use, third-party sharing, AI and automated decision-making, and data storage and security. It mentions that user information is shared with third-party AI providers, but they are not allowed to use the data to train their AI models. It also states that safeguards are in place to protect personal data, but acknowledges that no internet or email transmission is ever fully secure. This chunk of the privacy policy discusses the types of data collected and their uses, potential sharing of data with third parties through tracking technologies, user control over cookies, and policy changes. It does not provide information on data storage and security or the use of AI. The overall risk is medium due to the extensive data collection, potential third-party sharing, and the possibility of policy changes without explicit user consent. This chunk of the privacy policy provides detailed information on the types of personal data the company collects and how users can control their data. However, it does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This chunk of the privacy policy indicates a high level of risk due to extensive data collection and sharing with third parties, including for advertising purposes. While some user control is mentioned, detailed information about these processes is lacking. The use of AI is mentioned, but not explained in detail. Information about data storage and security is also limited. This chunk of the privacy policy provides detailed information about how the company collects, uses, and stores personal data. It also outlines user rights and the company's use of third-party AI technology. However, the company does share data with advertising partners and transfers data to other jurisdictions. This chunk of the privacy policy covers several areas including data collection and use, third-party sharing, data security, user rights and control, and policy changes. The company collects personal data and uses cookies, shares data with third-party sites and advertising partners, and has implemented security measures. It has appointed representatives for GDPR and UK GDPR compliance and will update the privacy policy as needed. This section of the privacy policy discusses data collection and use, third-party sharing, and user rights and control. It does not mention data storage and security, AI and automated decision-making, or policy changes and updates. The overall risk is medium due to the collection and use of personal data and the use of third-party services, but users have control over cookies and online tracking. This chunk of the privacy policy reveals extensive data collection and sharing practices, including for marketing and advertising purposes. It mentions some user control over data use, but does not provide comprehensive information about user rights. The use of AI is mentioned, but without detailed explanation. Data security measures are not detailed. This section of the privacy policy discusses the potential for data disclosure in the event of a business transaction, sharing of data with law enforcement and advertising partners, use of third-party AI technology, and data retention practices. It also outlines users' rights regarding their personal data and the company's compliance with data privacy frameworks. The overall risk is medium due to potential data sharing and transfer to other jurisdictions. This section of the privacy policy discusses the company's data collection and use, third-party sharing, data storage and security measures, user rights and control, and policy changes and updates. The company collects personal data for various purposes and may share it with third parties under certain conditions. They have implemented safeguards to protect personal data, but acknowledge that no transmission is fully secure. Users have several avenues to address privacy concerns, and the company reserves the right to modify the privacy policy at any time. This chunk of the privacy policy discusses the use of cookies for various purposes including marketing, personalization, and analytics. It also mentions the use of tracking technologies and third-party analytics cookies. However, it provides options for users to control the use of cookies and limit online tracking.",
-        "lastUpdated": "2025-04-22T02:07:37.384+00:00"
+        "lastUpdated": "2025-04-22T02:07:37.384+00:00",
+        "policyUrl": "https://superhuman.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2067,10 +2122,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy provides a general overview of privacy policies, their history, and their role in different jurisdictions. It does not provide specific details about data collection, use, storage, third-party sharing, user rights, AI use, or policy updates. This chunk of the privacy policy discusses various laws and regulations that govern data privacy in different regions, including the United States, Canada, the European Union, Australia, and India. These laws cover aspects such as data collection and use, third-party sharing and selling, data storage and security, and user rights and control. However, the policy does not mention AI, automated decision-making, policy changes, or updates. This chunk of the privacy policy discusses the components of a privacy policy, including data collection, use, storage, security, and third-party sharing. It also discusses the limitations and criticisms of privacy policies, including their lack of precision, the possibility of unilateral changes, and the misunderstanding of consumers about the protection offered by privacy policies. The policy does not mention AI or automated decision-making. This chunk of the privacy policy appears to be a list of references and further reading, rather than a part of the policy itself. It does not provide specific information on any of the categories of interest. This chunk does not contain any specific information related to the privacy policy. It seems to be a list of related topics and links to other pages, but does not provide any details on the privacy practices of the entity.",
-        "lastUpdated": "2025-04-22T05:04:06.389+00:00"
+        "lastUpdated": "2025-04-22T05:04:06.389+00:00",
+        "policyUrl": "https://en.wikipedia.org/wiki/Privacy_policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2104,10 +2160,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of the privacy policy outlines the types of personal information Paradigm Health collects, including health, financial, and professional data. It also explains how the company uses cookies and similar technologies to track user interactions with their services. However, it does not provide information on third-party sharing, data storage and security, AI use, or policy updates. This section of the privacy policy details how the company collects and uses data, shares data with third parties, and respects user rights and control. However, it does not provide information on data storage and security, or policy changes and updates. This chunk of the privacy policy provides detailed information about data collection and use, data storage and security, and user rights and control. It mentions third-party sharing but does not provide detailed information about these third parties. The policy does not mention the use of AI or automated decision-making, or how changes and updates to the policy will be communicated. This section of the privacy policy primarily addresses data transfer, user rights and control, and policy changes and updates. It indicates a commitment to data security and user rights, and transparency in policy updates.",
-        "lastUpdated": "2025-04-22T05:15:23.827+00:00"
+        "lastUpdated": "2025-04-22T05:15:23.827+00:00",
+        "policyUrl": "https://paradigm.inc/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2141,10 +2198,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of Zendesk's privacy policy outlines the types of personal data they collect and who they share it with. It also mentions that users have some control over their data and that Zendesk will notify users of policy changes. However, it does not provide information on data storage and security or the use of AI. This chunk of the privacy policy indicates a high level of risk due to the extensive data collection and sharing practices. While some control is given to users, such as the ability to opt out of marketing communications, the policy does not mention other important user rights. Information about data storage and security, AI and automated decision-making, and policy changes and updates is not provided in this chunk. This chunk of the privacy policy discusses the various ways in which the company collects data, including directly from users and from third parties. It also mentions that the company shares data with third-party service providers and business partners. The company maintains security measures to protect personal data and allows users to access, correct, update, and request deletion of their data. However, there is no mention of AI and automated decision-making or policy changes and updates. This section of the privacy policy discusses the types of data the company collects, including geolocation and sensory information. It also mentions that the company shares information with advertising partners. Users have the right to know, delete, correct, and opt out of sale or sharing of their personal data. This section of the privacy policy outlines the user's data protection rights in detail, including the right to access, rectification, objection, restriction of processing, erasure, and complaint. It also mentions the right to refuse or withdraw consent and the right to not be subject to automated decision-making. The policy mentions that data may be transferred to third parties, including those in countries with different data protection standards. However, it also states that these transfers are done using valid data transfer mechanisms. This chunk of the privacy policy outlines the company's compliance with various international data protection laws, indicating a commitment to data security and user privacy. However, it lacks detail on user rights and control over their data, and does not mention AI, automated decision-making, or policy updates.",
-        "lastUpdated": "2025-04-22T05:35:03.356+00:00"
+        "lastUpdated": "2025-04-22T05:35:03.356+00:00",
+        "policyUrl": "https://zendesk.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2178,10 +2236,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy reveals that the company collects a wide range of personal data, including sensitive information, and shares it with third parties. While they claim to have security measures in place, the specifics are not detailed. Users have some control over their data, but the process for exercising these rights is not clearly explained. The company updates its privacy policy periodically. This chunk of the privacy policy details the company's data collection and use practices, including the types of data collected and the purposes for which it is used. It also discusses third-party sharing and selling of data, data storage and security, and user rights and control. The company collects a wide range of personal data and shares it with various third parties, but does not sell, rent, or lease personal data. The company also takes measures to protect the data it collects. This chunk of the privacy policy outlines the company's practices regarding data collection and use, third-party sharing, data storage, and user rights and control. It provides users with several options to control their data, but also mentions that data may be shared with third parties under certain circumstances and will be stored even after a user stops using the services or requests account termination. This chunk of the privacy policy outlines the types of personal data collected, the sources of this data, and the purposes for its use. It also details the company's practices regarding third-party data sharing and collection. Extensive user rights are outlined, including the right to request access to and deletion of personal data, and the right to opt out of third-party data collection. However, there is no information provided on data storage and security, or on policy changes and updates. This chunk of the privacy policy primarily addresses user rights under the Brazilian General Data Protection Law (LGPD), including the right to request access, correction, anonymization, blocking, elimination, and portability of personal data, as well as the right to withdraw consent and petition regulatory authorities. The policy also outlines the types of data processed and the lawful grounds for processing, and states that data is stored and processed in various locations. The policy does not mention AI or automated decision-making, or how changes and updates to the policy will be communicated. This section of the privacy policy discusses the potential transfer of user data to other jurisdictions, the security measures in place to protect user data, and the procedure for updating the privacy policy. It does not mention data collection and use or AI and automated decision-making.",
-        "lastUpdated": "2025-04-22T05:39:34.617+00:00"
+        "lastUpdated": "2025-04-22T05:39:34.617+00:00",
+        "policyUrl": "https://tailorbrands.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2215,10 +2274,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of Stripe's privacy policy outlines the types of personal data that Stripe collects and how it uses this data. It mentions that users have certain rights and choices, but it does not provide clear information on third-party sharing, data storage and security, or policy updates. The use of AI for identity verification is also mentioned. This chunk of the privacy policy indicates a high level of risk due to extensive data collection and sharing practices. Personal data is used for a variety of purposes and shared with business users and third-party partners. User control is somewhat limited, and there is no information provided on data storage and security, AI use, or policy updates. This chunk of the privacy policy indicates a high level of data collection and sharing with third parties, including sensitive personal information. It mentions the use of automated decision-making but does not provide details on data storage and security, policy changes, or the extent of user control over their data. This section of the policy indicates extensive data collection and sharing with third parties, including for advertising purposes. It also mentions the use of machine learning models. However, it does not provide information on data storage and security, user rights and controls, or policy changes and updates. This section of the privacy policy discusses the collection and use of personal data for various purposes, including service delivery, marketing, fraud prevention, and legal compliance. Personal data is shared with third parties in certain circumstances, and service providers are required to maintain the security and confidentiality of the data. The policy does not provide detailed information about user rights or the use of AI, and it does not discuss policy changes or updates. This section of the privacy policy discusses the company's data collection and use, third-party sharing, data storage and security measures, and user rights and control. It does not mention AI and automated decision-making or policy changes and updates. This section of the privacy policy provides detailed information on how Stripe collects, uses, stores, and shares user data. It also outlines the measures taken to secure data and the rights users have in relation to their data. The policy also mentions the use of AI for automated decisions and how updates to the policy will be communicated to users. This chunk of the privacy policy outlines the user's rights and control over their data, the company's data collection and use practices, and its third-party sharing and selling practices. It also mentions the possibility of AI and automated decision-making. However, it does not provide information on data storage and security, or policy changes and updates. This section of Stripe's privacy policy discusses the collection and use of personal data, sharing with third parties, data security measures, and user rights and control. The company collects a wide range of personal information and shares it with affiliates and non-affiliates for various purposes. However, users have some control over data sharing. The company also takes measures to protect personal data. The use of AI and policy updates are not mentioned. This chunk appears to be a footer or menu from the website, not a part of the privacy policy. It does not contain any relevant information about the privacy practices of the company.",
-        "lastUpdated": "2025-04-22T05:46:01.541+00:00"
+        "lastUpdated": "2025-04-22T05:46:01.541+00:00",
+        "policyUrl": "https://stripe.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2252,10 +2312,11 @@
           }
         },
         "summary": "The privacy policy of Pentagon Consulting presents a medium risk for users. They collect personal and financial data, but it is not clear how this data is used beyond billing and service provision. They do not share personal data with third parties, but do share anonymous, aggregate data. The policy mentions secure data transfer, but does not provide details about specific security measures. User rights are somewhat respected with the option to opt out of mailing lists, but other rights are not mentioned. The policy does not mention the use of AI or automated decision-making. Changes to the policy will be posted on the website, but users are expected to check the policy regularly.",
-        "lastUpdated": "2025-04-22T06:00:42.011+00:00"
+        "lastUpdated": "2025-04-22T06:00:42.011+00:00",
+        "policyUrl": "https://pentagonconsulting.in/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2289,10 +2350,11 @@
           }
         },
         "summary": "The privacy policy page could not be found, so it's impossible to assess the risks for users. The company should make their privacy policy accessible to users.",
-        "lastUpdated": "2025-04-22T06:17:44.501+00:00"
+        "lastUpdated": "2025-04-22T06:17:44.501+00:00",
+        "policyUrl": "https://windsurf.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2326,10 +2388,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy covers data collection and use, and third-party sharing and selling. The company collects a wide range of personal data for various purposes and shares it with service providers, business partners, and parties authorized by the user. Information on data storage and security, user rights and control, AI and automated decision-making, and policy changes and updates is not provided in this chunk. This chunk of the privacy policy discusses the collection and use of personal data, sharing of data with third parties, data security measures, and user rights. It does not mention the use of AI or automated decision-making, and does not specify how changes to the policy will be communicated. This chunk of the privacy policy provides detailed information about the types of data collected, the reasons for processing, and users' rights regarding their data. It mentions sharing data with third parties and storing data on U.S. servers, but does not provide specific details about these practices. The policy does not mention the use of AI or automated decision-making.",
-        "lastUpdated": "2025-04-22T07:06:44.344+00:00"
+        "lastUpdated": "2025-04-22T07:06:44.344+00:00",
+        "policyUrl": "https://linear.app/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2363,10 +2426,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This privacy policy of Instant Commerce demonstrates a strong commitment to data protection. It collects limited personal data for specific purposes and shares it with third parties only when necessary. Users have control over their data and can exercise their rights under the GDPR. However, the policy does not mention data security measures or the use of AI. The policy is subject to change and the latest version is always available on the website.",
-        "lastUpdated": "2025-04-22T15:30:30.149+00:00"
+        "lastUpdated": "2025-04-22T15:30:30.149+00:00",
+        "policyUrl": "https://shopdev.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2400,10 +2464,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy primarily covers terms of service, user responsibilities, and general conditions of use. It mentions third-party tools and data transfer, but lacks specific details on data collection, use, storage, and security. The policy can be updated at any time, and users are responsible for keeping up with changes. This section of the policy raises high concerns about data collection and use, and third-party sharing and selling. It does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. It provides some control to users over their data, but holds them responsible for the accuracy of their comments. This chunk of the privacy policy covers data collection and usage, third-party sharing, user rights and control, and policy updates. Data is collected for various purposes and may be shared with third parties like Google Analytics. Users have some control over their data, but the policy does not mention data storage and security or the use of AI. The company can change the policy and advises users to check for updates. This chunk of the privacy policy indicates that the site does not respect Do Not Track signals, potentially leading to high risk in data collection and use. However, it allows users to inquire or complain about privacy practices, and it acknowledges that policy updates may occur. Information about third-party sharing, data storage and security, and AI use is not provided in this chunk.",
-        "lastUpdated": "2025-04-22T16:07:14.436+00:00"
+        "lastUpdated": "2025-04-22T16:07:14.436+00:00",
+        "policyUrl": "https://egghead.io/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2437,10 +2502,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy covers data collection and use, third-party sharing, and user rights and control. It does not mention data storage and security, AI and automated decision-making, or policy changes and updates. The overall risk is low. This chunk of the privacy policy discusses the company's data collection practices, third-party sharing, and user rights and control. The company collects user data to improve their product and services, and shares this data with third-party service providers who are contractually obligated to safeguard the data. Users have the right to opt out of data collection and can control the amount of personal information they share. The policy does not provide specific information about data storage and security measures, the use of AI or automated decision-making, or how changes to the policy will be communicated to users. This section of PostHog's privacy policy discusses how the company collects, uses, and shares personal information. It also mentions the security measures in place to protect this information and the rights users have in relation to their data. The company's data storage locations and its compliance with various data privacy frameworks are also discussed. This section of the privacy policy explains that the company only uses first-party cookies and does not use third-party tracking services. The company provides users with methods of accessing, correcting, or deleting their information and respects users' rights to restrict or suspend the company's processing of their personal information. Information collected may be stored and processed in the United States and is retained for as long as necessary to fulfill various purposes. This chunk of the privacy policy explains that the company collects personal information from customers and job applicants, but it is used strictly for providing services and managing the recruitment process. The company does not sell customer personal information and assists customers with data access, erasure, or opt-out requests. The company uses third-party services for recruitment, but these services are only allowed to process data in accordance with the company's instructions. This chunk of the privacy policy discusses the company's data collection and use for legitimate interests, data storage and security measures, user rights and control, and potential policy changes. There is no mention of third-party sharing or selling of data, or of AI and automated decision-making. The overall risk is low.",
-        "lastUpdated": "2025-04-22T16:35:02.524+00:00"
+        "lastUpdated": "2025-04-22T16:35:02.524+00:00",
+        "policyUrl": "https://posthog.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2474,10 +2540,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of Google's privacy policy outlines the types of data Google collects, including personal information, content, device and browser data, activity data, and location data. It also mentions that users can manage their privacy settings and use some services without an account. However, it does not provide details on data security measures, third-party sharing, AI use, or policy updates. This section of Google's privacy policy details the extensive data collection and use practices of the company, including the use of third-party data and automated systems for analysis and personalization. While users have some control over their data, the breadth of data collection and use presents a significant privacy risk. This chunk of the privacy policy explains how Google collects and uses data, and how users can control their data. It also discusses when Google shares user information and how they secure user data. However, it does not mention anything about AI and automated decision-making or policy changes and updates. This section of the privacy policy outlines Google's data collection, storage, and security measures. It also details user rights and control over their data. Google does not sell or share personal information and has robust security measures in place to protect data. The policy is regularly reviewed for compliance. This section of Google's privacy policy details the extensive data collection and use practices, including sharing with third parties. Some user control is mentioned, and the policy provides clear information about updates. However, details about data storage and security are not provided in this section. This section of Google's privacy policy explains the types of data Google collects and how it uses and stores this data. It also explains how users can control their account settings and Web & App Activity. However, it does not provide information on third-party sharing, AI and automated decision-making, or policy changes and updates. This chunk of the privacy policy discusses extensive data collection practices, including the collection of activity data, IP addresses, device information, and personal information. Data is shared with third-party sites and apps, and aggregated reports are provided to advertisers. Some user control is mentioned, but data collection is extensive. Information on data storage and security, AI use, and policy updates is not provided in this chunk. This chunk of the privacy policy discusses extensive data collection and use, including for personalized ads and AI features. It mentions some user control over data and sharing with third parties. However, it lacks detailed information about data security practices and policy updates. This chunk of the privacy policy reveals that Google collects voice and audio information, as well as data from users' activity on partner sites and apps. This data can be associated with personal information. Users have some control over their data, but the extent of this control is not fully detailed. The policy does not provide information on data storage and security, the use of AI, or policy updates.",
-        "lastUpdated": "2025-04-22T17:04:27.393+00:00"
+        "lastUpdated": "2025-04-22T17:04:27.393+00:00",
+        "policyUrl": "https://youtube.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2511,10 +2578,11 @@
           }
         },
         "summary": "The privacy policy does not provide any information on how user data is collected, used, stored, or shared. There is also no mention of user rights, AI use, or policy updates. Therefore, the risk to users cannot be assessed.",
-        "lastUpdated": "2025-04-22T17:37:57.43+00:00"
+        "lastUpdated": "2025-04-22T17:37:57.43+00:00",
+        "policyUrl": "https://uxforai.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2548,10 +2616,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This privacy policy is generally user-friendly and clear about its data practices. It collects personal and usage data for improving services and marketing. Data may be shared with linked third parties and some service providers. While they strive for data security, they acknowledge potential risks. Users have control over their data and will be notified of policy changes.",
-        "lastUpdated": "2025-04-22T17:38:28.663+00:00"
+        "lastUpdated": "2025-04-22T17:38:28.663+00:00",
+        "policyUrl": "https://mayerhawthorne.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2585,10 +2654,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of the privacy policy outlines the types of personal data that the NBA collects, including a wide range of personal and demographic information. It also mentions that data is collected through automated means. However, it does not provide specific details on third-party sharing, data storage and security, user rights and control, or policy changes and updates. This section of the privacy policy reveals a high level of data collection and use, including the use of automated technologies and third-party services. User control over data collection is limited, and there is no information about data storage and security or policy updates. This section of the policy indicates a high level of risk due to extensive data collection and sharing with third parties for advertising and marketing purposes. While users have some control over their data, the policy suggests that opting out of data collection may limit access to certain features. Information on data storage and security, AI and automated decision-making, and policy changes and updates is not provided in this section. This chunk of the privacy policy covers various aspects including data collection and use, third-party sharing and selling, data storage and security, user rights and control, and policy changes and updates. The policy states that they maintain safeguards to protect personal data and users can contact them for any concerns. However, their services may contain links to third-party services whose privacy practices are subject to their own privacy statements.",
-        "lastUpdated": "2025-04-22T17:54:54.199+00:00"
+        "lastUpdated": "2025-04-22T17:54:54.199+00:00",
+        "policyUrl": "https://nba.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2622,10 +2692,11 @@
           }
         },
         "summary": "The privacy policy of Toolgo has a medium risk level. It clearly states that personal data will not be sold or disclosed to third parties and that updates to the policy will be posted on the website. However, the policy does not provide specific details about data storage and security measures, and it does not explicitly mention user rights such as data deletion or modification. The use of cookies and tracking tools to collect data on usage is also a concern.",
-        "lastUpdated": "2025-04-22T21:26:03.232+00:00"
+        "lastUpdated": "2025-04-22T21:26:03.232+00:00",
+        "policyUrl": "https://toolgo.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2659,10 +2730,11 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy reveals that the company collects a significant amount of personal data for various purposes, including AI training and response generation. User rights are mentioned, but details are not provided in this chunk. Information on third-party sharing, data storage and security, and policy updates is not provided in this chunk. This chunk of the privacy policy outlines the company's practices regarding data collection and use, third-party sharing, user rights and control, and AI and automated decision-making. It does not provide information on data storage and security or policy changes and updates. The overall risk is medium due to data sharing with third parties. This chunk of the privacy policy covers data transfers, data retention, security controls, children's data, policy changes, contact information, and legal bases for processing. The company takes measures to protect data and respects user rights. However, there is some risk associated with data transfers to third parties in countries without an adequacy decision. This section of the privacy policy outlines the company's data collection and use practices, data storage and security measures, and user rights and control. It mentions potential cross-jurisdictional data transfers, but does not explicitly discuss third-party sharing or selling of data, AI or automated decision-making, or policy changes and updates. This chunk of the privacy policy does not provide any information about the categories of data collection & use, third-party sharing & selling, data storage & security, user rights & control, AI & automated decision-making, and policy changes & updates. It seems to be more of a site map or index rather than a section of a privacy policy.",
-        "lastUpdated": "2025-04-23T00:38:34.207+00:00"
+        "lastUpdated": "2025-04-23T00:38:34.207+00:00",
+        "policyUrl": "https://anthropic.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     },
@@ -2696,10 +2768,125 @@
           }
         },
         "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of Twitch's privacy policy outlines the types of personal information Twitch collects, including information provided by users, information automatically collected, and information obtained from third parties and live events. It also mentions that users can choose to provide additional information and that Twitch may transfer personal information to exhibitors at live events. However, it does not provide details on data storage and security, AI and automated decision-making, or policy changes and updates. Twitch collects and uses personal information for various purposes and shares it with its parent company, Amazon, and its subsidiaries. It also discloses information to service providers working on its behalf. Users have the right to review, update, or delete their information. However, the policy does not mention the use of AI or automated decision-making, and policy changes and updates. This chunk of the privacy policy outlines Twitch's practices regarding data collection, use, storage, and sharing, as well as user rights and control. It acknowledges that while Twitch takes measures to protect user data, no system can be completely secure. The policy does not mention the use of AI or automated decision-making, or how changes and updates to the policy will be communicated. This chunk of the privacy policy covers Twitch's practices regarding data collection, storage, and third-party sharing. It also addresses user rights and control, and policy changes and updates. There is a high risk in third-party sharing and selling due to potential data transfer in the event of a merger or sale. Data storage and security is a medium risk due to data potentially being stored and processed outside of the user's region. User rights and control, and policy changes and updates are low risk as Twitch provides avenues for user inquiries and will not make less protective changes without consent.",
-        "lastUpdated": "2025-04-23T05:30:45.35+00:00"
+        "lastUpdated": "2025-04-23T05:30:45.35+00:00",
+        "policyUrl": "https://twitch.tv/legal/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745386463646,
+        "timestamp": 1745427966850,
+        "version": "1.0.0"
+      }
+    },
+    "gap.com": {
+      "assessment": {
+        "riskLevel": "Unknown",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "Unknown",
+            "explanation": "The privacy policy does not provide any information on data collection and use."
+          },
+          "User Rights & Control": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention any information about user rights and control over their data."
+          },
+          "Data Storage & Security": {
+            "risk": "Unknown",
+            "explanation": "There is no information provided about data storage and security measures."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention how or when updates and changes to the privacy policy will be communicated to users."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "Unknown",
+            "explanation": "The privacy policy does not mention any details about third-party sharing or selling of user data."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Unknown",
+            "explanation": "The policy does not provide any information on the use of AI and automated decision-making."
+          }
+        },
+        "summary": "The provided text does not seem to contain a privacy policy. No information is provided about data collection, use, storage, security, third-party sharing, user rights, AI use, or policy updates. Therefore, the risk for each category and overall risk is unknown.",
+        "lastUpdated": "2025-04-23T06:51:54.135+00:00",
+        "policyUrl": "https://gap.com/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745427966850,
+        "version": "1.0.0"
+      }
+    },
+    "shopify.com": {
+      "assessment": {
+        "riskLevel": "Medium",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "Low",
+            "explanation": "Shopify provides clear options for users to manage their personal data, including access and erasure. It also provides an option to exclude personal data from Shopify Audiences."
+          },
+          "User Rights & Control": {
+            "risk": "Low",
+            "explanation": "Users have the ability to manage, access, and erase their data. They can also opt out of data sharing for targeted advertising."
+          },
+          "Data Storage & Security": {
+            "risk": "Unknown",
+            "explanation": "The policy does not provide specific details about how data is stored or secured."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention how or when it might be updated, or how users will be notified of changes."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "Medium",
+            "explanation": "The policy mentions that users can opt out of sharing personal data for targeted advertising, implying that data may be shared with third parties for this purpose by default."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention the use of AI or automated decision-making."
+          }
+        },
+        "summary": "Shopify's privacy policy provides users with control over their data, including the ability to manage, access, and erase it. However, it implies that data may be shared with third parties for targeted advertising by default, although users can opt out. The policy does not provide specific details about data storage and security, the use of AI or automated decision-making, or how the policy might be updated.",
+        "lastUpdated": "2025-04-23T15:28:21.798+00:00",
+        "policyUrl": "https://shopify.com/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745427966850,
+        "version": "1.0.0"
+      }
+    },
+    "above.com": {
+      "assessment": {
+        "riskLevel": "Unknown",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "Unknown",
+            "explanation": "The privacy policy does not provide any information on what data is collected or how it is used."
+          },
+          "User Rights & Control": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention any user rights or controls over their data."
+          },
+          "Data Storage & Security": {
+            "risk": "Unknown",
+            "explanation": "The policy does not discuss how user data is stored or secured."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Unknown",
+            "explanation": "The policy does not discuss how or when it will be updated and how users will be notified of these changes."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "Unknown",
+            "explanation": "There is no mention of whether user data is shared or sold to third parties."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Unknown",
+            "explanation": "There is no mention of AI or automated decision-making processes."
+          }
+        },
+        "summary": "This privacy policy does not provide any information on data collection, use, storage, security, user rights, third-party sharing, AI use, or policy updates. This lack of transparency presents an unknown risk to users.",
+        "lastUpdated": "2025-04-23T15:29:29.197+00:00",
+        "policyUrl": "https://above.com/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745427966850,
         "version": "1.0.0"
       }
     }

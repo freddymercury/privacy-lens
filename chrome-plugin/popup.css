@@ -229,3 +229,23 @@ input:checked + .slider:before {
   background-color: rgba(149, 165, 166, 0.1);
   border-left: 3px solid #95a5a6;
 }
+
+/* Privacy policy link styles */
+.privacy-policy-link {
+  margin-top: 10px;
+  text-align: center;
+  padding: 5px 0;
+  border-top: 1px solid #ddd;
+}
+
+.privacy-policy-link a {
+  color: #3498db;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.privacy-policy-link a:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}

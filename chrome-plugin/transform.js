@@ -12,6 +12,7 @@ function transformServerResponse(domain, serverResponse) {
     throw new Error('Invalid server response format');
   }
 
+  console.log("Server response:", serverResponse);
   // Current timestamp for metadata
   const timestamp = Date.now();
   
@@ -25,7 +26,10 @@ function transformServerResponse(domain, serverResponse) {
       ...serverResponse.assessment,
       
       // Ensure riskLevel is normalized to lowercase for consistency
-      riskLevel: normalizeRiskLevel(serverResponse.assessment.riskLevel)
+      riskLevel: normalizeRiskLevel(serverResponse.assessment.riskLevel),
+      
+      // Add policy URL if available
+      policyUrl: serverResponse.assessment.policyUrl || null
     },
     
     // Add metadata
@@ -95,7 +99,9 @@ function transformPrepackagedData(prepackagedData) {
     domain,
     assessment: {
       ...data.assessment,
-      riskLevel: normalizeRiskLevel(data.assessment.riskLevel)
+      riskLevel: normalizeRiskLevel(data.assessment.riskLevel),
+      // Add policy URL if available in the prepackaged data
+      policyUrl: data.assessment.policyUrl || null
     },
     metadata: {
       ...data.metadata,
