@@ -1,4 +1,4 @@
-// Authentication middleware for PrivacyGuard admin dashboard
+// Authentication middleware for PrivacyLens admin dashboard
 
 /**
  * Check if user is authenticated

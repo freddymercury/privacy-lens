@@ -1,4 +1,4 @@
-// Utility functions for PrivacyGuard Chrome Plugin
+// Utility functions for PrivacyLens Chrome Plugin
 
 /**
  * Extract the effective top-level domain plus one level from a hostname

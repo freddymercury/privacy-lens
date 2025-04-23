@@ -1,4 +1,4 @@
-// Unassessed URLs Controller for PrivacyGuard backend
+// Unassessed URLs Controller for PrivacyLens backend
 
 const db = require("../utils/db");
 

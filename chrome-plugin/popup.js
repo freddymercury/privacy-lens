@@ -1,4 +1,4 @@
-// PrivacyGuard Popup Script
+// PrivacyLens Popup Script
 
 // Import utility functions
 import { getNormalizedDomain, normalizeUrl } from "./utils.js";
@@ -96,7 +96,7 @@ function displayAssessment(assessmentData) {
         : "unknown";
   } else {
     console.error(
-      `[PrivacyGuard] Unexpected overall risk level structure:`,
+      `[PrivacyLens] Unexpected overall risk level structure:`,
       assessment.riskLevel
     );
     riskLevel = "unknown";
@@ -186,7 +186,7 @@ async function updateUserTierDisplay() {
       tierBadge.className = "tier-badge free";
     }
   } catch (error) {
-    console.error("[PrivacyGuard] Error updating user tier display:", error);
+    console.error("[PrivacyLens] Error updating user tier display:", error);
   }
 }
 
@@ -204,7 +204,7 @@ async function updateUIForUserTier() {
     
     await updateUserTierDisplay();
   } catch (error) {
-    console.error("[PrivacyGuard] Error updating UI for user tier:", error);
+    console.error("[PrivacyLens] Error updating UI for user tier:", error);
   }
 }
 
@@ -221,7 +221,7 @@ async function fetchFromServer(domain, tabId) {
     
     // Query the backend service
     console.log(
-      `[PrivacyGuard] Fetching from server: ${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
+      `[PrivacyLens] Fetching from server: ${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
     );
     
     const response = await fetchWithRetry(
@@ -239,13 +239,13 @@ async function fetchFromServer(domain, tabId) {
       // Update badge
       updateBadge(tabId, data.assessment.riskLevel);
       
-      console.log(`[PrivacyGuard] Server data stored in local database`);
+      console.log(`[PrivacyLens] Server data stored in local database`);
       return transformedData;
     } else {
       throw new Error("Invalid server response or no assessment available");
     }
   } catch (error) {
-    console.error("[PrivacyGuard] Error fetching from server:", error);
+    console.error("[PrivacyLens] Error fetching from server:", error);
     throw error;
   }
 }
@@ -266,9 +266,9 @@ function setupServerFetchButton(domain, tabId) {
       // Display updated assessment
       displayAssessment(updatedData);
       
-      console.log("[PrivacyGuard] Assessment updated from server");
+      console.log("[PrivacyLens] Assessment updated from server");
     } catch (error) {
-      console.error("[PrivacyGuard] Error in server fetch:", error);
+      console.error("[PrivacyLens] Error in server fetch:", error);
       updateAssessmentDisplay("error", "Error fetching from server");
     } finally {
       // Reset button state
@@ -327,7 +327,7 @@ if (typeof document !== "undefined") {
       const fullHostname = new URL(currentUrl).hostname;
       const domain = normalizeUrl(currentUrl); // Use normalizeUrl to ensure 'www.' is removed
       console.log(
-        `[PrivacyGuard] URL: ${currentUrl}, Hostname: ${fullHostname}, Normalized Domain: ${domain}`
+        `[PrivacyLens] URL: ${currentUrl}, Hostname: ${fullHostname}, Normalized Domain: ${domain}`
       );
 
       // Load plugin state from storage
@@ -351,17 +351,17 @@ if (typeof document !== "undefined") {
         if (assessmentData) {
           // Display assessment data from local database
           displayAssessment(assessmentData);
-          console.log("[PrivacyGuard] Using assessment from local database");
+          console.log("[PrivacyLens] Using assessment from local database");
         } else {
           // No assessment available in local database
           updateAssessmentDisplay("unknown", "No assessment available");
-          console.log("[PrivacyGuard] No assessment found in local database");
+          console.log("[PrivacyLens] No assessment found in local database");
           
           // Don't automatically try to fetch from server here
           // Let the user click the refresh button if they want to check the server
         }
       } catch (dbError) {
-        console.error("[PrivacyGuard] Error reading from local database:", dbError);
+        console.error("[PrivacyLens] Error reading from local database:", dbError);
         updateAssessmentDisplay("error", "Error reading local database");
       }
 
@@ -379,7 +379,7 @@ if (typeof document !== "undefined") {
           if (localData) {
             // If we have local data, display it
             displayAssessment(localData);
-            console.log("[PrivacyGuard] Using assessment from local database");
+            console.log("[PrivacyLens] Using assessment from local database");
           } else {
             // If no local data, check if user is in paid tier before trying server
             const isPaidTier = await isUserPaidTier();
@@ -393,23 +393,23 @@ if (typeof document !== "undefined") {
                 if (serverData) {
                   // If server fetch successful, display the data
                   displayAssessment(serverData);
-                  console.log("[PrivacyGuard] Using assessment from server");
+                  console.log("[PrivacyLens] Using assessment from server");
                 } else {
                   // If server fetch returned null, show unknown
                   updateAssessmentDisplay("unknown", "No assessment available");
                 }
               } catch (serverError) {
-                console.error("[PrivacyGuard] Error fetching from server:", serverError);
+                console.error("[PrivacyLens] Error fetching from server:", serverError);
                 updateAssessmentDisplay("error", "Error fetching from server");
               }
             } else {
               // Free tier users just get "No assessment available"
-              console.log("[PrivacyGuard] Free tier user - no server fetch attempted");
+              console.log("[PrivacyLens] Free tier user - no server fetch attempted");
               updateAssessmentDisplay("unknown", "No assessment available");
             }
           }
         } catch (error) {
-          console.error("[PrivacyGuard] Error refreshing assessment:", error);
+          console.error("[PrivacyLens] Error refreshing assessment:", error);
           updateAssessmentDisplay("error", "Error refreshing assessment");
         } finally {
           refreshBtn.textContent = "Refresh Assessment";
@@ -432,7 +432,7 @@ if (typeof document !== "undefined") {
             if (localData) {
               // If we have local data, display it
               displayAssessment(localData);
-              console.log("[PrivacyGuard] Using assessment from local database");
+              console.log("[PrivacyLens] Using assessment from local database");
             } else {
               // If no local data, check if user is in paid tier before trying server
               const isPaidTier = await isUserPaidTier();
@@ -457,17 +457,17 @@ if (typeof document !== "undefined") {
                     updateAssessmentDisplay("unknown", "No assessment available");
                   }
                 } catch (serverError) {
-                  console.error("[PrivacyGuard] Error fetching from server:", serverError);
+                  console.error("[PrivacyLens] Error fetching from server:", serverError);
                   updateAssessmentDisplay("error", "Error fetching from server");
                 }
               } else {
                 // Free tier users just get "No assessment available"
-                console.log("[PrivacyGuard] Free tier user - no server fetch attempted");
+                console.log("[PrivacyLens] Free tier user - no server fetch attempted");
                 updateAssessmentDisplay("unknown", "No assessment available");
               }
             }
           } catch (error) {
-            console.error("[PrivacyGuard] Error activating plugin:", error);
+            console.error("[PrivacyLens] Error activating plugin:", error);
             updateAssessmentDisplay("error", "Error activating plugin");
           }
         } else {
@@ -519,7 +519,7 @@ if (typeof document !== "undefined") {
       settingsDiv.appendChild(downgradeBtn);
       
     } catch (error) {
-      console.error("[PrivacyGuard] Error in popup initialization:", error);
+      console.error("[PrivacyLens] Error in popup initialization:", error);
       updateAssessmentDisplay("error", "Error initializing plugin");
     }
   });
@@ -540,7 +540,7 @@ function updateBadge(tabId, riskLevel) {
         ? riskLevel.risk.toLowerCase()
         : "unknown";
   } else {
-    console.error(`[PrivacyGuard] Unexpected risk level structure:`, riskLevel);
+    console.error(`[PrivacyLens] Unexpected risk level structure:`, riskLevel);
     normalizedRiskLevel = "unknown";
   }
 
@@ -591,7 +591,7 @@ async function fetchWithRetry(url, options = {}, retries = 2, timeout = 5000) {
     if (retries <= 0) throw error;
 
     console.log(
-      `[PrivacyGuard] Retrying fetch to ${url}, ${retries} retries left`
+      `[PrivacyLens] Retrying fetch to ${url}, ${retries} retries left`
     );
     // Wait a bit before retrying (exponential backoff)
     await new Promise((resolve) => setTimeout(resolve, 1000 * (3 - retries)));
@@ -608,19 +608,19 @@ async function checkPrivacyAssessment(url, tabId) {
     // First check if user is in paid tier
     const isPaidTier = await isUserPaidTier();
     if (!isPaidTier) {
-      console.log("[PrivacyGuard] Server fetch attempted by free tier user - not allowed");
+      console.log("[PrivacyLens] Server fetch attempted by free tier user - not allowed");
       throw new Error("Server fetch is only available for paid tier users");
     }
     // Extract domain from URL for assessment lookup and remove 'www.' prefix
     const fullHostname = new URL(url).hostname;
     const domain = normalizeUrl(url); // Use normalizeUrl to ensure 'www.' is removed
     console.log(
-      `[PrivacyGuard] Checking assessment for domain: ${fullHostname}, Normalized: ${domain}`
+      `[PrivacyLens] Checking assessment for domain: ${fullHostname}, Normalized: ${domain}`
     );
 
     // Query the backend service
     console.log(
-      `[PrivacyGuard] Fetching from: ${API_BASE_URL}/assessment?url=${encodeURIComponent(
+      `[PrivacyLens] Fetching from: ${API_BASE_URL}/assessment?url=${encodeURIComponent(
         domain
       )}`
     );
@@ -628,12 +628,12 @@ async function checkPrivacyAssessment(url, tabId) {
       `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
     );
     const data = await response.json();
-    console.log(`[PrivacyGuard] Assessment API response:`, data);
+    console.log(`[PrivacyLens] Assessment API response:`, data);
 
     if (data.status === "success") {
       if (data.assessment) {
         console.log(
-          `[PrivacyGuard] Assessment found with risk level: ${data.assessment.riskLevel}`
+          `[PrivacyLens] Assessment found with risk level: ${data.assessment.riskLevel}`
         );
         
         // Transform server response to database format
@@ -645,17 +645,17 @@ async function checkPrivacyAssessment(url, tabId) {
         // Update badge
         updateBadge(tabId, data.assessment.riskLevel);
         
-        console.log(`[PrivacyGuard] Assessment stored in local database`);
+        console.log(`[PrivacyLens] Assessment stored in local database`);
         return transformedData;
       } else {
         console.log(
-          `[PrivacyGuard] No assessment available for ${domain}, reporting as unassessed`
+          `[PrivacyLens] No assessment available for ${domain}, reporting as unassessed`
         );
         // No assessment available
         updateBadge(tabId, "unknown");
 
         // Report URL for future assessment
-        console.log(`[PrivacyGuard] Reporting ${domain} as unassessed`);
+        console.log(`[PrivacyLens] Reporting ${domain} as unassessed`);
         const reportResponse = await fetchWithRetry(
           `${API_BASE_URL}/report-unassessed`,
           {
@@ -667,12 +667,12 @@ async function checkPrivacyAssessment(url, tabId) {
           }
         );
         const reportData = await reportResponse.json();
-        console.log(`[PrivacyGuard] Report unassessed response:`, reportData);
+        console.log(`[PrivacyLens] Report unassessed response:`, reportData);
 
         // Immediately trigger assessment for this URL
         try {
           console.log(
-            `[PrivacyGuard] Triggering immediate assessment for ${domain}`
+            `[PrivacyLens] Triggering immediate assessment for ${domain}`
           );
           const triggerResponse = await fetchWithRetry(
             `${API_BASE_URL}/trigger-assessment/${encodeURIComponent(domain)}`,
@@ -686,13 +686,13 @@ async function checkPrivacyAssessment(url, tabId) {
 
           const triggerData = await triggerResponse.json();
           console.log(
-            `[PrivacyGuard] Trigger assessment response:`,
+            `[PrivacyLens] Trigger assessment response:`,
             triggerData
           );
 
           if (triggerData.status === "success" && triggerData.assessment) {
             console.log(
-              `[PrivacyGuard] Immediate assessment successful with risk level: ${triggerData.assessment.riskLevel}`
+              `[PrivacyLens] Immediate assessment successful with risk level: ${triggerData.assessment.riskLevel}`
             );
             
             // Transform server response to database format
@@ -705,17 +705,17 @@ async function checkPrivacyAssessment(url, tabId) {
             updateBadge(tabId, triggerData.assessment.riskLevel);
             
             console.log(
-              `[PrivacyGuard] Immediate assessment stored in local database`
+              `[PrivacyLens] Immediate assessment stored in local database`
             );
             return transformedData;
           } else {
             console.log(
-              `[PrivacyGuard] Immediate assessment did not return an assessment object`
+              `[PrivacyLens] Immediate assessment did not return an assessment object`
             );
           }
         } catch (triggerError) {
           console.error(
-            "[PrivacyGuard] Error triggering assessment:",
+            "[PrivacyLens] Error triggering assessment:",
             triggerError
           );
         }
@@ -723,13 +723,13 @@ async function checkPrivacyAssessment(url, tabId) {
         return null;
       }
     } else {
-      console.error(`[PrivacyGuard] Error in API response:`, data);
+      console.error(`[PrivacyLens] Error in API response:`, data);
       // Error in API response
       updateBadge(tabId, "error");
       return null;
     }
   } catch (error) {
-    console.error("[PrivacyGuard] Error checking privacy assessment:", error);
+    console.error("[PrivacyLens] Error checking privacy assessment:", error);
     updateBadge(tabId, "error");
     return null;
   }

@@ -1,4 +1,4 @@
-// Admin Controller for PrivacyGuard admin dashboard
+// Admin Controller for PrivacyLens admin dashboard
 
 const db = require("../utils/db");
 const llmService = require("../services/llmService");
@@ -72,7 +72,7 @@ const dashboard = async (req, res) => {
 
     // Render dashboard
     res.render("dashboard", {
-      title: "PrivacyGuard Admin - Dashboard",
+      title: "PrivacyLens Admin - Dashboard",
       user: req.session.user,
       stats: {
         total: websites.length,
@@ -143,7 +143,7 @@ const listAssessments = async (req, res) => {
 
     // Render assessments page
     res.render("assessments", {
-      title: "PrivacyGuard Admin - Assessments",
+      title: "PrivacyLens Admin - Assessments",
       user: req.session.user,
       assessments,
       pagination: {
@@ -197,7 +197,7 @@ const viewAssessment = async (req, res) => {
 
     // Render assessment page
     res.render("assessment-detail", {
-      title: `PrivacyGuard Admin - ${url}`,
+      title: `PrivacyLens Admin - ${url}`,
       user: req.session.user,
       assessment: {
         url: assessment.url,
@@ -264,7 +264,7 @@ const listUnassessed = async (req, res) => {
 
     // Render unassessed URLs page
     res.render("unassessed", {
-      title: "PrivacyGuard Admin - Unassessed URLs",
+      title: "PrivacyLens Admin - Unassessed URLs",
       user: req.session.user,
       unassessedUrls,
       pagination: {
@@ -508,7 +508,7 @@ const analytics = async (req, res) => {
 
     // Render analytics page
     res.render("analytics", {
-      title: "PrivacyGuard Admin - Analytics",
+      title: "PrivacyLens Admin - Analytics",
       user: req.session.user,
       analytics: {
         totalAssessments: assessments.length,
@@ -557,7 +557,7 @@ const listUsers = async (req, res) => {
 
     // Render users page
     res.render("users", {
-      title: "PrivacyGuard Admin - Users",
+      title: "PrivacyLens Admin - Users",
       user: req.session.user,
       users,
     });
@@ -631,7 +631,7 @@ const auditLogs = async (req, res) => {
 
     // Render audit logs page
     res.render("audit-logs", {
-      title: "PrivacyGuard Admin - Audit Logs",
+      title: "PrivacyLens Admin - Audit Logs",
       user: req.session.user,
       logs,
       users,

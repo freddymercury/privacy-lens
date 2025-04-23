@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Data Migration Script for PrivacyGuard
+ * Data Migration Script for PrivacyLens
  *
  * This script migrates existing data to use normalized domains:
  * 1. Fetches all records from the websites table

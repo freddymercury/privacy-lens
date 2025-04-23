@@ -1,4 +1,4 @@
-// Main entry point for PrivacyGuard backend
+// Main entry point for PrivacyLens backend
 
 require("dotenv").config();
 const express = require("express");
@@ -65,7 +65,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`PrivacyGuard backend server running on port ${PORT}`);
+  console.log(`PrivacyLens backend server running on port ${PORT}`);
 
   // Initialize assessment trigger service
   const intervalMinutes =

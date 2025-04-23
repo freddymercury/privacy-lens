@@ -1,4 +1,4 @@
-// Background script for PrivacyGuard Chrome Plugin
+// Background script for PrivacyLens Chrome Plugin
 
 // Import utility functions
 import { getNormalizedDomain, normalizeUrl } from "./utils.js";
@@ -20,18 +20,18 @@ const API_BASE_URL = "http://localhost:3000/api"; // Change in production
 
 // Initialize extension on install or update
 chrome.runtime.onInstalled.addListener(async (details) => {
-  console.log(`[PrivacyGuard BG] Extension ${details.reason}ed`);
+  console.log(`[PrivacyLens BG] Extension ${details.reason}ed`);
   
   try {
     // Initialize database with pre-packaged data
     await checkAndInitializeDatabase();
-    console.log('[PrivacyGuard BG] Database initialized');
+    console.log('[PrivacyLens BG] Database initialized');
     
     // Initialize user tier
     await initializeUserTier();
-    console.log('[PrivacyGuard BG] User tier initialized');
+    console.log('[PrivacyLens BG] User tier initialized');
   } catch (error) {
-    console.error('[PrivacyGuard BG] Error during initialization:', error);
+    console.error('[PrivacyLens BG] Error during initialization:', error);
   }
 });
 
@@ -101,15 +101,15 @@ async function fetchWithRetry(url, options = {}, retries = 2, timeout = 15000) {
       
       // Log more details about the error
       if (error.name === 'AbortError') {
-        console.log(`[PrivacyGuard BG] Request to ${url} timed out after ${timeout}ms`);
+        console.log(`[PrivacyLens BG] Request to ${url} timed out after ${timeout}ms`);
       } else if (error instanceof DOMException) {
-        console.log(`[PrivacyGuard BG] DOMException in fetch: ${error.name} - ${error.message}`);
+        console.log(`[PrivacyLens BG] DOMException in fetch: ${error.name} - ${error.message}`);
       }
       
       if (retries <= 0) throw error;
 
       console.log(
-        `[PrivacyGuard BG] Retrying fetch to ${url}, ${retries} retries left`
+        `[PrivacyLens BG] Retrying fetch to ${url}, ${retries} retries left`
       );
       // Wait a bit before retrying (exponential backoff)
       await new Promise((resolve) => setTimeout(resolve, 1000 * (3 - retries)));
@@ -125,7 +125,7 @@ async function checkPrivacyAssessment(url, tabId) {
     const fullHostname = new URL(url).hostname;
     const domain = normalizeUrl(url); // Use normalizeUrl to ensure 'www.' is removed
     console.log(
-      `[PrivacyGuard BG] Checking assessment for domain: ${fullHostname}, Normalized: ${domain}`
+      `[PrivacyLens BG] Checking assessment for domain: ${fullHostname}, Normalized: ${domain}`
     );
 
     // First check if we have this domain in our local database
@@ -134,14 +134,14 @@ async function checkPrivacyAssessment(url, tabId) {
       
       if (localAssessment) {
         console.log(
-          `[PrivacyGuard BG] Assessment found in local database with risk level: ${localAssessment.assessment.riskLevel}`
+          `[PrivacyLens BG] Assessment found in local database with risk level: ${localAssessment.assessment.riskLevel}`
         );
         // Update icon based on risk level from local database
         updateIcon(tabId, localAssessment.assessment.riskLevel);
         return localAssessment;
       }
     } catch (dbError) {
-      console.error("[PrivacyGuard BG] Error reading from local database:", dbError);
+      console.error("[PrivacyLens BG] Error reading from local database:", dbError);
       // Continue to try server if local DB fails, but only for paid users
     }
     
@@ -151,7 +151,7 @@ async function checkPrivacyAssessment(url, tabId) {
       const isPaidTier = await isUserPaidTier();
       
       if (!isPaidTier) {
-        console.log("[PrivacyGuard BG] Free tier user - no server fetch attempted");
+        console.log("[PrivacyLens BG] Free tier user - no server fetch attempted");
         // Free tier users just get "unknown" if no local data
         updateIcon(tabId, "unknown");
         return null;
@@ -159,7 +159,7 @@ async function checkPrivacyAssessment(url, tabId) {
       
       // If not in local database and user is paid tier, query the backend service
       console.log(
-        `[PrivacyGuard BG] No local data, paid user - fetching from: ${API_BASE_URL}/assessment?url=${encodeURIComponent(
+        `[PrivacyLens BG] No local data, paid user - fetching from: ${API_BASE_URL}/assessment?url=${encodeURIComponent(
           domain
         )}`
       );
@@ -169,13 +169,13 @@ async function checkPrivacyAssessment(url, tabId) {
       );
 
       const data = await response.json();
-      console.log(`[PrivacyGuard BG] Assessment API response:`, data);
+      console.log(`[PrivacyLens BG] Assessment API response:`, data);
 
       // Update the extension icon based on assessment
       if (data.status === "success") {
         if (data.assessment) {
           console.log(
-            `[PrivacyGuard BG] Assessment found with risk level: ${data.assessment.riskLevel}`
+            `[PrivacyLens BG] Assessment found with risk level: ${data.assessment.riskLevel}`
           );
           
           // Transform server response to database format
@@ -187,11 +187,11 @@ async function checkPrivacyAssessment(url, tabId) {
           // Update icon based on risk level
           updateIcon(tabId, data.assessment.riskLevel);
           
-          console.log(`[PrivacyGuard BG] Assessment stored in local database`);
+          console.log(`[PrivacyLens BG] Assessment stored in local database`);
           return transformedData;
         } else {
           console.log(
-            `[PrivacyGuard BG] No assessment available for ${domain}, reporting as unassessed`
+            `[PrivacyLens BG] No assessment available for ${domain}, reporting as unassessed`
           );
           // No assessment available
           updateIcon(tabId, "unknown");
@@ -201,7 +201,7 @@ async function checkPrivacyAssessment(url, tabId) {
           // Immediately trigger assessment for this URL
           try {
             console.log(
-              `[PrivacyGuard BG] Triggering immediate assessment for ${domain}`
+              `[PrivacyLens BG] Triggering immediate assessment for ${domain}`
             );
 
             const triggerResponse = await fetchWithRetry(
@@ -216,13 +216,13 @@ async function checkPrivacyAssessment(url, tabId) {
 
             const triggerData = await triggerResponse.json();
             console.log(
-              `[PrivacyGuard BG] Trigger assessment response:`,
+              `[PrivacyLens BG] Trigger assessment response:`,
               triggerData
             );
 
             if (triggerData.status === "success" && triggerData.assessment) {
               console.log(
-                `[PrivacyGuard BG] Immediate assessment successful with risk level: ${triggerData.assessment.riskLevel}`
+                `[PrivacyLens BG] Immediate assessment successful with risk level: ${triggerData.assessment.riskLevel}`
               );
               
               // Transform server response to database format
@@ -235,42 +235,42 @@ async function checkPrivacyAssessment(url, tabId) {
               updateIcon(tabId, triggerData.assessment.riskLevel);
               
               console.log(
-                `[PrivacyGuard BG] Immediate assessment stored in local database`
+                `[PrivacyLens BG] Immediate assessment stored in local database`
               );
               return transformedData;
             } else {
               console.log(
-                `[PrivacyGuard BG] Immediate assessment did not return an assessment object`
+                `[PrivacyLens BG] Immediate assessment did not return an assessment object`
               );
             }
           } catch (triggerError) {
             // Provide more detailed error logging
             if (triggerError instanceof DOMException) {
               console.error(
-                `[PrivacyGuard BG] Error triggering assessment: DOMException - ${triggerError.name}: ${triggerError.message}`
+                `[PrivacyLens BG] Error triggering assessment: DOMException - ${triggerError.name}: ${triggerError.message}`
               );
             } else {
               console.error(
-                "[PrivacyGuard BG] Error triggering assessment:",
+                "[PrivacyLens BG] Error triggering assessment:",
                 triggerError
               );
             }
           }
         }
       } else {
-        console.error(`[PrivacyGuard BG] Error in API response:`, data);
+        console.error(`[PrivacyLens BG] Error in API response:`, data);
         // Error in API response
         updateIcon(tabId, "error");
       }
     } catch (fetchError) {
-      console.error("[PrivacyGuard BG] Error fetching from server:", fetchError);
+      console.error("[PrivacyLens BG] Error fetching from server:", fetchError);
       
       // If we have no local data and can't fetch, show unknown
       updateIcon(tabId, "unknown");
     }
   } catch (error) {
     console.error(
-      "[PrivacyGuard BG] Error checking privacy assessment:",
+      "[PrivacyLens BG] Error checking privacy assessment:",
       error
     );
     updateIcon(tabId, "error");
@@ -295,7 +295,7 @@ function updateIcon(tabId, riskLevel) {
         : "unknown";
   } else {
     console.error(
-      `[PrivacyGuard BG] Unexpected risk level structure:`,
+      `[PrivacyLens BG] Unexpected risk level structure:`,
       riskLevel
     );
     normalizedRiskLevel = "unknown";
@@ -339,7 +339,7 @@ async function reportUnassessedUrl(domain) {
     // Use normalizeUrl instead of getNormalizedDomain to ensure 'www.' is removed
     const normalizedDomain = domain; // Already normalized by normalizeUrl in checkPrivacyAssessment
     console.log(
-      `[PrivacyGuard BG] Reporting unassessed URL: ${domain}, Normalized: ${normalizedDomain}`
+      `[PrivacyLens BG] Reporting unassessed URL: ${domain}, Normalized: ${normalizedDomain}`
     );
 
     await fetchWithRetry(`${API_BASE_URL}/report-unassessed`, {
@@ -350,7 +350,7 @@ async function reportUnassessedUrl(domain) {
       body: JSON.stringify({ url: normalizedDomain }),
     });
   } catch (error) {
-    console.error("[PrivacyGuard BG] Error reporting unassessed URL:", error);
+    console.error("[PrivacyLens BG] Error reporting unassessed URL:", error);
     // Continue execution even if reporting fails
   }
 }

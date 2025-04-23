@@ -1,4 +1,4 @@
-// LLM Service for PrivacyGuard backend
+// LLM Service for PrivacyLens backend
 
 const db = require('../utils/db');
 

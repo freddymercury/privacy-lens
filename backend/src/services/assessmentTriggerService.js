@@ -1,4 +1,4 @@
-// Assessment Trigger Service for PrivacyGuard backend
+// Assessment Trigger Service for PrivacyLens backend
 // Handles automated processing of unassessed URLs
 
 const db = require("../utils/db");

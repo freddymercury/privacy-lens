@@ -1,6 +1,6 @@
-# PrivacyGuard Backend + Admin Dashboard
+# PrivacyLens Backend + Admin Dashboard
 
-Backend service and admin dashboard for the PrivacyGuard Chrome plugin. This service assesses privacy risks of user agreements for popular websites.
+Backend service and admin dashboard for the PrivacyLens Chrome plugin. This service assesses privacy risks of user agreements for popular websites.
 
 ## Features
 

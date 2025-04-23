@@ -1,4 +1,4 @@
-// Database configuration for PrivacyGuard backend
+// Database configuration for PrivacyLens backend
 
 const { createClient } = require("@supabase/supabase-js");
 const { normalizeUrl } = require("./domainUtils");

@@ -1,7 +1,7 @@
 {
   "name": "privacy-guard-backend",
   "version": "1.0.0",
-  "description": "Backend service and admin dashboard for PrivacyGuard",
+  "description": "Backend service and admin dashboard for PrivacyLens",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

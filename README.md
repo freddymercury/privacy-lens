@@ -4,7 +4,7 @@ A comprehensive privacy assessment system for user agreements of popular website
 
 ## Overview
 
-PrivacyGuard helps users understand the privacy implications of websites they visit by:
+PrivacyLens helps users understand the privacy implications of websites they visit by:
 
 1. Automatically detecting when a user visits a website
 2. Checking if a privacy assessment exists for that website
@@ -15,7 +15,7 @@ The system uses LLM technology to analyze privacy policies and user agreements, 
 
 ## System Architecture
 
-The PrivacyGuard system consists of two main components:
+The PrivacyLens system consists of two main components:
 
 ### 1. Chrome Plugin
 
@@ -37,7 +37,7 @@ The PrivacyGuard system consists of two main components:
 
 ## Privacy Risk Categories
 
-PrivacyGuard evaluates privacy policies across these key categories:
+PrivacyLens evaluates privacy policies across these key categories:
 
 - **Data Collection & Use**: What personal data is collected and how it's used
 - **Third-Party Sharing & Selling**: Whether and how data is shared with third parties

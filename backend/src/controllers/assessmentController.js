@@ -1,4 +1,4 @@
-// Assessment Controller for PrivacyGuard backend
+// Assessment Controller for PrivacyLens backend
 
 const db = require("../utils/db");
 const llmService = require("../services/llmService");

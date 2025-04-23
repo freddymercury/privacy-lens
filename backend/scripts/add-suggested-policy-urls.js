@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Database Migration Script for PrivacyGuard
+ * Database Migration Script for PrivacyLens
  *
  * This script adds the suggested_policy_urls column to the unassessed_urls table.
  *
