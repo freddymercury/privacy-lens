@@ -8,15 +8,25 @@ import {
   updateAssessmentInDB 
 } from "./db.js";
 import { 
-  initializeUserTier, 
-  isUserPaidTier 
+  isAuthenticated,
+  refreshToken,
+  getUserTier,
+  hasFeature,
+  isPremium,
+  getDeviceId,
+  getAuthToken
 } from "./auth.js";
 import { 
   transformServerResponse 
 } from "./transform.js";
+import {
+  checkForUpdates,
+  scheduleUpdateChecks
+} from "./updater.js";
 
 // Configuration
-const API_BASE_URL = "http://localhost:3000/api"; // Change in production
+const API_BASE_URL = "http://localhost:3000/api";
+const CURRENT_VERSION = "2.0.0";
 
 // Initialize extension on install or update
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -27,11 +37,41 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     await checkAndInitializeDatabase();
     console.log('[PrivacyLens BG] Database initialized');
     
-    // Initialize user tier
-    await initializeUserTier();
-    console.log('[PrivacyLens BG] User tier initialized');
+    // Schedule update checks
+    const deviceId = await getDeviceId();
+    scheduleUpdateChecks(CURRENT_VERSION, (updateInfo) => {
+      // Show update notification
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon16.svg',
+        title: 'PrivacyLens Update Available',
+        message: `Version ${updateInfo.version} is available. Open the extension to update.`,
+        priority: 2
+      });
+    });
+    console.log('[PrivacyLens BG] Update checks scheduled');
+    
+    // Set up token refresh alarm
+    chrome.alarms.create('tokenRefresh', { periodInMinutes: 60 }); // Check every hour
+    console.log('[PrivacyLens BG] Token refresh alarm set');
   } catch (error) {
     console.error('[PrivacyLens BG] Error during initialization:', error);
+  }
+});
+
+// Handle alarms
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+  if (alarm.name === 'tokenRefresh') {
+    try {
+      // Check if authenticated and refresh token if needed
+      const authenticated = await isAuthenticated();
+      if (authenticated) {
+        await refreshToken();
+        console.log('[PrivacyLens BG] Token refreshed');
+      }
+    } catch (error) {
+      console.error('[PrivacyLens BG] Token refresh error:', error);
+    }
   }
 });
 
@@ -145,14 +185,23 @@ async function checkPrivacyAssessment(url, tabId) {
       // Continue to try server if local DB fails, but only for paid users
     }
     
-    // Only try to fetch from server if user is in paid tier
+    // Only try to fetch from server if user is in premium tier
     try {
-      // Check if user is in paid tier
-      const isPaidTier = await isUserPaidTier();
+      // Check if user is authenticated and in premium tier
+      const authenticated = await isAuthenticated();
+      const premium = await isPremium();
       
-      if (!isPaidTier) {
-        console.log("[PrivacyLens BG] Free tier user - no server fetch attempted");
+      if (!authenticated || !premium) {
+        console.log("[PrivacyLens BG] Free tier user or not authenticated - no server fetch attempted");
         // Free tier users just get "unknown" if no local data
+        updateIcon(tabId, "unknown");
+        return null;
+      }
+      
+      // Get auth token for API requests
+      const token = await getAuthToken();
+      if (!token) {
+        console.log("[PrivacyLens BG] No auth token available");
         updateIcon(tabId, "unknown");
         return null;
       }
@@ -165,7 +214,13 @@ async function checkPrivacyAssessment(url, tabId) {
       );
 
       const response = await fetchWithRetry(
-        `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
+        `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
 
       const data = await response.json();
@@ -210,6 +265,7 @@ async function checkPrivacyAssessment(url, tabId) {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
                 },
               }
             );
@@ -342,11 +398,20 @@ async function reportUnassessedUrl(domain) {
       `[PrivacyLens BG] Reporting unassessed URL: ${domain}, Normalized: ${normalizedDomain}`
     );
 
+    // Get auth token for API request
+    const token = await getAuthToken();
+    const headers = {
+      "Content-Type": "application/json"
+    };
+    
+    // Add authorization header if token is available
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     await fetchWithRetry(`${API_BASE_URL}/report-unassessed`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify({ url: normalizedDomain }),
     });
   } catch (error) {

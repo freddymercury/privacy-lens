@@ -60,6 +60,24 @@
         <div class="user-tier" id="user-tier-indicator">
           <span class="tier-badge free">Free Tier</span>
         </div>
+        
+        <!-- User menu -->
+        <div class="user-menu">
+          <div id="logged-out-menu">
+            <button id="login-btn" class="menu-btn">Sign In</button>
+          </div>
+          
+          <div id="logged-in-menu" style="display: none;">
+            <div class="user-info">
+              <span id="user-email">user@example.com</span>
+            </div>
+            <div class="menu-buttons">
+              <button id="subscription-btn" class="menu-btn">Subscription</button>
+              <button id="updates-btn" class="menu-btn">Updates</button>
+              <button id="logout-btn" class="menu-btn">Sign Out</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -115,6 +133,66 @@
         font-size: 12px;
         color: #666;
         font-style: italic;
+      }
+      
+      /* User menu styles */
+      .user-menu {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e0e0e0;
+      }
+      
+      .user-info {
+        margin-bottom: 10px;
+        text-align: center;
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+      }
+      
+      .menu-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      
+      .menu-btn {
+        background-color: #f1f3f4;
+        color: #333;
+        border: none;
+        padding: 8px 12px;
+        margin: 4px 2px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        flex: 1;
+        min-width: 80px;
+        transition: background-color 0.2s;
+      }
+      
+      .menu-btn:hover {
+        background-color: #e0e0e0;
+      }
+      
+      #login-btn {
+        background-color: #4285f4;
+        color: white;
+        width: 100%;
+        padding: 10px;
+        font-weight: 500;
+      }
+      
+      #login-btn:hover {
+        background-color: #3367d6;
+      }
+      
+      #logout-btn {
+        background-color: #f1f3f4;
+        color: #d93025;
+      }
+      
+      #logout-btn:hover {
+        background-color: #fce8e6;
       }
     </style>
   </body>

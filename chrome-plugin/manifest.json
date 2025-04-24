@@ -1,22 +1,32 @@
 {
   "manifest_version": 3,
   "name": "PrivacyLens",
-  "version": "2.0.0",
-  "description": "Assesses privacy risks of user agreements for popular websites",
-  "permissions": ["activeTab", "storage", "tabs"],
-  "host_permissions": ["http://*/*", "https://*/*"],
+  "version": "2.0",
+  "description": "Assess privacy policies and user agreements",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "identity",
+    "alarms",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://api.privacy-lens.example.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.svg"
+    }
+  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
   },
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "PrivacyLens"
-  },
-  "web_accessible_resources": [
+  "content_scripts": [
     {
-      "resources": ["utils.js", "db.js", "auth.js", "transform.js", "assessments.json"],
-      "matches": ["<all_urls>"]
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
     }
   ]
 }

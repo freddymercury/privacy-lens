@@ -18,4 +18,4 @@ if (!supabaseUrl || !supabaseKey) {
 } else {
   const supabase = createClient(supabaseUrl, supabaseKey);
   module.exports = supabase;
-} 
+}

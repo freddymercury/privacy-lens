@@ -336,6 +336,406 @@ const getAllAssessments = async () => {
   return assessments;
 };
 
+/**
+ * Store user token
+ * @param {Object} token - Token data
+ * @returns {Promise<Object>} - Stored token
+ */
+const storeToken = async (token) => {
+  const { data, error } = await supabase
+    .from('user_tokens')
+    .insert(token)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get token by hash
+ * @param {string} tokenHash - Token hash
+ * @returns {Promise<Object|null>} - Token data or null if not found
+ */
+const getTokenByHash = async (tokenHash) => {
+  const { data, error } = await supabase
+    .from('user_tokens')
+    .select('*')
+    .eq('token_hash', tokenHash)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get user's active tokens
+ * @param {string} userId - User ID
+ * @returns {Promise<Array>} - Array of active tokens
+ */
+const getUserActiveTokens = async (userId) => {
+  const { data, error } = await supabase
+    .from('user_tokens')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('revoked', false)
+    .lt('expires_at', new Date().toISOString());
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+};
+
+/**
+ * Update token's last used timestamp
+ * @param {string} tokenId - Token ID
+ * @returns {Promise<Object>} - Updated token
+ */
+const updateTokenLastUsed = async (tokenId) => {
+  const { data, error } = await supabase
+    .from('user_tokens')
+    .update({ last_used_at: new Date().toISOString() })
+    .eq('id', tokenId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Revoke token
+ * @param {string} tokenId - Token ID
+ * @returns {Promise<Object>} - Revoked token
+ */
+const revokeToken = async (tokenId) => {
+  const { data, error } = await supabase
+    .from('user_tokens')
+    .update({ revoked: true })
+    .eq('id', tokenId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get user by ID
+ * @param {string} userId - User ID
+ * @returns {Promise<Object|null>} - User data or null if not found
+ */
+const getUserById = async (userId) => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get user by email
+ * @param {string} email - User email
+ * @returns {Promise<Object|null>} - User data or null if not found
+ */
+const getUserByEmail = async (email) => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('email', email)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Create user
+ * @param {Object} userData - User data
+ * @returns {Promise<Object>} - Created user
+ */
+const createUser = async (userData) => {
+  const { data, error } = await supabase
+    .from('users')
+    .insert(userData)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Update user
+ * @param {string} userId - User ID
+ * @param {Object} userData - User data to update
+ * @returns {Promise<Object>} - Updated user
+ */
+const updateUser = async (userId, userData) => {
+  const { data, error } = await supabase
+    .from('users')
+    .update(userData)
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get user subscription
+ * @param {string} userId - User ID
+ * @returns {Promise<Object|null>} - Subscription data or null if not found
+ */
+const getUserSubscription = async (userId) => {
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Create subscription
+ * @param {Object} subscriptionData - Subscription data
+ * @returns {Promise<Object>} - Created subscription
+ */
+const createSubscription = async (subscriptionData) => {
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .insert(subscriptionData)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Update subscription
+ * @param {string} subscriptionId - Subscription ID
+ * @param {Object} subscriptionData - Subscription data to update
+ * @returns {Promise<Object>} - Updated subscription
+ */
+const updateSubscription = async (subscriptionId, subscriptionData) => {
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .update(subscriptionData)
+    .eq('id', subscriptionId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get subscription by Stripe ID
+ * @param {string} stripeSubscriptionId - Stripe subscription ID
+ * @returns {Promise<Object|null>} - Subscription data or null if not found
+ */
+const getSubscriptionByStripeId = async (stripeSubscriptionId) => {
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('*')
+    .eq('stripe_subscription_id', stripeSubscriptionId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get latest plugin update
+ * @returns {Promise<Object|null>} - Latest plugin update or null if not found
+ */
+const getLatestPluginUpdate = async () => {
+  const { data, error } = await supabase
+    .from('updates')
+    .select('*')
+    .eq('update_type', 'plugin')
+    .order('version', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get latest server update
+ * @returns {Promise<Object|null>} - Latest server update or null if not found
+ */
+const getLatestServerUpdate = async () => {
+  const { data, error } = await supabase
+    .from('updates')
+    .select('*')
+    .eq('update_type', 'server')
+    .order('version', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get update by ID
+ * @param {string} updateId - Update ID
+ * @returns {Promise<Object|null>} - Update data or null if not found
+ */
+const getUpdateById = async (updateId) => {
+  const { data, error } = await supabase
+    .from('updates')
+    .select('*')
+    .eq('id', updateId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Create update
+ * @param {Object} updateData - Update data
+ * @returns {Promise<Object>} - Created update
+ */
+const createUpdate = async (updateData) => {
+  const { data, error } = await supabase
+    .from('updates')
+    .insert(updateData)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Record update application
+ * @param {Object} applicationData - Application data
+ * @returns {Promise<Object>} - Created application record
+ */
+const recordUpdateApplication = async (applicationData) => {
+  const { data, error } = await supabase
+    .from('update_applications')
+    .insert(applicationData)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+};
+
+/**
+ * Get user update history
+ * @param {string} userId - User ID
+ * @param {string} deviceId - Device ID
+ * @returns {Promise<Array>} - Update history
+ */
+const getUserUpdateHistory = async (userId, deviceId) => {
+  const { data, error } = await supabase
+    .from('update_applications')
+    .select(`
+      *,
+      update:update_id (*)
+    `)
+    .eq('user_id', userId)
+    .eq('device_id', deviceId)
+    .order('applied_at', { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+};
+
 module.exports = {
   supabase,
   getAssessment,
@@ -346,6 +746,25 @@ module.exports = {
   updateUnassessedStatus,
   removeFromUnassessedQueue,
   getUserByUsername,
+  getUserByEmail,
+  getUserById,
+  createUser,
+  updateUser,
   createAuditLog,
   updateSuggestedPolicyUrls,
+  storeToken,
+  getTokenByHash,
+  getUserActiveTokens,
+  updateTokenLastUsed,
+  revokeToken,
+  getUserSubscription,
+  createSubscription,
+  updateSubscription,
+  getSubscriptionByStripeId,
+  getLatestPluginUpdate,
+  getLatestServerUpdate,
+  getUpdateById,
+  createUpdate,
+  recordUpdateApplication,
+  getUserUpdateHistory
 };
