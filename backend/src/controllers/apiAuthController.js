@@ -36,6 +36,7 @@ const register = async (req, res) => {
     // Create user in database
     const user = await db.createUser({
       email,
+      username: email.split('@')[0], // Set username to the part before @ in email
       password_hash: passwordHash,
       name: name || email.split('@')[0],
       role: 'user',
