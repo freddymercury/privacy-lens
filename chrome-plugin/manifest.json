@@ -16,8 +16,14 @@
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icons/icon16.svg"
+      "16": "icons/detective_16.png",
+      "48": "icons/detective_48.png"
     }
+  },
+  "icons": {
+    "16": "icons/detective_16.png",
+    "48": "icons/detective_48.png",
+    "128": "icons/detective_128.png"
   },
   "background": {
     "service_worker": "background.js",
