@@ -105,8 +105,23 @@
         cursor: not-allowed;
       }
       
+      /* Add loading state specific styles */
+      #server-fetch-btn.loading,
+      #refresh-btn.loading { /* Target loading class on specific buttons */
+        opacity: 0.7;
+        cursor: wait;
+        position: relative; /* Needed for potential spinner */
+      }
+
+      /* Optional: Basic text indication for loading */
+      #server-fetch-btn.loading::after,
+      #refresh-btn.loading::after {
+        content: '...';
+        display: inline-block;
+        margin-left: 5px;
+      }
+      
       .user-tier {
-        margin-top: 10px;
         text-align: center;
       }
       
@@ -140,59 +155,70 @@
         margin-top: 15px;
         padding-top: 15px;
         border-top: 1px solid #e0e0e0;
+        width: 100%; /* Ensure it takes full width for alignment */
       }
       
       .user-info {
         margin-bottom: 10px;
         text-align: center;
-        font-size: 14px;
-        color: #333;
-        font-weight: 500;
+        font-size: 13px; /* Slightly smaller */
+        color: #555; /* Slightly lighter color */
+        font-weight: 400;
+        word-break: break-all; /* Handle long emails */
       }
       
       .menu-buttons {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
+        gap: 4px; /* Add gap between buttons */
       }
       
+      /* Default style for menu buttons (Subscription, Updates) */
       .menu-btn {
-        background-color: #f1f3f4;
-        color: #333;
+        background-color: transparent; /* Make background transparent */
+        color: #3498db; /* Use link color */
         border: none;
-        padding: 8px 12px;
-        margin: 4px 2px;
+        padding: 6px 8px; /* Adjust padding */
+        margin: 0; /* Remove margin, use gap instead */
         border-radius: 4px;
         cursor: pointer;
         font-size: 13px;
         flex: 1;
         min-width: 80px;
-        transition: background-color 0.2s;
+        transition: background-color 0.2s, color 0.2s;
+        text-align: center; /* Ensure text is centered */
       }
       
       .menu-btn:hover {
-        background-color: #e0e0e0;
+        background-color: rgba(52, 152, 219, 0.1); /* Light background on hover */
+        color: #2980b9;
       }
       
+      /* Style for the main login button */
       #login-btn {
         background-color: #4285f4;
         color: white;
         width: 100%;
         padding: 10px;
         font-weight: 500;
+        margin: 4px 0; /* Add vertical margin */
       }
       
       #login-btn:hover {
         background-color: #3367d6;
+        color: white; /* Ensure hover color is white */
       }
       
+      /* Style for the logout button */
       #logout-btn {
-        background-color: #f1f3f4;
-        color: #d93025;
+        background-color: transparent; /* Match other menu buttons */
+        color: #d93025; /* Red color for logout */
       }
       
       #logout-btn:hover {
-        background-color: #fce8e6;
+        background-color: rgba(217, 48, 37, 0.1); /* Light red background on hover */
+        color: #b3271e;
       }
     </style>
   </body>

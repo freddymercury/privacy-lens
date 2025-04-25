@@ -322,7 +322,7 @@ function setupServerFetchButton(domain, tabId) {
   serverFetchBtn.addEventListener("click", async () => {
     // Disable button and show loading state
     serverFetchBtn.disabled = true;
-    serverFetchBtn.textContent = "Fetching...";
+    serverFetchBtn.classList.add('loading');
     
     try {
       // Fetch from server and update local database
@@ -338,7 +338,7 @@ function setupServerFetchButton(domain, tabId) {
     } finally {
       // Reset button state
       serverFetchBtn.disabled = false;
-      serverFetchBtn.textContent = "Fetch from Server";
+      serverFetchBtn.classList.remove('loading');
     }
   });
 }
@@ -436,8 +436,9 @@ if (typeof document !== "undefined") {
 
       // Refresh button
       refreshBtn.addEventListener("click", async () => {
-        refreshBtn.textContent = "Refreshing...";
+        // refreshBtn.textContent = "Refreshing..."; // Keep or remove?
         refreshBtn.disabled = true;
+        refreshBtn.classList.add('loading'); // Add loading class
 
         try {
           // First try to get from local database again
@@ -479,8 +480,9 @@ if (typeof document !== "undefined") {
           console.error("[PrivacyLens] Error refreshing assessment:", error);
           updateAssessmentDisplay("error", "Error refreshing assessment");
         } finally {
-          refreshBtn.textContent = "Refresh Assessment";
+          // refreshBtn.textContent = "Refresh Assessment"; // Keep or remove?
           refreshBtn.disabled = false;
+          refreshBtn.classList.remove('loading'); // Remove loading class
         }
       });
 
