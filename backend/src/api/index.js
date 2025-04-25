@@ -6,40 +6,49 @@ const router = express.Router();
 // Import controllers
 const assessmentController = require("../controllers/assessmentController");
 const unassessedController = require("../controllers/unassessedController");
+const apiAuthController = require("../controllers/apiAuthController");
+const subscriptionController = require("../controllers/subscriptionController");
+const updateController = require("../controllers/updateController");
+
+// Import middleware
+const { validateToken } = require("../middleware/apiAuth");
 
 /**
- * @route GET /api/assessment
- * @desc Get privacy assessment for a URL
- * @access Public
+ * Authentication Routes
+ */
+router.post("/auth/register", apiAuthController.register);
+router.post("/auth/login", apiAuthController.login);
+router.post("/auth/refresh", apiAuthController.refresh);
+router.post("/auth/validate", apiAuthController.validate);
+router.post("/auth/revoke", apiAuthController.revoke);
+
+/**
+ * Subscription Routes
+ */
+router.post("/subscription/create", validateToken, subscriptionController.createSubscription);
+router.post("/subscription/update", validateToken, subscriptionController.updateSubscription);
+router.post("/subscription/cancel", validateToken, subscriptionController.cancelSubscription);
+router.post("/subscription/status", validateToken, subscriptionController.getSubscriptionStatus);
+router.post("/subscription/webhook", subscriptionController.handleWebhook);
+
+/**
+ * Update Routes
+ */
+router.post("/updates/check", validateToken, updateController.checkForUpdates);
+router.post("/updates/download", validateToken, updateController.downloadUpdate);
+router.post("/updates/changelog", validateToken, updateController.getUpdateHistory);
+
+/**
+ * Assessment Routes
  */
 router.get("/assessment", assessmentController.getAssessment);
-
-/**
- * @route GET /api/all-assessments
- * @desc Get all privacy assessments
- * @access Public
- */
 router.get("/all-assessments", assessmentController.getAllAssessments);
-
-/**
- * @route POST /api/report-unassessed
- * @desc Report an unassessed URL
- * @access Public
- */
-router.post("/report-unassessed", unassessedController.reportUnassessed);
-
-/**
- * @route POST /api/trigger-assessment/:url
- * @desc Trigger assessment for a specific URL
- * @access Public
- */
 router.post("/trigger-assessment/:url", assessmentController.triggerAssessment);
 
 /**
- * @route PUT /api/unassessed/:url/policy-urls
- * @desc Update suggested policy URLs for an unassessed URL
- * @access Private (Admin)
+ * Unassessed Routes
  */
+router.post("/report-unassessed", unassessedController.reportUnassessed);
 router.put(
   "/unassessed/:url/policy-urls",
   unassessedController.updateSuggestedPolicyUrls

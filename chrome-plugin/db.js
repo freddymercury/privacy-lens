@@ -4,9 +4,10 @@
  * Database configuration
  */
 const DB_NAME = 'privacyGuardDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const ASSESSMENT_STORE = 'assessments';
 const CONFIG_STORE = 'config';
+const AUTH_STORE = 'auth';
 
 /**
  * Initialize the database with the required object stores and indexes
@@ -51,6 +52,16 @@ async function initializeDatabase() {
         
         console.log('[PrivacyGuard DB] Created config store with indexes');
       }
+      
+      // Create auth object store
+      if (!db.objectStoreNames.contains(AUTH_STORE)) {
+        const authStore = db.createObjectStore(AUTH_STORE, { keyPath: 'key' });
+        
+        // Create index
+        authStore.createIndex('lastUpdated', 'lastUpdated', { unique: false });
+        
+        console.log('[PrivacyGuard DB] Created auth store with indexes');
+      }
     };
   });
 }
@@ -84,6 +95,10 @@ async function openDatabase() {
       
       if (!db.objectStoreNames.contains(CONFIG_STORE)) {
         db.createObjectStore(CONFIG_STORE, { keyPath: 'key' });
+      }
+      
+      if (!db.objectStoreNames.contains(AUTH_STORE)) {
+        db.createObjectStore(AUTH_STORE, { keyPath: 'key' });
       }
     };
   });
@@ -455,5 +470,9 @@ export {
   updateLastSyncInfo,
   getLastSyncInfo,
   checkAndInitializeDatabase,
-  loadPrepackagedDatabase
+  loadPrepackagedDatabase,
+  // Constants
+  ASSESSMENT_STORE,
+  CONFIG_STORE,
+  AUTH_STORE
 };

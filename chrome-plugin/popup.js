@@ -8,17 +8,22 @@ import {
   checkAndInitializeDatabase 
 } from "./db.js";
 import { 
-  isUserPaidTier, 
-  hasFeature, 
-  initializeUserTier,
-  upgradeToPaidTier,
-  downgradeToFreeTier
+  isAuthenticated,
+  isPremium,
+  hasFeature,
+  getCurrentUser,
+  logout,
+  getAuthToken
 } from "./auth.js";
 import {
   transformServerResponse,
   formatCategoryName,
   addSourceInfoToAssessment
 } from "./transform.js";
+import {
+  checkForUpdates,
+  getDeviceId
+} from "./updater.js";
 
 // Check if URL is valid for assessment
 function isValidUrl(url) {
@@ -185,12 +190,12 @@ function displayAssessment(assessmentData) {
 // Update the user tier display
 async function updateUserTierDisplay() {
   try {
-    const isPaid = await isUserPaidTier();
+    const isPaid = await isPremium();
     const tierIndicator = document.getElementById("user-tier-indicator");
     const tierBadge = tierIndicator.querySelector(".tier-badge");
     
     if (isPaid) {
-      tierBadge.textContent = "Paid Tier";
+      tierBadge.textContent = "Premium Tier";
       tierBadge.className = "tier-badge paid";
     } else {
       tierBadge.textContent = "Free Tier";
@@ -201,21 +206,70 @@ async function updateUserTierDisplay() {
   }
 }
 
-// Update UI based on user tier
+// Update UI based on user tier and authentication status
 async function updateUIForUserTier() {
   try {
-    const canFetchFromServer = await hasFeature("serverFetch");
-    const serverFetchContainer = document.getElementById("server-fetch-container");
+    // Check if user is authenticated
+    const authenticated = await isAuthenticated();
+    const loggedOutMenu = document.getElementById("logged-out-menu");
+    const loggedInMenu = document.getElementById("logged-in-menu");
     
-    if (canFetchFromServer) {
-      serverFetchContainer.style.display = "block";
+    if (authenticated) {
+      // Show logged in menu
+      loggedOutMenu.style.display = "none";
+      loggedInMenu.style.display = "block";
+      
+      // Update user email
+      const user = await getCurrentUser();
+      if (user && user.email) {
+        document.getElementById("user-email").textContent = user.email;
+      }
+      
+      // Check if user has server fetch feature
+      const canFetchFromServer = await hasFeature("serverFetch");
+      const serverFetchContainer = document.getElementById("server-fetch-container");
+      
+      if (canFetchFromServer) {
+        serverFetchContainer.style.display = "block";
+      } else {
+        serverFetchContainer.style.display = "none";
+      }
     } else {
+      // Show logged out menu
+      loggedOutMenu.style.display = "block";
+      loggedInMenu.style.display = "none";
+      
+      // Hide server fetch button for unauthenticated users
+      const serverFetchContainer = document.getElementById("server-fetch-container");
       serverFetchContainer.style.display = "none";
     }
     
+    // Update tier display
     await updateUserTierDisplay();
+    
+    // Check for updates
+    checkForAvailableUpdates();
   } catch (error) {
     console.error("[PrivacyLens] Error updating UI for user tier:", error);
+  }
+}
+
+// Check for available updates
+async function checkForAvailableUpdates() {
+  try {
+    const deviceId = await getDeviceId();
+    const updateInfo = await checkForUpdates('2.0.0', deviceId);
+    
+    if (updateInfo && updateInfo.hasUpdate) {
+      // Show update notification
+      const updatesBtn = document.getElementById("updates-btn");
+      updatesBtn.textContent = "Update Available!";
+      updatesBtn.style.backgroundColor = "#f39c12";
+      updatesBtn.style.color = "white";
+      updatesBtn.style.fontWeight = "bold";
+    }
+  } catch (error) {
+    console.error("[PrivacyLens] Error checking for updates:", error);
   }
 }
 
@@ -268,7 +322,7 @@ function setupServerFetchButton(domain, tabId) {
   serverFetchBtn.addEventListener("click", async () => {
     // Disable button and show loading state
     serverFetchBtn.disabled = true;
-    serverFetchBtn.textContent = "Fetching...";
+    serverFetchBtn.classList.add('loading');
     
     try {
       // Fetch from server and update local database
@@ -284,7 +338,7 @@ function setupServerFetchButton(domain, tabId) {
     } finally {
       // Reset button state
       serverFetchBtn.disabled = false;
-      serverFetchBtn.textContent = "Fetch from Server";
+      serverFetchBtn.classList.remove('loading');
     }
   });
 }
@@ -304,12 +358,14 @@ export {
 if (typeof document !== "undefined") {
   document.addEventListener("DOMContentLoaded", async () => {
     try {
-      // Initialize database and user tier
+      // Initialize database
       await checkAndInitializeDatabase();
-      await initializeUserTier();
       
-      // Update UI based on user tier
+      // Update UI based on user tier and authentication status
       await updateUIForUserTier();
+      
+      // Set up user menu buttons
+      setupUserMenuButtons();
       
       // Get DOM elements
       const currentUrlElement = document.getElementById("current-url");
@@ -380,8 +436,9 @@ if (typeof document !== "undefined") {
 
       // Refresh button
       refreshBtn.addEventListener("click", async () => {
-        refreshBtn.textContent = "Refreshing...";
+        // refreshBtn.textContent = "Refreshing..."; // Keep or remove?
         refreshBtn.disabled = true;
+        refreshBtn.classList.add('loading'); // Add loading class
 
         try {
           // First try to get from local database again
@@ -392,8 +449,8 @@ if (typeof document !== "undefined") {
             displayAssessment(localData);
             console.log("[PrivacyLens] Using assessment from local database");
           } else {
-            // If no local data, check if user is in paid tier before trying server
-            const isPaidTier = await isUserPaidTier();
+            // If no local data, check if user is in premium tier before trying server
+            const isPaidTier = await isPremium();
             
             if (isPaidTier) {
               // Only paid users can fetch from server
@@ -423,8 +480,9 @@ if (typeof document !== "undefined") {
           console.error("[PrivacyLens] Error refreshing assessment:", error);
           updateAssessmentDisplay("error", "Error refreshing assessment");
         } finally {
-          refreshBtn.textContent = "Refresh Assessment";
+          // refreshBtn.textContent = "Refresh Assessment"; // Keep or remove?
           refreshBtn.disabled = false;
+          refreshBtn.classList.remove('loading'); // Remove loading class
         }
       });
 
@@ -445,8 +503,8 @@ if (typeof document !== "undefined") {
               displayAssessment(localData);
               console.log("[PrivacyLens] Using assessment from local database");
             } else {
-              // If no local data, check if user is in paid tier before trying server
-              const isPaidTier = await isUserPaidTier();
+              // If no local data, check if user is in premium tier before trying server
+              const isPaidTier = await isPremium();
               
               if (isPaidTier) {
                 // Only paid users can fetch from server
@@ -487,47 +545,7 @@ if (typeof document !== "undefined") {
         }
       });
       
-      // FOR TESTING: Add buttons to upgrade/downgrade tier (remove in production)
-      const settingsDiv = document.querySelector('.settings');
-      
-      // Create upgrade button
-      const upgradeBtn = document.createElement('button');
-      upgradeBtn.textContent = 'TEST: Upgrade to Paid';
-      upgradeBtn.style.marginTop = '10px';
-      upgradeBtn.style.backgroundColor = '#4CAF50';
-      upgradeBtn.style.color = 'white';
-      upgradeBtn.style.border = 'none';
-      upgradeBtn.style.padding = '5px 10px';
-      upgradeBtn.style.borderRadius = '4px';
-      upgradeBtn.style.cursor = 'pointer';
-      upgradeBtn.style.fontSize = '12px';
-      
-      // Create downgrade button
-      const downgradeBtn = document.createElement('button');
-      downgradeBtn.textContent = 'TEST: Downgrade to Free';
-      downgradeBtn.style.marginTop = '5px';
-      downgradeBtn.style.backgroundColor = '#f44336';
-      downgradeBtn.style.color = 'white';
-      downgradeBtn.style.border = 'none';
-      downgradeBtn.style.padding = '5px 10px';
-      downgradeBtn.style.borderRadius = '4px';
-      downgradeBtn.style.cursor = 'pointer';
-      downgradeBtn.style.fontSize = '12px';
-      
-      // Add event listeners
-      upgradeBtn.addEventListener('click', async () => {
-        await upgradeToPaidTier(30); // 30 days
-        await updateUIForUserTier();
-      });
-      
-      downgradeBtn.addEventListener('click', async () => {
-        await downgradeToFreeTier();
-        await updateUIForUserTier();
-      });
-      
-      // Add buttons to the DOM
-      settingsDiv.appendChild(upgradeBtn);
-      settingsDiv.appendChild(downgradeBtn);
+      // No test buttons needed anymore since we have proper subscription page
       
     } catch (error) {
       console.error("[PrivacyLens] Error in popup initialization:", error);
@@ -610,14 +628,55 @@ async function fetchWithRetry(url, options = {}, retries = 2, timeout = 5000) {
   }
 }
 
+// Set up user menu buttons
+function setupUserMenuButtons() {
+  // Login button
+  const loginBtn = document.getElementById('login-btn');
+  if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'login.html' });
+    });
+  }
+  
+  // Subscription button
+  const subscriptionBtn = document.getElementById('subscription-btn');
+  if (subscriptionBtn) {
+    subscriptionBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'subscription.html' });
+    });
+  }
+  
+  // Updates button
+  const updatesBtn = document.getElementById('updates-btn');
+  if (updatesBtn) {
+    updatesBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: 'update.html' });
+    });
+  }
+  
+  // Logout button
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      try {
+        await logout();
+        // Update UI after logout
+        await updateUIForUserTier();
+      } catch (error) {
+        console.error('[PrivacyLens] Logout error:', error);
+      }
+    });
+  }
+}
+
 // Query the service layer for privacy assessment and update local database
-// This should ONLY be called for paid tier users
+// This should ONLY be called for premium tier users
 async function checkPrivacyAssessment(url, tabId) {
   const API_BASE_URL = "http://localhost:3000/api"; // Should match background.js
 
   try {
-    // First check if user is in paid tier
-    const isPaidTier = await isUserPaidTier();
+    // First check if user is in premium tier
+    const isPaidTier = await isPremium();
     if (!isPaidTier) {
       console.log("[PrivacyLens] Server fetch attempted by free tier user - not allowed");
       throw new Error("Server fetch is only available for paid tier users");

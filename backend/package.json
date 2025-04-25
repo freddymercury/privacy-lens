@@ -8,7 +8,8 @@
     "dev": "nodemon src/index.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:coverage:watch": "jest --coverage --watchAll"
+    "test:coverage:watch": "jest --coverage --watchAll",
+    "setup-auth-tables": "node scripts/setup-auth-tables.js"
   },
   "keywords": [
     "privacy",
@@ -26,8 +27,13 @@
     "ejs": "^3.1.10",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.2",
     "llamaindex": "^0.1.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "node-fetch": "^3.3.2",
+    "node-schedule": "^2.1.1",
+    "redis": "^4.7.0",
+    "stripe": "^18.0.0"
   },
   "devDependencies": {
     "jest": "^29.5.0",

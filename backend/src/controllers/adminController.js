@@ -904,9 +904,10 @@ const createUser = async (req, res) => {
       .from("users")
       .insert({
         username,
-        password: hashedPassword,
+        password_hash: hashedPassword,
         name: name || username,
         role: role || "user",
+        email: `${username}@example.com`, // Add a default email
       })
       .select("id, username, name, role")
       .single();
@@ -989,7 +990,7 @@ const updateUser = async (req, res) => {
     if (role) updateData.role = role;
     if (password) {
       const bcrypt = require("bcrypt");
-      updateData.password = await bcrypt.hash(password, 10);
+      updateData.password_hash = await bcrypt.hash(password, 10);
     }
 
     // Update user
