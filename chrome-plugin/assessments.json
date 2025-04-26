@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": 1745602091957,
+  "generatedAt": 1745651451530,
   "assessments": {
     "docs.cline.bot": {
       "assessment": {
@@ -36,7 +36,7 @@
         "policyUrl": "https://docs.cline.bot/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -74,7 +74,7 @@
         "policyUrl": "https://www.irs.gov/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -112,7 +112,7 @@
         "policyUrl": "https://mail.google.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -150,7 +150,7 @@
         "policyUrl": "https://www.chase.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -188,7 +188,7 @@
         "policyUrl": "https://nextdoor.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -226,7 +226,7 @@
         "policyUrl": "https://sfist.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -264,7 +264,7 @@
         "policyUrl": "https://proton.me/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -302,7 +302,7 @@
         "policyUrl": "https://duckduckgo.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -340,7 +340,7 @@
         "policyUrl": "https://sfbay.craigslist.org/about/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -378,7 +378,7 @@
         "policyUrl": "https://google.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -416,7 +416,7 @@
         "policyUrl": "https://cline.bot/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -454,7 +454,7 @@
         "policyUrl": "https://reddit.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -492,7 +492,7 @@
         "policyUrl": "https://openrouter.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -530,7 +530,7 @@
         "policyUrl": "https://bandsintown.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -568,7 +568,7 @@
         "policyUrl": "https://supabase.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -606,7 +606,7 @@
         "policyUrl": "https://www.amazon.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -644,7 +644,7 @@
         "policyUrl": "https://x.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -682,7 +682,7 @@
         "policyUrl": "https://www.yahoo.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -720,7 +720,7 @@
         "policyUrl": "https://www.quiverquant.com/privacypolicy/"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -758,7 +758,7 @@
         "policyUrl": "https://lu.ma/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -796,7 +796,7 @@
         "policyUrl": "https://jetspizza.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -834,7 +834,7 @@
         "policyUrl": "https://info.ticketweb.com/privacy-policy/"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -872,7 +872,7 @@
         "policyUrl": "https://datastax.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091957,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -910,7 +910,7 @@
         "policyUrl": "https://medium.com/legal/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -948,7 +948,7 @@
         "policyUrl": "https://www.linkedin.com/legal/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -986,7 +986,7 @@
         "policyUrl": "https://localgoods.io/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1024,7 +1024,7 @@
         "policyUrl": "https://lovable.dev/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1062,7 +1062,7 @@
         "policyUrl": "https://vuoriclothing.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1100,7 +1100,7 @@
         "policyUrl": "https://www.marinelayer.com/pages/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1138,7 +1138,7 @@
         "policyUrl": "https://napkin.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1176,7 +1176,7 @@
         "policyUrl": "https://www.jcrew.com/help/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1214,7 +1214,7 @@
         "policyUrl": "https://sf.funcheap.com/privacy-policy/"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1252,7 +1252,7 @@
         "policyUrl": "https://sanfranciscoartfair.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1290,7 +1290,7 @@
         "policyUrl": "https://substack.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1328,7 +1328,7 @@
         "policyUrl": "https://mlb.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1366,7 +1366,7 @@
         "policyUrl": "https://lennysnewsletter.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1404,7 +1404,7 @@
         "policyUrl": "https://link.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1442,7 +1442,7 @@
         "policyUrl": "https://langchain.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1480,7 +1480,7 @@
         "policyUrl": "https://snapchat.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1518,7 +1518,7 @@
         "policyUrl": "https://us.teamblind.com/setting/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1556,7 +1556,7 @@
         "policyUrl": "https://weather.com/en-US/twc/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1594,7 +1594,7 @@
         "policyUrl": "https://adobe.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1632,7 +1632,7 @@
         "policyUrl": "https://hulu.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1670,7 +1670,7 @@
         "policyUrl": "https://netflix.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1708,7 +1708,7 @@
         "policyUrl": "https://terms.yelp.com/privacy/en_us/20220831_en_us/"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1746,7 +1746,7 @@
         "policyUrl": "https://madewell.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1784,7 +1784,7 @@
         "policyUrl": "https://priceline.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1822,7 +1822,7 @@
         "policyUrl": "https://tiktok.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1860,7 +1860,7 @@
         "policyUrl": "https://alibaba.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1898,7 +1898,7 @@
         "policyUrl": "https://anvilogic.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1936,7 +1936,7 @@
         "policyUrl": "https://spotify.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -1974,7 +1974,7 @@
         "policyUrl": "https://iheart.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2012,7 +2012,7 @@
         "policyUrl": "https://mabl.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2050,7 +2050,7 @@
         "policyUrl": "https://superhuman.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2088,7 +2088,7 @@
         "policyUrl": "https://en.wikipedia.org/wiki/Privacy_policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2126,7 +2126,7 @@
         "policyUrl": "https://paradigm.inc/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2164,7 +2164,7 @@
         "policyUrl": "https://zendesk.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2202,7 +2202,7 @@
         "policyUrl": "https://tailorbrands.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2240,7 +2240,7 @@
         "policyUrl": "https://stripe.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2278,7 +2278,7 @@
         "policyUrl": "https://pentagonconsulting.in/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2316,7 +2316,7 @@
         "policyUrl": "https://windsurf.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2354,7 +2354,7 @@
         "policyUrl": "https://linear.app/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2392,7 +2392,7 @@
         "policyUrl": "https://shopdev.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2430,7 +2430,7 @@
         "policyUrl": "https://egghead.io/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2468,7 +2468,7 @@
         "policyUrl": "https://posthog.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2506,7 +2506,7 @@
         "policyUrl": "https://youtube.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2544,7 +2544,7 @@
         "policyUrl": "https://uxforai.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2582,7 +2582,7 @@
         "policyUrl": "https://mayerhawthorne.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2620,7 +2620,7 @@
         "policyUrl": "https://nba.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2658,7 +2658,7 @@
         "policyUrl": "https://toolgo.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2696,7 +2696,7 @@
         "policyUrl": "https://anthropic.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2734,7 +2734,7 @@
         "policyUrl": "https://twitch.tv/legal/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2772,7 +2772,7 @@
         "policyUrl": "https://gap.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2810,7 +2810,7 @@
         "policyUrl": "https://shopify.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2848,7 +2848,7 @@
         "policyUrl": "https://above.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2886,7 +2886,45 @@
         "policyUrl": "https://gapinc.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "lovable.app": {
+      "assessment": {
+        "riskLevel": "Unknown",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "Unknown",
+            "explanation": "The policy does not provide information on data collection and use."
+          },
+          "User Rights & Control": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention user rights or control over personal data."
+          },
+          "Data Storage & Security": {
+            "risk": "Unknown",
+            "explanation": "The policy does not discuss data storage and security measures."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Unknown",
+            "explanation": "There is no information about how or when the policy might be updated."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "Unknown",
+            "explanation": "There is no mention of third-party sharing or selling of data."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention the use of AI or automated decision-making."
+          }
+        },
+        "summary": "This privacy policy does not provide any information about its practices related to user data, making the risk to users unknown. It is recommended that users seek further information before using the service.",
+        "lastUpdated": "2025-04-26T03:49:47.347+00:00",
+        "policyUrl": "https://lovable.app/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2924,7 +2962,7 @@
         "policyUrl": "https://onlineornot.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -2962,7 +3000,7 @@
         "policyUrl": "https://airbnb.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3000,7 +3038,7 @@
         "policyUrl": "https://sitechecker.pro/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3038,7 +3076,7 @@
         "policyUrl": "https://speedtest.net/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3076,7 +3114,7 @@
         "policyUrl": "https://uber.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3114,7 +3152,7 @@
         "policyUrl": "https://woot.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3152,7 +3190,7 @@
         "policyUrl": "https://ebay.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3190,7 +3228,7 @@
         "policyUrl": "https://ticketmaster.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3228,7 +3266,7 @@
         "policyUrl": "https://policy.naver.com/policy/privacy_en.html"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3266,7 +3304,7 @@
         "policyUrl": "https://w3.org/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3304,7 +3342,7 @@
         "policyUrl": "https://policies.google.com/privacy?hl=en"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3342,7 +3380,7 @@
         "policyUrl": "https://myfitnesspal.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3380,7 +3418,7 @@
         "policyUrl": "https://nbcuniversalprivacy.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3418,7 +3456,7 @@
         "policyUrl": "https://www.nbcuniversalprivacy.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3456,7 +3494,7 @@
         "policyUrl": "https://sperry.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3494,7 +3532,7 @@
         "policyUrl": "https://soundcloud.com/pages/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3532,7 +3570,7 @@
         "policyUrl": "https://www.wellsfargo.com/privacy-security/"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3570,7 +3608,7 @@
         "policyUrl": "https://citi.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3608,7 +3646,7 @@
         "policyUrl": "https://www.wunderground.com/company/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3646,7 +3684,7 @@
         "policyUrl": "https://dev.to/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3684,7 +3722,7 @@
         "policyUrl": "https://barclaysus.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3722,7 +3760,7 @@
         "policyUrl": "https://www.banking.barclaysus.com/Privacy-Policy.html"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3760,7 +3798,7 @@
         "policyUrl": "https://buttondown.com/legal/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3798,7 +3836,7 @@
         "policyUrl": "https://ghost.org/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3836,7 +3874,7 @@
         "policyUrl": "https://kit.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3874,7 +3912,7 @@
         "policyUrl": "https://beehiiv.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3912,7 +3950,7 @@
         "policyUrl": "https://wordpress.org/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3950,7 +3988,7 @@
         "policyUrl": "https://mailerlite.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -3988,7 +4026,7 @@
         "policyUrl": "https://mailchimp.com/legal/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -4026,7 +4064,7 @@
         "policyUrl": "https://waymo.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -4064,7 +4102,7 @@
         "policyUrl": "https://nudgesecurity.com/privacy-policy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -4102,7 +4140,7 @@
         "policyUrl": "https://impel.ai/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -4140,7 +4178,7 @@
         "policyUrl": "https://lyft.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -4178,7 +4216,7 @@
         "policyUrl": "https://tesla.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -4216,7 +4254,7 @@
         "policyUrl": "https://cursor.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -4254,7 +4292,7 @@
         "policyUrl": "https://superwhisper.com/privacy"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     },
@@ -4292,7 +4330,349 @@
         "policyUrl": "https://www.ford.com/help/privacy/"
       },
       "metadata": {
-        "timestamp": 1745602091958,
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "github.com": {
+      "assessment": {
+        "riskLevel": "High",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "High",
+            "explanation": "GitHub collects a wide range of personal data, including account data, user content and files, demographic information, feedback data, payment information, profile information, sales and marketing data, and support data. It also collects data automatically through cookies and similar technologies."
+          },
+          "User Rights & Control": {
+            "risk": "Medium",
+            "explanation": "GitHub mentions that when a school or employer supplies a user's GitHub account, they assume the role of Data Controller for most Personal Data used in their Services. This enables them to manage and administer the user's GitHub account, including adjusting privacy settings, and access and utilize the user's Personal Data. However, GitHub remains dedicated to preserving user's privacy rights."
+          },
+          "Data Storage & Security": {
+            "risk": "Medium",
+            "explanation": "The policy mentions that subprocessors and service providers are bound by contractual obligations to ensure the security, privacy, and confidentiality of user information. However, the specifics of data storage and security measures are not detailed."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Low",
+            "explanation": "GitHub will provide at least 30 days prior notice of material changes to the privacy statement by updating their website or sending an email to the primary email address associated with the user's GitHub account."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "High",
+            "explanation": "Personal data may be shared with a wide range of entities, including abuse and fraud prevention entities, affiliates, organization accounts, competent authorities, corporate transaction entities, partners and resellers, subprocessors and service providers, other third-party applications, and other users and the public."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Low",
+            "explanation": "The company does not engage in profiling that produces legal or similarly significant effects concerning the consumer."
+          }
+        },
+        "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of GitHub's privacy policy outlines the types of personal data it collects, how it uses this data, and its practices around third-party sharing. It also provides information on user rights and control over their data. However, it does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This section of the privacy policy details extensive data collection and use, as well as sharing with a wide range of third parties. While some user control is mentioned, the specifics of data storage and security measures are not detailed. The use of AI or automated decision-making, and policy changes or updates are not addressed in this section. This chunk of the privacy policy explains how GitHub collects and uses personal data, the rights of users regarding their data, and how GitHub stores and transfers data. It also mentions that GitHub may share data with third parties acting as agents on its behalf. However, it does not mention anything about AI and automated decision-making or policy changes and updates. This chunk of GitHub's privacy policy discusses their use of cookies and tracking technologies for various purposes, including to provide, secure and improve their service, and for targeted advertising. They share the information they collect with third parties for these purposes. They use appropriate security controls to protect personal data and will provide notice of material changes to their privacy statement. Users have some control over their data, such as the ability to disable non-essential cookies. This section of the privacy policy discusses the types of personal information collected and the purposes for collection. It also mentions third-party sharing and provides information about user rights and controls. However, it does not provide specific information about data storage and security, AI or automated decision-making, or policy changes and updates. This chunk of the privacy policy discusses the company's practices regarding data collection and use, third-party sharing and selling, user rights and control, and AI and automated decision-making. It does not provide information on data storage and security, or policy changes and updates.",
+        "lastUpdated": "2025-04-25T17:32:36.261+00:00",
+        "policyUrl": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "robinhood.com": {
+      "assessment": {
+        "riskLevel": "High",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "High",
+            "explanation": "The policy mentions extensive data collection, including personal, financial, and transactional data. It also collects data from third-party services and infers data based on the collected information."
+          },
+          "User Rights & Control": {
+            "risk": "Medium",
+            "explanation": "The policy mentions that users can control the collection of location data and disable cookies. However, it does not provide comprehensive information about user rights and controls."
+          },
+          "Data Storage & Security": {
+            "risk": "Unknown",
+            "explanation": "Not addressed in the policy"
+          },
+          "Policy Changes & Updates": {
+            "risk": "Low",
+            "explanation": "The company updates its privacy policy over time and notifies users by revising the 'Effective Date' and posting the new statement. In some cases, additional notice is provided."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "High",
+            "explanation": "The company discloses user information to a variety of third parties, including authorized vendors, marketing partners, banking and credit card partners, and other entities. This includes sharing personal data for marketing purposes across third-party websites and online services."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Unknown",
+            "explanation": "Not addressed in the policy"
+          }
+        },
+        "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy indicates that Robinhood collects a wide range of personal, financial, and transactional data from users. It also collects data from third-party services and infers additional data based on the collected information. The policy mentions sharing data with vendors, business partners, and third-party services. Users have some control over data collection, but the policy does not provide comprehensive information about user rights and controls. Information about data storage and security, the use of AI and automated decision-making, and policy changes and updates is not provided in this chunk. This section of the privacy policy reveals that the company collects a wide range of data from users and shares this data with a variety of third parties, including for marketing purposes. There is no information provided on data storage and security, AI use, or policy updates. Users have some control over their data, but the extent of this control is not fully detailed. This chunk of the privacy policy discusses how user data is collected and used, particularly for targeted advertising. It also mentions third-party sharing for marketing purposes. Users are given various controls over their data, including the ability to opt out of certain data uses. The policy is updated over time and users are notified of changes. However, there is no mention of data storage and security measures, or the use of AI or automated decision-making. This chunk of the privacy policy primarily discusses the various financial services offered by Robinhood and its subsidiaries, as well as the associated risks of these services. It does not provide information on data privacy practices, user rights, or policy updates.",
+        "lastUpdated": "2025-04-25T17:38:53.071+00:00",
+        "policyUrl": "https://robinhood.com/us/en/support/articles/privacy-policy/"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "linktr.ee": {
+      "assessment": {
+        "riskLevel": "High",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "High",
+            "explanation": "The policy mentions extensive data collection for various purposes such as providing hints and tips, verifying identity, detecting fraud, promoting Linktree, improving algorithms, analyzing engagement, and enforcing compliance. The policy also mentions the collection of children's data, which is a high-risk area."
+          },
+          "User Rights & Control": {
+            "risk": "Medium",
+            "explanation": "Users have rights regarding their personal information, but the extent of these rights is not specified in this chunk. Linktree also acts as a 'processor' on behalf of a user, facilitating the processing of personal information based on the user's instructions."
+          },
+          "Data Storage & Security": {
+            "risk": "Medium",
+            "explanation": "The policy mentions that payment information is handled by third-party payment service providers who adhere to PCI-DSS standards. However, it does not provide information about how other personal data is stored and secured."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Low",
+            "explanation": "The policy mentions that updates will be made from time to time and that users will be informed of significant changes. It also states that consent will be obtained for material changes where required by law."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "High",
+            "explanation": "Linktree enables connections between users and third parties such as brands, advertisers, social platforms, and affiliate partners. Once a user interacts with a third party, Linktree does not control how the third party processes the user's personal information."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Medium",
+            "explanation": "The policy mentions the use of algorithms to deliver relevant recommendations and content, which implies the use of AI and automated decision-making. However, it does not provide details about how this process works and how it affects users."
+          }
+        },
+        "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of Linktree's privacy policy outlines how the company collects and uses personal information to provide its services. It also mentions that Linktree enables connections between users and third parties, but does not control how these third parties process user information. The policy does not provide details on data storage and security, the use of AI, or how policy changes are communicated. This chunk of the privacy policy outlines the types of personal information collected, both voluntarily and automatically, and how this information is used. It also mentions that data may be obtained from third-party sources. However, it does not provide information on data storage and security, or how policy changes are communicated. User control over their data is somewhat limited, and while some automated processes are used, they do not appear to result in decisions that significantly impact the user. This chunk of the privacy policy discusses extensive data collection and sharing with third parties for various purposes. It also mentions the use of AI and automated decision-making. However, it lacks detailed information about data storage and security, user rights and control, and policy changes and updates. This section of the privacy policy discusses the company's use of cookies and similar tracking technology, the transfer and disclosure of personal information to third parties and other countries, and the security measures in place to protect personal information. It also outlines the rights users have in relation to their personal information. However, it does not mention the use of AI or automated decision-making, or how the policy will be updated. This section of the privacy policy details the types of personal information collected, the sources from which it is collected, and the purposes for which it is used. It also mentions that personal information may be sold to brand partners and shared with service providers and group companies. The policy states that personal information is retained as long as necessary for fulfilling the purposes for which it was collected and for satisfying legal, accounting, contractual, or reporting requirements. Users have the right to opt out of targeted advertising and can control their cookie preferences. This section of the privacy policy outlines the rights of users under California law, including the right to know, delete, correct, and limit the use of their personal information. It also mentions the possibility of data being shared with third parties, but allows users to opt out of this. The policy does not provide information on data storage and security, or on AI and automated decision-making. Updates to the policy will be communicated to users, with consent obtained for significant changes where necessary. This chunk of the privacy policy does not provide any information related to the categories of data collection & use, third-party sharing & selling, data storage & security, user rights & control, AI & automated decision-making, and policy changes & updates. It seems to be more about the company's contact information and other general information.",
+        "lastUpdated": "2025-04-25T17:51:43.643+00:00",
+        "policyUrl": "https://linktr.ee/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "vercel.com": {
+      "assessment": {
+        "riskLevel": "High",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "High",
+            "explanation": "The company collects a wide range of information, including contact, professional, account, transactional, domain registration, user content, and AI product information. This data is collected directly from users and through the use of their services."
+          },
+          "User Rights & Control": {
+            "risk": "Medium",
+            "explanation": "Users have some control over their data, such as managing communication preferences. However, the extent of user control over their data is not fully clear."
+          },
+          "Data Storage & Security": {
+            "risk": "Low",
+            "explanation": "The policy mentions that they use reasonable and appropriate administrative, technical, and physical safeguards to protect user data. It also requires third parties to provide security measures in accordance with industry standards."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Low",
+            "explanation": "The company periodically reviews and updates its privacy notice. The last update date is provided at the bottom of the notice."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "High",
+            "explanation": "The policy mentions that personal information is disclosed to third-party service providers for business operations and marketing activities. It also states that under certain laws, the company may 'share' or 'sell' personal information for advertising purposes."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Medium",
+            "explanation": "The company collects information when users interact with certain AI products and features. However, it's not clear how this data is used or if users have control over this."
+          }
+        },
+        "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy reveals that the company collects a significant amount of data from users, including when they interact with AI products. However, it does not provide information about third-party sharing, data storage and security, user rights and control, or policy changes and updates. This chunk of the privacy policy reveals that the company collects a wide range of user information for various purposes. It is not clear how the data is stored or secured, and the extent of user control over their data is not fully clear. The company's practices regarding third-party sharing and selling of data, use of AI, and policy updates are not addressed in this section. This chunk of the privacy policy explains the purposes for data collection and use, the entities with whom data may be shared, and the security measures in place to protect user data. It does not provide information on user rights and control, the use of AI or automated decision-making, or how policy changes and updates are handled. This chunk of the privacy policy covers how the company transfers, stores, and protects user information. It also discusses user rights and how the company complies with the Data Privacy Framework for data transfers. The company collects personal and professional information and processes it in various jurisdictions. Users have several rights, including the right to opt-out of marketing communications and manage account preferences. The company periodically updates its privacy notice. This chunk of the privacy policy reveals that the company collects a wide range of personal data and may share or sell this information for advertising purposes, which presents a high risk. However, it also outlines extensive user rights, which mitigates some of this risk. Information on data storage and security, AI use, and policy updates is not provided in this chunk. This section of the privacy policy outlines the circumstances under which data may be collected and used, and provides a comprehensive list of user rights. It does not mention data storage or security, or third-party sharing or selling. The overall risk is low.",
+        "lastUpdated": "2025-04-25T19:10:00.456+00:00",
+        "policyUrl": "https://vercel.com/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "readdy.ai": {
+      "assessment": {
+        "riskLevel": "High",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "High",
+            "explanation": "The policy mentions extensive data collection, including personal data, device information, log information, user account support information, audio, video, photo information, location information, and payment-related information. Some of this data is collected automatically, and some is provided by the user or their organization. The data is used for a variety of purposes, including service provision, real-name authentication, and targeted advertising."
+          },
+          "User Rights & Control": {
+            "risk": "Medium",
+            "explanation": "Users have some control over their data, such as the ability to refuse to provide certain information, turn off location services, and cancel their account. However, refusal to provide certain information may affect the ability to use related services."
+          },
+          "Data Storage & Security": {
+            "risk": "Medium",
+            "explanation": "The policy mentions that personal data is stored and protected, and that it will be deleted or anonymized within a reasonable period of time after account cancellation. However, some information may be retained for legal and business purposes. The policy does not provide specific details about security measures."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Low",
+            "explanation": "The policy includes a section on 'Privacy Policy Updates', suggesting that users will be informed of any changes or updates to the policy."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "Medium",
+            "explanation": "The policy states that the company does not assume any legal responsibility for any improper use or disclosure of information provided to third parties by the user. It also mentions that the company uses subprocessors to process personal data."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Medium",
+            "explanation": "The policy mentions that the company collects user input when they use product services that make use of artificial intelligence technology."
+          }
+        },
+        "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy outlines the company's data collection and use practices, third-party sharing, user rights, and policy updates. It does not provide information on data storage and security or the use of AI and automated decision-making. The overall risk is medium due to the company's data collection and third-party sharing practices. This chunk of the privacy policy discusses extensive data collection and use, with some user control over their data. Data is stored and protected, but may be retained for legal and business purposes. The use of AI technology is mentioned, but not automated decision-making. Third-party sharing and selling of data, as well as policy changes and updates, are not mentioned. This chunk of the privacy policy outlines the types of data the company collects and how it is used. It also mentions third-party services but does not explicitly state if data is shared or sold. User rights are well-defined, but there is no information on data storage and security, or the use of AI and automated decision-making. Updates to the privacy policy are mentioned. This chunk of the privacy policy details the company's practices regarding the collection, use, and storage of personal data. It mentions that the company collects a wide range of personal data, including sensitive information, and retains some information even after account cancellation for legal and business purposes. Users have some control over their data, but not providing certain information may affect their ability to use related services. The company also collects user input for AI technology. There is no mention of third-party sharing or selling of personal data, or policy changes or updates. This chunk of the privacy policy discusses the types of data collected, including location, payment, usage, and diagnostic data, and data from third-party sources. The data is used for service provision, improvement, advertising, and security. Some data may be shared with affiliates, partners, and third parties. Users have some control over their data, but refusal to provide certain data may limit functionality. The use of AI or automated decision-making is suggested. There is no information on data storage, security, or policy changes. This chunk of the privacy policy discusses the company's data collection and use practices, conditions under which it shares data with third parties, and user rights and control over their data. It does not provide information on data storage and security, AI and automated decision-making, or policy changes and updates. This section of the privacy policy discusses the use of third-party SDKs and cookies for data collection, the sharing of personal data with third-party vendors, affiliates, and partners, and the security measures in place to protect personal data. It also mentions user rights in relation to managing cookies and using third-party services. However, it does not provide specific details on the use of AI and automated decision-making or policy changes and updates. This chunk of the privacy policy primarily addresses data storage and security, and user rights and control. The company takes various measures to protect personal data, but acknowledges that it cannot guarantee absolute security. Users have rights to access, rectify, and delete their personal data. The company stores data with Amazon Web Services in Singapore and in the US and other regions for AI features. This chunk of the privacy policy outlines several rights for users regarding their personal data, including the right to copy, withdraw consent, cancel account, restrict processing, object to processing, port data, lodge a complaint, and request explanation of data processing rules. The company uses automated decision-making mechanisms for certain business decisions. The company will notify users 15 days in advance if some or all of their products and services are forced to stop operation. This chunk of the privacy policy discusses the circumstances under which the company may not be able to respond to user requests for data correction or deletion, the collection and use of minors' data, data storage and transfers, and policy updates. It assures that personal data will be adequately protected and that users will be informed of any policy changes. This section of the privacy policy outlines the company's data collection and use practices, as well as the rights of the user. It mentions that personal data is shared with third parties for advertising purposes, but does not provide specifics. It also states that they do not sell personal data. The policy does not mention data storage and security, AI or automated decision-making, or policy changes and updates. This chunk of the privacy policy explains how personal data is collected and used, and how it is shared with third parties, including service providers, affiliates, and partners. It also mentions the use of cookies and similar technologies, and the user's rights to manage these. The policy does not provide specific information about data storage and security, or about policy changes and updates. This chunk of the privacy policy discusses data collection for improving customer service, data storage and security measures, and user rights to access and control their personal data. It acknowledges that absolute security cannot be guaranteed due to technological limitations and potential malicious attacks. The company stores data in Singapore with Amazon Web Services. This chunk of the privacy policy primarily outlines the rights of users in relation to their personal data, including the right to delete, copy, withdraw consent, cancel account, restrict processing, object to processing, port data, lodge a complaint, and request explanation of data processing rules. It also mentions that business decisions may be made based on automated decision-making mechanisms. This chunk of the privacy policy discusses the company's right to refuse certain user requests, the collection of personal data from minors, the storage of personal data, and updates to the policy. The overall risk is medium due to potential limitations on user rights and control and concerns about data storage. This section of the privacy policy outlines the company's practices regarding data collection and use, third-party sharing and selling, data storage and security, and user rights and control. It states that explicit consent will be obtained for data transfer, and that data will be protected using encryption or de-identification. It also states that personal data is not currently sold to third parties, and provides a detailed definition of 'sharing'. The policy outlines several user rights, including the right to be informed, to access and delete data, to rectify incorrect data, to opt-out of data selling or sharing, and to equal services. It does not mention AI, automated decision-making, policy changes, or updates. This chunk of the privacy policy discusses how the company collects, uses, and shares personal data. It mentions that data may be shared with third-party vendors and trusted partners, and may be transferred in the event of a merger, acquisition or bankruptcy liquidation. The company uses Cookies to improve user experience and users have the right to manage and clear these Cookies. However, the policy does not provide specific information about data storage and security, or policy changes and updates. This chunk of the privacy policy discusses the company's use of cookies and similar technologies to track user activity and improve customer service. It also outlines the measures the company takes to protect personal data, including pseudonymisation, encryption, and access control. However, it acknowledges that it cannot always ensure the security of information. Users have the right to access, manage, update, and delete their personal data, and can request corrections to their data. This chunk of the privacy policy provides detailed information about user rights and control over their personal data, including the right to delete, copy, withdraw consent, cancel account, restrict processing, object to processing, port data, lodge a complaint, and request explanation of data processing rules. It also mentions the use of automated decision-making mechanisms and the company's response in case of cessation of services. This chunk of the privacy policy discusses the company's right to refuse certain user requests, their policy for handling personal data of minors, their data storage practices, and their policy for updates and changes. It also provides contact information for users to reach out with any questions or comments. This section of the privacy policy outlines the company's practices regarding data collection, use, and protection, particularly for users in California. It emphasizes user rights and control over their personal data, and states that the company does not currently sell personal data to third parties. The company also uses encryption or de-identification to protect personal data. This chunk of the privacy policy discusses how the company collects and uses personal data, shares data with third parties, and uses cookies. It also mentions that the company uses artificial intelligence services, but does not provide details about how these services are used in decision-making. The chunk does not provide information about data storage and security or policy changes and updates. This chunk of the privacy policy discusses the company's use of tracking technologies, their data storage and security measures, and the user's rights to control their personal data. The company takes various measures to protect personal data and allows users to access and manage their data. The overall risk to user privacy is low. This chunk of the privacy policy outlines a comprehensive set of user rights and control mechanisms, including deletion, copying, withdrawal of consent, account cancellation, processing restrictions, objections to processing, data portability, complaint lodging, and explanation of automated decision-making rules. It also mentions that third parties will be notified to delete user data upon a deletion request, and that user data will be deleted or anonymized in a timely manner. The overall risk is low. This chunk of the privacy policy outlines the company's practices regarding user requests, data storage and transfers, and policy updates. It states that user requests may be refused under certain circumstances, and that personal data is stored in Singapore and the United States. The policy also mentions that changes will be posted on a dedicated page, with more prominent notice for major changes. This chunk of the privacy policy addresses data collection and use, third-party sharing and selling, data storage and security, and user rights and control. It states that the company does not currently sell personal data to third parties and uses encryption or de-identification to protect personal data. It also outlines the rights of users to be informed about what data is collected, to access their data, to request deletion of their data, to rectify incorrect data, and to opt-out of selling or sharing their data. This chunk does not contain any specific information related to privacy policy, it seems to be more of a promotional content.",
+        "lastUpdated": "2025-04-25T19:24:46.039+00:00",
+        "policyUrl": "https://readdy.ai/privacy-policy"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "replit.com": {
+      "assessment": {
+        "riskLevel": "High",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "High",
+            "explanation": "The company collects a wide range of information, including registration and profile information, payment information, communications, career information, device and usage information, and information from third parties. This includes data from social media services and third-party accounts, as well as automatically generated data about how users interact with the services."
+          },
+          "User Rights & Control": {
+            "risk": "Medium",
+            "explanation": "Users have some control over their data, such as the ability to opt out of Google Analytics and to limit the information available to the company through their third-party account settings. However, the company collects a significant amount of data automatically, which may limit users' control over their data."
+          },
+          "Data Storage & Security": {
+            "risk": "Medium",
+            "explanation": "The policy mentions the use of technical, organizational, and physical safeguards, but also acknowledges that no guarantees can be made for the security or privacy of electronic data."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Low",
+            "explanation": "The policy mentions that any changes to the privacy policy will be posted on the page, and users will be notified in the application and via email."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "Medium",
+            "explanation": "The company shares data with third-party service providers, including payment processors and analytics providers. It also receives data from third-party services and partners. However, it's not clear if the company sells user data."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Low",
+            "explanation": "The policy mentions the use of user information for improving machine learning technologies, but does not specify automated decision-making processes."
+          }
+        },
+        "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of the privacy policy reveals that the company collects a significant amount of data from users, including data shared with third-party services. Users have some control over their data, but the company also collects a lot of data automatically. The company's data storage and security practices, use of AI, and policy change procedures are not mentioned in this section. This section of the privacy policy outlines how user data is collected and used, including for marketing and legal compliance. Data is shared with third parties, and user profiles are publicly viewable. Users have some control over their data, with additional rights for European users. The use of data for machine learning is mentioned, but there is no information on data storage and security, or policy changes and updates. This chunk of the privacy policy outlines the types of data collected, the purposes for their use, and the third parties with which data may be shared. It also details user rights and the security measures in place to protect data. However, it acknowledges that no guarantees can be made for the security of electronic data. This chunk of the privacy policy provides detailed information about the rights of users from various states, including California, Colorado, Connecticut, Iowa, and Utah. It emphasizes that the company does not sell personal information and that users have the right to request access to, deletion of, and corrections to their personal information. It also states that users can opt out of profiling. This section of the privacy policy provides detailed information about the rights of users, the data collection and use, and third-party sharing. It also mentions the storage locations and the procedure for policy updates. The overall risk is low as the policy seems to be user-friendly and privacy-conscious.",
+        "lastUpdated": "2025-04-26T03:55:54.972+00:00",
+        "policyUrl": "https://replit.com/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "resend.com": {
+      "assessment": {
+        "riskLevel": "Medium",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "Medium",
+            "explanation": "The company collects personal and usage data for various purposes including service improvement, customer support, and marketing. Users can opt out of marketing communications."
+          },
+          "User Rights & Control": {
+            "risk": "Medium",
+            "explanation": "The policy mentions that users are advised to review the privacy policy of any third-party sites they visit through links on the service, indicating that users have some control over their data but also need to be proactive."
+          },
+          "Data Storage & Security": {
+            "risk": "Medium",
+            "explanation": "The company stores data as long as necessary and takes steps to protect it, but acknowledges that no method of electronic storage is 100% secure."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Low",
+            "explanation": "The policy states that users will be notified of any changes to the privacy policy."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "Medium",
+            "explanation": "The company may disclose user information to contractors, service providers, and other third parties that support their business. Personal data may also be disclosed for law enforcement purposes."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Unknown",
+            "explanation": "Not addressed in the policy"
+          }
+        },
+        "summary": "This privacy policy assessment is based on analysis of multiple sections. This chunk of the privacy policy covers how Plus Five Five, Inc. collects, uses, stores, and discloses user data. The company collects personal and usage data, which it may share with third parties that support its business. The company takes steps to protect user data, but acknowledges that no method of electronic storage is 100% secure. Users in the EU and EEA have rights under the GDPR, and can request information about the personal data the company holds about them. This section of the privacy policy outlines the user's data protection rights, the company's practices regarding third-party sharing, and the use of third-party service providers. It does not provide specific information about data storage and security, or the use of AI and automated decision-making. The overall risk is medium due to the potential access of personal data by third-party service providers. This chunk of the privacy policy discusses how personal information is handled by third-party payment processors, the service's stance on children's privacy, and how changes to the privacy policy are communicated to users. It also advises users to review the privacy policies of any third-party sites they visit through links on the service.",
+        "lastUpdated": "2025-04-26T05:36:17.602+00:00",
+        "policyUrl": "https://resend.com/legal/privacy-policy"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "xfinity.com": {
+      "assessment": {
+        "riskLevel": "Low",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "Low",
+            "explanation": "The policy states that they do not track the websites users visit or apps they use, and they do not use this information to build a profile about the user."
+          },
+          "User Rights & Control": {
+            "risk": "Low",
+            "explanation": "Users have control over their information, with the ability to download, correct, and delete their personal information. They can also opt in or out of a number of settings and programs."
+          },
+          "Data Storage & Security": {
+            "risk": "Low",
+            "explanation": "The company has multiple layers of security to protect user data, including automatic detection and blocking of cyber events and a team of security experts."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention how or when it will be updated, or how users will be notified of changes."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "Low",
+            "explanation": "The policy clearly states that they do not sell information that identifies who the user is to anyone, including location data."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Unknown",
+            "explanation": "The policy does not mention the use of AI or automated decision-making."
+          }
+        },
+        "summary": "The privacy policy of Xfinity by Comcast shows a strong commitment to user privacy and data security. They do not track or sell personal identifying information, and they provide robust security measures. Users have control over their data and can opt in or out of settings and programs. However, the policy does not mention the use of AI or automated decision-making, and it does not specify how policy changes and updates will be handled.",
+        "lastUpdated": "2025-04-26T06:18:23.776+00:00",
+        "policyUrl": "https://xfinity.com/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
+        "version": "1.0.0"
+      }
+    },
+    "bestbuy.com": {
+      "assessment": {
+        "riskLevel": "High",
+        "categories": {
+          "Data Collection & Use": {
+            "risk": "High",
+            "explanation": "The policy mentions extensive data collection practices, including personal, demographic, lifestyle, health information, and even fingerprints. They also collect data from user interactions with personnel, digital properties, and through observing behavior in stores or online."
+          },
+          "User Rights & Control": {
+            "risk": "Medium",
+            "explanation": "Users are given some control over their data, with options to access, delete, and opt-out of advertising. However, the extent of these rights and how they are exercised is not fully clear."
+          },
+          "Data Storage & Security": {
+            "risk": "High",
+            "explanation": "The policy mentions that they cannot guarantee the security of the information collected, which presents a high risk."
+          },
+          "Policy Changes & Updates": {
+            "risk": "Low",
+            "explanation": "The policy states that they will notify users by email or by posting a notice on the website prior to any material changes becoming effective."
+          },
+          "Third-Party Sharing & Selling": {
+            "risk": "High",
+            "explanation": "The company shares data with third parties for various purposes, including marketing, advertising, and servicing products. Some data is shared for advertising purposes without specific limits on its use."
+          },
+          "AI & Automated Decision-Making": {
+            "risk": "Unknown",
+            "explanation": "Not addressed in the policy"
+          }
+        },
+        "summary": "This privacy policy assessment is based on analysis of multiple sections. This section of the privacy policy outlines Best Buy's data collection practices, which are extensive and include personal, demographic, lifestyle, and health information. It also mentions that third-party service providers are allowed to collect and process some user data. User rights are mentioned, including the ability to access, delete, and opt-out of advertising, but the extent of these rights is not fully clear. Data storage and security, AI use, and policy updates are not addressed in this section. This section of the privacy policy indicates a high level of risk due to extensive data collection and use, as well as sharing with third parties for various purposes, including advertising. While some cybersecurity measures are in place, details are lacking, and user control over data is limited. This chunk of the privacy policy addresses data security, third-party sharing, user rights, and policy updates. The company does not guarantee the security of collected data, which presents a high risk. However, they do not sell personal information to third parties and they notify users of policy changes, which are low-risk practices. User rights are moderately protected, with some limitations on content removal.",
+        "lastUpdated": "2025-04-26T06:26:11.236+00:00",
+        "policyUrl": "https://bestbuy.com/privacy"
+      },
+      "metadata": {
+        "timestamp": 1745651451530,
         "version": "1.0.0"
       }
     }
