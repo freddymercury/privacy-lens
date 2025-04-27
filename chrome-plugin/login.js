@@ -13,6 +13,8 @@ const loginError = document.getElementById('login-error');
 const registerError = document.getElementById('register-error');
 const registerSuccess = document.getElementById('register-success');
 const loadingIndicator = document.getElementById('loading');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
 
 // Email validation regex
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,6 +29,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   } catch (error) {
     console.error('[PrivacyLens Login] Error checking authentication:', error);
+  }
+});
+
+// Add event listeners for Enter key press on login fields
+emailInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault(); // Prevent default form submission if any
+    loginButton.click(); // Trigger login button click
+  }
+});
+
+passwordInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter') {
+    event.preventDefault(); // Prevent default form submission if any
+    loginButton.click(); // Trigger login button click
   }
 });
 
