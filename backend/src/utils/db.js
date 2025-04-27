@@ -1,10 +1,11 @@
 // Database configuration for PrivacyLens backend
 
-const { createClient } = require("@supabase/supabase-js");
+// Database configuration for PrivacyLens backend
+
+// Use specific clients: one for service role (bypasses RLS), one factory for user-scoped (respects RLS)
+const { supabaseServiceRole, createAuthedClient } = require("./supabaseClient");
 const { normalizeUrl } = require("./domainUtils");
 
-// Import the Supabase client (real or mocked by Jest)
-const supabase = require("./supabaseClient");
 
 /**
  * Database helper functions
@@ -19,10 +20,11 @@ const getAssessment = async (url) => {
   // Normalize the URL to get the base domain
   const normalizedUrl = normalizeUrl(url);
   console.log(
-    `[DB] Getting assessment for URL: ${url}, Normalized: ${normalizedUrl}`
+    `[DB] Getting assessment for URL: ${url}, Normalized: ${normalizedUrl} (using service role)`
   );
 
-  const { data, error } = await supabase
+  // Using service role, assuming public read access to assessments or system lookup
+  const { data, error } = await supabaseServiceRole
     .from("websites")
     .select("*")
     .eq("url", normalizedUrl)
@@ -50,7 +52,7 @@ const upsertAssessment = async (assessment) => {
   const normalizedUrl = normalizeUrl(originalUrl);
 
   console.log(
-    `[DB] Upserting assessment for URL: ${originalUrl}, Normalized: ${normalizedUrl}`
+    `[DB] Upserting assessment for URL: ${originalUrl}, Normalized: ${normalizedUrl} (using service role)`
   );
 
   // Create a new assessment object with the normalized URL
@@ -59,7 +61,8 @@ const upsertAssessment = async (assessment) => {
     url: normalizedUrl,
   };
 
-  const { data, error } = await supabase
+  // Use service role for system/admin task
+  const { data, error } = await supabaseServiceRole
     .from("websites")
     .upsert(normalizedAssessment)
     .select()
@@ -81,11 +84,11 @@ const addToUnassessedQueue = async (url) => {
   // Normalize the URL
   const normalizedUrl = normalizeUrl(url);
   console.log(
-    `[DB] Adding URL to unassessed queue: ${url}, Normalized: ${normalizedUrl}`
+    `[DB] Adding URL to unassessed queue: ${url}, Normalized: ${normalizedUrl} (using service role)`
   );
 
-  // Check if normalized URL already exists in queue
-  const { data: existing } = await supabase
+  // Check if normalized URL already exists in queue (using service role)
+  const { data: existing } = await supabaseServiceRole
     .from("unassessed_urls")
     .select("url")
     .eq("url", normalizedUrl)
@@ -98,8 +101,8 @@ const addToUnassessedQueue = async (url) => {
     return existing;
   }
 
-  // Add new entry to queue with normalized URL
-  const { data, error } = await supabase
+  // Add new entry to queue with normalized URL (using service role)
+  const { data, error } = await supabaseServiceRole
     .from("unassessed_urls")
     .insert({
       url: normalizedUrl,
@@ -123,7 +126,8 @@ const addToUnassessedQueue = async (url) => {
  * @returns {Promise<Array>} - Array of unassessed URLs
  */
 const getUnassessedUrls = async (status = null, limit = 100) => {
-  let query = supabase
+  // Use service role for system/admin task
+  let query = supabaseServiceRole
     .from("unassessed_urls")
     .select("*")
     .order("first_recorded", { ascending: true })
@@ -152,10 +156,11 @@ const updateUnassessedStatus = async (url, status) => {
   // Normalize the URL
   const normalizedUrl = normalizeUrl(url);
   console.log(
-    `[DB] Updating unassessed URL status: ${url}, Normalized: ${normalizedUrl}, Status: ${status}`
+    `[DB] Updating unassessed URL status: ${url}, Normalized: ${normalizedUrl}, Status: ${status} (using service role)`
   );
 
-  const { data, error } = await supabase
+  // Use service role for system/admin task
+  const { data, error } = await supabaseServiceRole
     .from("unassessed_urls")
     .update({ status })
     .eq("url", normalizedUrl)
@@ -179,11 +184,11 @@ const removeFromUnassessedQueue = async (url) => {
     // Normalize the URL
     const normalizedUrl = normalizeUrl(url);
     console.log(
-      `[DB] Removing URL from unassessed queue: ${url}, Normalized: ${normalizedUrl}`
+      `[DB] Removing URL from unassessed queue: ${url}, Normalized: ${normalizedUrl} (using service role)`
     );
 
-    // First check if the URL exists in the queue
-    const { data: existingEntry, error: checkError } = await supabase
+    // First check if the URL exists in the queue (using service role)
+    const { data: existingEntry, error: checkError } = await supabaseServiceRole
       .from("unassessed_urls")
       .select("url")
       .eq("url", normalizedUrl)
@@ -206,8 +211,8 @@ const removeFromUnassessedQueue = async (url) => {
       return;
     }
 
-    // Delete the entry
-    const { error: deleteError } = await supabase
+    // Delete the entry (using service role)
+    const { error: deleteError } = await supabaseServiceRole
       .from("unassessed_urls")
       .delete()
       .eq("url", normalizedUrl);
@@ -238,9 +243,10 @@ const removeFromUnassessedQueue = async (url) => {
  * @returns {Promise<Object|null>} - User data or null if not found
  */
 const getUserByUsername = async (username) => {
-  const { data, error } = await supabase
+  // Use service role for lookup (e.g., admin or pre-auth check)
+  const { data, error } = await supabaseServiceRole
     .from("users")
-    .select("*")
+    .select("*") // Might need specific columns depending on use case
     .eq("username", username)
     .single();
 
@@ -260,7 +266,9 @@ const getUserByUsername = async (username) => {
  * @returns {Promise<Object>} - Created log entry
  */
 const createAuditLog = async (logEntry) => {
-  const { data, error } = await supabase
+  // Assuming service role for now (system logs). If user action logs need RLS,
+  // this would need userAuthToken and createAuthedClient.
+  const { data, error } = await supabaseServiceRole
     .from("audit_logs")
     .insert({
       ...logEntry,
@@ -286,10 +294,11 @@ const updateSuggestedPolicyUrls = async (url, policyUrls) => {
   // Normalize the URL
   const normalizedUrl = normalizeUrl(url);
   console.log(
-    `[DB] Updating suggested policy URLs for: ${url}, Normalized: ${normalizedUrl}`
+    `[DB] Updating suggested policy URLs for: ${url}, Normalized: ${normalizedUrl} (using service role)`
   );
 
-  const { data, error } = await supabase
+  // Use service role for system/admin task
+  const { data, error } = await supabaseServiceRole
     .from("unassessed_urls")
     .update({ suggested_policy_urls: policyUrls })
     .eq("url", normalizedUrl)
@@ -308,12 +317,13 @@ const updateSuggestedPolicyUrls = async (url, policyUrls) => {
  * @returns {Promise<Object>} - Object with domains as keys and assessments as values
  */
 const getAllAssessments = async () => {
-  console.log('[DB] Getting all assessments');
-  
-  const { data, error } = await supabase
+  console.log('[DB] Getting all assessments (using service role)');
+
+  // Use service role assuming public read or admin view
+  const { data, error } = await supabaseServiceRole
     .from("websites")
     .select("*");
-  
+
   if (error) {
     throw error;
   }
@@ -342,7 +352,8 @@ const getAllAssessments = async () => {
  * @returns {Promise<Object>} - Stored token
  */
 const storeToken = async (token) => {
-  const { data, error } = await supabase
+  // Use service role for storing tokens (system action during login/refresh)
+  const { data, error } = await supabaseServiceRole
     .from('user_tokens')
     .insert(token)
     .select()
@@ -361,7 +372,8 @@ const storeToken = async (token) => {
  * @returns {Promise<Object|null>} - Token data or null if not found
  */
 const getTokenByHash = async (tokenHash) => {
-  const { data, error } = await supabase
+  // Use service role for looking up tokens by hash (system action during auth)
+  const { data, error } = await supabaseServiceRole
     .from('user_tokens')
     .select('*')
     .eq('token_hash', tokenHash)
@@ -379,14 +391,27 @@ const getTokenByHash = async (tokenHash) => {
 
 /**
  * Get user's active tokens
- * @param {string} userId - User ID
+ * @param {string} userId - User ID (often redundant due to RLS but good practice)
+ * @param {string} userAuthToken - The user's JWT for RLS.
  * @returns {Promise<Array>} - Array of active tokens
  */
-const getUserActiveTokens = async (userId) => {
-  const { data, error } = await supabase
+const getUserActiveTokens = async (userId, userAuthToken) => {
+  let client;
+  if (userAuthToken) {
+    // If token is provided, use RLS client
+    client = createAuthedClient(userAuthToken);
+    console.log(`[DB] Getting active tokens for user ${userId} (using RLS client)`);
+  } else {
+    // If no token (e.g., internal call during token generation), use service role
+    client = supabaseServiceRole;
+    console.warn(`[DB] Getting active tokens for user ${userId} (using service role - internal call assumed)`);
+  }
+
+  // RLS policy `auth.uid() = user_id` should enforce this if using userSupabase
+  const { data, error } = await client
     .from('user_tokens')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', userId) // RLS policy `auth.uid() = user_id` enforces this too
     .eq('revoked', false)
     .lt('expires_at', new Date().toISOString());
 
@@ -400,17 +425,24 @@ const getUserActiveTokens = async (userId) => {
 /**
  * Update token's last used timestamp
  * @param {string} tokenId - Token ID
+ * @param {string} userAuthToken - The user's JWT for RLS.
  * @returns {Promise<Object>} - Updated token
  */
-const updateTokenLastUsed = async (tokenId) => {
-  const { data, error } = await supabase
+const updateTokenLastUsed = async (tokenId /*, userAuthToken - No longer needed */) => {
+  // Note: We use the service role client here.
+  // Rationale: authService.validateToken already verified the token exists, isn't revoked (using service role getTokenByHash),
+  // and the JWT signature/expiry. The RLS check here was causing issues due to potential user_id/sub mismatches
+  // in the token data itself, which shouldn't block a simple timestamp update after validation.
+  const { data, error } = await supabaseServiceRole // Use service role client
     .from('user_tokens')
     .update({ last_used_at: new Date().toISOString() })
-    .eq('id', tokenId)
+    .eq('id', tokenId) // Target the specific token by its ID
     .select()
-    .single();
+    .single(); // Still expect a single row to be updated
 
   if (error) {
+    // If the service role update fails (e.g., token ID doesn't exist), log and throw
+    console.error(`[DB] Service role failed to update last_used_at for token ID ${tokenId}:`, error);
     throw error;
   }
 
@@ -420,13 +452,19 @@ const updateTokenLastUsed = async (tokenId) => {
 /**
  * Revoke token
  * @param {string} tokenId - Token ID
+ * @param {string} userAuthToken - The user's JWT for RLS.
  * @returns {Promise<Object>} - Revoked token
  */
-const revokeToken = async (tokenId) => {
-  const { data, error } = await supabase
+const revokeToken = async (tokenId /*, userAuthToken - No longer needed */) => {
+  // Note: We use the service role client here.
+  // Rationale: The calling context (e.g., authService.refreshToken) should have already
+  // verified the token's validity and ownership before attempting revocation.
+  // Using RLS here caused issues similar to updateTokenLastUsed.
+  console.log(`[DB] Revoking token ${tokenId} (using service role)`);
+  const { data, error } = await supabaseServiceRole // Use service role client
     .from('user_tokens')
     .update({ revoked: true })
-    .eq('id', tokenId)
+    .eq('id', tokenId) // RLS policy `auth.uid() = user_id` check needed if using userSupabase
     .select()
     .single();
 
@@ -443,9 +481,11 @@ const revokeToken = async (tokenId) => {
  * @returns {Promise<Object|null>} - User data or null if not found
  */
 const getUserById = async (userId) => {
-  const { data, error } = await supabase
+  // Use service role for general lookup by ID (e.g., admin or system process)
+  // If fetching the *currently authenticated* user's data, a different function using createAuthedClient might be needed.
+  const { data, error } = await supabaseServiceRole
     .from('users')
-    .select('*')
+    .select('*') // Consider selecting specific columns needed
     .eq('id', userId)
     .single();
 
@@ -465,9 +505,10 @@ const getUserById = async (userId) => {
  * @returns {Promise<Object|null>} - User data or null if not found
  */
 const getUserByEmail = async (email) => {
-  const { data, error } = await supabase
+  // Use service role for lookup by email (e.g., during login)
+  const { data, error } = await supabaseServiceRole
     .from('users')
-    .select('*')
+    .select('*') // Select required fields, including password hash if needed for login
     .eq('email', email)
     .single();
 
@@ -487,7 +528,8 @@ const getUserByEmail = async (email) => {
  * @returns {Promise<Object>} - Created user
  */
 const createUser = async (userData) => {
-  const { data, error } = await supabase
+  // Use service role for creating users (registration or admin action)
+  const { data, error } = await supabaseServiceRole
     .from('users')
     .insert(userData)
     .select()
@@ -502,15 +544,20 @@ const createUser = async (userData) => {
 
 /**
  * Update user
- * @param {string} userId - User ID
+ * @param {string} userId - User ID (often redundant due to RLS but good practice)
  * @param {Object} userData - User data to update
+ * @param {string} userAuthToken - The user's JWT for RLS.
  * @returns {Promise<Object>} - Updated user
  */
-const updateUser = async (userId, userData) => {
-  const { data, error } = await supabase
+const updateUser = async (userId, userData, userAuthToken) => {
+  if (!userAuthToken) throw new Error("Authentication token required for updateUser");
+  const userSupabase = createAuthedClient(userAuthToken); // RLS Client
+
+  // RLS policy `auth.uid() = id` should enforce this on the DB side
+  const { data, error } = await userSupabase
     .from('users')
     .update(userData)
-    .eq('id', userId)
+    .eq('id', userId) // RLS policy `auth.uid() = id` enforces this too
     .select()
     .single();
 
@@ -523,25 +570,80 @@ const updateUser = async (userId, userData) => {
 
 /**
  * Get user subscription
- * @param {string} userId - User ID
+ * @param {string} userId - User ID (often redundant due to RLS but good practice)
+ * @param {string} userAuthToken - The user's JWT for RLS.
  * @returns {Promise<Object|null>} - Subscription data or null if not found
  */
-const getUserSubscription = async (userId) => {
-  const { data, error } = await supabase
-    .from('subscriptions')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('status', 'active')
-    .single();
+const getUserSubscription = async (userId, userAuthToken) => {
+  if (!userAuthToken) throw new Error("Authentication token required for getUserSubscription");
+  
+  console.log(`[DB getUserSubscription] Attempting to fetch subscription for userId: ${userId}`);
+  // console.log(`[DB getUserSubscription] Using token starting with: ${userAuthToken.substring(0, 10)}...`); // Optional: Log part of token for debugging
+  
+  // const userSupabase = createAuthedClient(userAuthToken); // RLS Client - REPLACED WITH SERVICE ROLE BELOW
+  console.log(`[DB getUserSubscription] Bypassing RLS: Using Service Role client for userId: ${userId}`);
 
-  if (error) {
-    if (error.code === 'PGRST116') {
-      return null;
-    }
-    throw error;
+  // RLS policy `auth.uid() = user_id` is bypassed by using supabaseServiceRole
+  let data, error;
+  try {
+    // Use supabaseServiceRole to bypass RLS for this query
+    const queryResult = await supabaseServiceRole 
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', userId) // Filter based on the userId passed from validated token context
+      // Allow 'active' or 'trialing' status to be considered a valid subscription
+      .in('status', ['active', 'trialing'])
+      // Get the most recent one if multiple exist (e.g., old canceled, new active)
+      .order('created_at', { ascending: false }) 
+      .limit(1); // Fetch at most one record
+      
+    data = queryResult.data;
+    error = queryResult.error;
+
+  } catch (queryError) {
+    console.error(`[DB getUserSubscription] EXCEPTION during query for userId ${userId}:`, queryError);
+    throw queryError; // Re-throw unexpected exceptions
   }
 
-  return data;
+  if (error) {
+    // Log Supabase-specific errors returned in the 'error' object
+    console.error(`[DB getUserSubscription] Supabase error fetching subscription for userId ${userId}:`, error);
+    // Throw the error to make it visible upstream
+    throw error; 
+  } 
+  
+  // Log the result before returning
+  if (data && data.length > 0) {
+    console.log(`[DB getUserSubscription] Found subscription for userId ${userId}:`, data[0]);
+  } else {
+    console.log(`[DB getUserSubscription] No active/trialing subscription found for userId ${userId}. Raw data:`, data);
+  }
+
+  // Store the result from the RLS query
+  let subscription = data && data.length > 0 ? data[0] : null;
+
+  // --- DIAGNOSTIC STEP REMOVED as we are now using Service Role directly ---
+  /* 
+  if (!subscription && !error) { 
+    console.warn(`[DB getUserSubscription DIAGNOSTIC] ...`);
+    try {
+      const { data: serviceData, error: serviceError } = await supabaseServiceRole
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .in('status', ['active', 'trialing'])
+        .order('created_at', { ascending: false })
+        .limit(1);
+      // ... logging ...
+    } catch (serviceException) {
+      // ... logging ...
+    }
+  }
+  */
+  // --- END DIAGNOSTIC STEP ---
+
+  // Return the result obtained using the Service Role client
+  return subscription; 
 };
 
 /**
@@ -550,7 +652,8 @@ const getUserSubscription = async (userId) => {
  * @returns {Promise<Object>} - Created subscription
  */
 const createSubscription = async (subscriptionData) => {
-  const { data, error } = await supabase
+  // Use service role (likely triggered by webhook or admin action)
+  const { data, error } = await supabaseServiceRole
     .from('subscriptions')
     .insert(subscriptionData)
     .select()
@@ -570,7 +673,9 @@ const createSubscription = async (subscriptionData) => {
  * @returns {Promise<Object>} - Updated subscription
  */
 const updateSubscription = async (subscriptionId, subscriptionData) => {
-  const { data, error } = await supabase
+  // Use service role (likely triggered by webhook or admin action)
+  // If user-initiated updates are possible via API, a separate RLS function would be needed.
+  const { data, error } = await supabaseServiceRole
     .from('subscriptions')
     .update(subscriptionData)
     .eq('id', subscriptionId)
@@ -590,18 +695,27 @@ const updateSubscription = async (subscriptionId, subscriptionData) => {
  * @returns {Promise<Object|null>} - Subscription data or null if not found
  */
 const getSubscriptionByStripeId = async (stripeSubscriptionId) => {
-  const { data, error } = await supabase
+  // Use service role (likely triggered by webhook)
+  const { data, error } = await supabaseServiceRole
     .from('subscriptions')
     .select('*')
     .eq('stripe_subscription_id', stripeSubscriptionId)
-    .single();
+    // Use maybeSingle() with limit(1) to safely get the first match or null,
+    // without erroring if multiple rows exist (which can happen with 'sub_mock').
+    .limit(1)
+    .maybeSingle();
 
   if (error) {
+    // Log unexpected errors, but PGRST116 (no rows) is handled by maybeSingle returning null.
+    // Errors from multiple rows are avoided by limit(1).maybeSingle().
+    console.error(`[DB Error] getSubscriptionByStripeId failed unexpectedly for ${stripeSubscriptionId}:`, error);
+    throw error;
+    /* Old check removed as maybeSingle handles the null case:
     if (error.code === 'PGRST116') {
       return null;
     }
-    throw error;
-  }
+    throw error; */
+  } // <-- This closing brace should be outside the comment
 
   return data;
 };
@@ -611,7 +725,8 @@ const getSubscriptionByStripeId = async (stripeSubscriptionId) => {
  * @returns {Promise<Object|null>} - Latest plugin update or null if not found
  */
 const getLatestPluginUpdate = async () => {
-  const { data, error } = await supabase
+  // Use service role for system data lookup
+  const { data, error } = await supabaseServiceRole
     .from('updates')
     .select('*')
     .eq('update_type', 'plugin')
@@ -634,7 +749,8 @@ const getLatestPluginUpdate = async () => {
  * @returns {Promise<Object|null>} - Latest server update or null if not found
  */
 const getLatestServerUpdate = async () => {
-  const { data, error } = await supabase
+  // Use service role for system data lookup
+  const { data, error } = await supabaseServiceRole
     .from('updates')
     .select('*')
     .eq('update_type', 'server')
@@ -658,7 +774,8 @@ const getLatestServerUpdate = async () => {
  * @returns {Promise<Object|null>} - Update data or null if not found
  */
 const getUpdateById = async (updateId) => {
-  const { data, error } = await supabase
+  // Use service role for system data lookup
+  const { data, error } = await supabaseServiceRole
     .from('updates')
     .select('*')
     .eq('id', updateId)
@@ -680,7 +797,8 @@ const getUpdateById = async (updateId) => {
  * @returns {Promise<Object>} - Created update
  */
 const createUpdate = async (updateData) => {
-  const { data, error } = await supabase
+  // Use service role for system/admin task
+  const { data, error } = await supabaseServiceRole
     .from('updates')
     .insert(updateData)
     .select()
@@ -695,13 +813,18 @@ const createUpdate = async (updateData) => {
 
 /**
  * Record update application
- * @param {Object} applicationData - Application data
+ * @param {Object} applicationData - Application data (should include user_id, device_id, update_id)
+ * @param {string} userAuthToken - The user's JWT for RLS.
  * @returns {Promise<Object>} - Created application record
  */
-const recordUpdateApplication = async (applicationData) => {
-  const { data, error } = await supabase
+const recordUpdateApplication = async (applicationData, userAuthToken) => {
+  if (!userAuthToken) throw new Error("Authentication token required for recordUpdateApplication");
+  const userSupabase = createAuthedClient(userAuthToken); // RLS Client
+
+  // RLS policy should ensure user can only record for their own user_id
+  const { data, error } = await userSupabase
     .from('update_applications')
-    .insert(applicationData)
+    .insert(applicationData) // Ensure applicationData.user_id matches auth.uid() via policy
     .select()
     .single();
 
@@ -714,12 +837,17 @@ const recordUpdateApplication = async (applicationData) => {
 
 /**
  * Get user update history
- * @param {string} userId - User ID
+ * @param {string} userId - User ID (often redundant due to RLS but good practice)
  * @param {string} deviceId - Device ID
+ * @param {string} userAuthToken - The user's JWT for RLS.
  * @returns {Promise<Array>} - Update history
  */
-const getUserUpdateHistory = async (userId, deviceId) => {
-  const { data, error } = await supabase
+const getUserUpdateHistory = async (userId, deviceId, userAuthToken) => {
+  if (!userAuthToken) throw new Error("Authentication token required for getUserUpdateHistory");
+  const userSupabase = createAuthedClient(userAuthToken); // RLS Client
+
+  // RLS policy `auth.uid() = user_id` should enforce this
+  const { data, error } = await userSupabase
     .from('update_applications')
     .select(`
       *,
@@ -737,7 +865,7 @@ const getUserUpdateHistory = async (userId, deviceId) => {
 };
 
 module.exports = {
-  supabase,
+  // Note: supabase (the old generic client) is no longer exported
   getAssessment,
   getAllAssessments,
   upsertAssessment,

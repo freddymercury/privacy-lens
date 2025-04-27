@@ -291,8 +291,13 @@ const deleteAssessment = async (req, res) => {
       });
     }
 
-    // Delete assessment from database
-    await db.supabase.from("websites").delete().eq("url", url);
+    // Delete assessment from database using service role client
+    const { error: deleteError } = await supabaseServiceRole.from("websites").delete().eq("url", url);
+
+    if (deleteError) {
+      console.error(`[AssessmentController] Error deleting assessment for ${url}:`, deleteError);
+      throw deleteError;
+    }
 
     // Create audit log entry
     await db.createAuditLog({

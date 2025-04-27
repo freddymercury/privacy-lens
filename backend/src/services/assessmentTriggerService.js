@@ -4,6 +4,7 @@
 const db = require("../utils/db");
 const llmService = require("./llmService");
 const { normalizeUrl } = require("../utils/domainUtils");
+const { supabaseServiceRole } = require("../utils/supabaseClient"); // Import service role client
 const axios = require("axios");
 const crypto = require("crypto");
 
@@ -273,8 +274,8 @@ async function processUnassessedUrl(urlEntry) {
     // Compute hash of agreement text
     const agreementHash = llmService.computeTextHash(agreementResult.text);
 
-    // Check if we already have an assessment with this hash
-    const { data: existingWithHash } = await db.supabase
+    // Check if we already have an assessment with this hash using service role client
+    const { data: existingWithHash } = await supabaseServiceRole
       .from("websites")
       .select("url, user_agreement_hash")
       .eq("user_agreement_hash", agreementHash)
@@ -424,9 +425,9 @@ async function locateUserAgreement(baseUrl) {
     `[AssessmentTrigger] Looking for user agreement at ${normalizedUrl}`
   );
 
-  // Check if there are suggested policy URLs for this domain
+  // Check if there are suggested policy URLs for this domain using service role client
   try {
-    const { data: unassessedEntry } = await db.supabase
+    const { data: unassessedEntry } = await supabaseServiceRole
       .from("unassessed_urls")
       .select("suggested_policy_urls")
       .eq("url", normalizeUrl(baseUrl))

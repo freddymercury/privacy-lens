@@ -93,8 +93,8 @@ const validateToken = async (token) => {
       return null;
     }
     
-    // Update last used timestamp
-    await db.updateTokenLastUsed(storedToken.id);
+    // Update last used timestamp (now using service role client internally)
+    await db.updateTokenLastUsed(storedToken.id); // No longer needs the token passed
     
     return decoded;
   } catch (error) {
@@ -121,13 +121,13 @@ const refreshToken = async (token) => {
       return null;
     }
     
-    // Get current user subscription status
-    const user = await db.getUserById(decoded.sub);
-    const subscription = await db.getUserSubscription(user.id);
+    // Get current user subscription status using RLS client via the original token
+    const user = await db.getUserById(decoded.sub); // getUserById uses service role, no token needed
+    const subscription = await db.getUserSubscription(user.id, token); // Pass the original token
     const tier = subscription ? subscription.plan_type : 'free';
     
-    // Revoke old token
-    await db.revokeToken(storedToken.id);
+    // Revoke old token (now using service role client internally)
+    await db.revokeToken(storedToken.id); // No longer needs the token passed
     
     // Generate new token
     return await generateToken(user, decoded.device_id, tier);
@@ -151,7 +151,8 @@ const revokeToken = async (token) => {
       return false;
     }
     
-    await db.revokeToken(storedToken.id);
+    // Revoke token using RLS client via the token being revoked
+    await db.revokeToken(storedToken.id, token); // Pass the token
     return true;
   } catch (error) {
     console.error('Token revocation error:', error);

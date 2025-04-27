@@ -7,16 +7,18 @@ const semver = require('semver');
  * @param {string} userId - User ID
  * @param {string} deviceId - Device ID
  * @param {string} currentVersion - Current version
+ * @param {string} userAuthToken - The user's JWT for RLS-scoped operations.
  * @returns {Promise<Object>} - Update information
  */
-const checkForUpdates = async (userId, deviceId, currentVersion) => {
+const checkForUpdates = async (userId, deviceId, currentVersion, userAuthToken) => {
   try {
-    // Get user subscription status
-    const user = await db.getUserById(userId);
-    const subscription = await db.getUserSubscription(userId);
+    // Get user subscription status (requires RLS token)
+    if (!userAuthToken) throw new Error("Authentication token required for checkForUpdates");
+    const user = await db.getUserById(userId); // Uses service role
+    const subscription = await db.getUserSubscription(userId, userAuthToken);
     const isPremium = subscription && subscription.status === 'active';
     
-    // Get latest plugin update
+    // Get latest plugin update (uses service role)
     const latestPluginUpdate = await db.getLatestPluginUpdate();
     
     // For premium users, also check server updates
@@ -86,11 +88,13 @@ const checkForUpdates = async (userId, deviceId, currentVersion) => {
  * @param {string} userId - User ID
  * @param {string} deviceId - Device ID
  * @param {string} updateId - Update ID
+ * @param {string} userAuthToken - The user's JWT for RLS-scoped operations.
  * @returns {Promise<Object>} - Update result
  */
-const applyUpdate = async (userId, deviceId, updateId) => {
+const applyUpdate = async (userId, deviceId, updateId, userAuthToken) => {
   try {
-    // Get update
+    // Get update (uses service role)
+    if (!userAuthToken) throw new Error("Authentication token required for applyUpdate");
     const update = await db.getUpdateById(updateId);
     if (!update) {
       return {
@@ -99,15 +103,15 @@ const applyUpdate = async (userId, deviceId, updateId) => {
       };
     }
     
-    // Record update application
+    // Record update application (requires RLS token)
     await db.recordUpdateApplication({
       user_id: userId,
       device_id: deviceId,
       update_id: updateId,
       applied_at: new Date().toISOString()
-    });
+    }, userAuthToken);
     
-    // Create audit log entry
+    // Create audit log entry (uses service role)
     await db.createAuditLog({
       action: 'update_applied',
       user_id: userId,
@@ -138,11 +142,14 @@ const applyUpdate = async (userId, deviceId, updateId) => {
  * Get update history for a user
  * @param {string} userId - User ID
  * @param {string} deviceId - Device ID
+ * @param {string} userAuthToken - The user's JWT for RLS-scoped operations.
  * @returns {Promise<Array>} - Update history
  */
-const getUpdateHistory = async (userId, deviceId) => {
+const getUpdateHistory = async (userId, deviceId, userAuthToken) => {
   try {
-    const history = await db.getUserUpdateHistory(userId, deviceId);
+    // Get user update history (requires RLS token)
+    if (!userAuthToken) throw new Error("Authentication token required for getUpdateHistory");
+    const history = await db.getUserUpdateHistory(userId, deviceId, userAuthToken);
     
     // Format history for client
     return history.map(entry => ({

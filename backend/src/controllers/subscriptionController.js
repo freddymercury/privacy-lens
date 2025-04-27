@@ -26,7 +26,15 @@ const createSubscription = async (req, res) => {
       });
     }
 
-    const result = await subscriptionService.createSubscription(userId, planType, paymentMethodId);
+    // Extract token from header
+    const token = req.headers.authorization; // Assumes 'Bearer <token>' format or just '<token>'
+    if (!token) {
+      return res.status(401).json({ status: 'error', message: 'Authorization token missing' });
+    }
+    // Extract only the token part, assuming "Bearer <token>" format
+    const jwtToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
+
+    const result = await subscriptionService.createSubscription(userId, planType, paymentMethodId, jwtToken);
 
     return res.status(201).json({
       status: 'success',
@@ -67,7 +75,15 @@ const updateSubscription = async (req, res) => {
       });
     }
 
-    const subscription = await subscriptionService.updateSubscription(userId, planType);
+    // Extract token from header
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ status: 'error', message: 'Authorization token missing' });
+    }
+    // Extract only the token part, assuming "Bearer <token>" format
+    const jwtToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
+
+    const subscription = await subscriptionService.updateSubscription(userId, planType, jwtToken);
 
     return res.status(200).json({
       status: 'success',
@@ -92,7 +108,15 @@ const cancelSubscription = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const subscription = await subscriptionService.cancelSubscription(userId);
+    // Extract token from header
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ status: 'error', message: 'Authorization token missing' });
+    }
+    // Extract only the token part, assuming "Bearer <token>" format
+    const jwtToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
+
+    const subscription = await subscriptionService.cancelSubscription(userId, jwtToken);
 
     return res.status(200).json({
       status: 'success',
@@ -117,7 +141,17 @@ const getSubscriptionStatus = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const status = await subscriptionService.getSubscriptionStatus(userId);
+    // Extract token from header
+    const token = req.headers.authorization;
+    if (!token) {
+      // If checking status and no token, maybe return 'free' tier status? Or require auth.
+      // Let's require auth for consistency.
+      return res.status(401).json({ status: 'error', message: 'Authorization token missing' });
+    }
+    // Extract only the token part, assuming "Bearer <token>" format
+    const jwtToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
+
+    const status = await subscriptionService.getSubscriptionStatus(userId, jwtToken);
 
     return res.status(200).json({
       status: 'success',
