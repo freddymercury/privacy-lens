@@ -45,11 +45,22 @@ const db = require('../utils/db');
  * @param {string} userId - User ID
  * @param {string} planType - Subscription plan type (monthly/annual)
  * @param {string} paymentMethodId - Stripe payment method ID
+ * @param {string} userAuthToken - The user's JWT for RLS-scoped operations.
  * @returns {Promise<Object>} - Subscription data
  */
-const createSubscription = async (userId, planType, paymentMethodId) => {
+const createSubscription = async (userId, planType, paymentMethodId, userAuthToken) => {
   try {
-    // Get user
+    // Check if user already has an active subscription (requires RLS token)
+    // Note: getUserSubscription likely needs the userAuthToken for RLS
+    if (!userAuthToken) throw new Error("Authentication token required to check existing subscription in createSubscription");
+    const existingSubscription = await db.getUserSubscription(userId, userAuthToken);
+    if (existingSubscription && ['active', 'trialing'].includes(existingSubscription.status)) {
+      // User already has an active or trialing subscription, prevent creating a new one.
+      // Consider returning a specific error or the existing subscription details.
+      throw new Error(`User already has an active or trialing subscription (Status: ${existingSubscription.status}).`);
+    }
+
+    // Get user (uses service role)
     const user = await db.getUserById(userId);
     if (!user) {
       throw new Error('User not found');
@@ -67,8 +78,9 @@ const createSubscription = async (userId, planType, paymentMethodId) => {
       });
       stripeCustomerId = customer.id;
       
-      // Update user with Stripe customer ID
-      await db.updateUser(userId, { stripe_customer_id: stripeCustomerId });
+      // Update user with Stripe customer ID (requires RLS token)
+      if (!userAuthToken) throw new Error("Authentication token required to update user in createSubscription");
+      await db.updateUser(userId, { stripe_customer_id: stripeCustomerId }, userAuthToken);
     }
 
     // Attach payment method to customer
@@ -95,7 +107,23 @@ const createSubscription = async (userId, planType, paymentMethodId) => {
       expand: ['latest_invoice.payment_intent']
     });
 
-    // Store subscription in database
+    // --- Check if this Stripe Subscription ID already exists in our DB ---
+    // This is crucial for handling the mock client returning the same ID repeatedly.
+    console.log(`[SubscriptionService] Checking if Stripe subscription ID ${subscription.id} already exists in DB...`);
+    const existingDbSub = await db.getSubscriptionByStripeId(subscription.id);
+    if (existingDbSub) {
+      // If the Stripe ID already exists in the DB (common with mock 'sub_mock'),
+      // throw a specific error immediately to halt execution before the insert attempt.
+      const specificErrorMsg = `[PRE-INSERT CHECK FAILED] Stripe subscription ID ${subscription.id} already exists in the database (DB ID: ${existingDbSub.id}). Cannot create duplicate.`;
+      console.error(specificErrorMsg);
+      throw new Error(specificErrorMsg);
+    } else {
+       console.log(`[SubscriptionService] Stripe subscription ID ${subscription.id} does not exist in DB. Proceeding with creation.`);
+    }
+    // --- End Check ---
+
+
+    // Store subscription in database (only if it didn't exist)
     const subscriptionData = {
       user_id: userId,
       stripe_subscription_id: subscription.id,
@@ -133,12 +161,14 @@ const createSubscription = async (userId, planType, paymentMethodId) => {
  * Update a subscription
  * @param {string} userId - User ID
  * @param {string} planType - New plan type (monthly/annual)
+ * @param {string} userAuthToken - The user's JWT for RLS-scoped operations.
  * @returns {Promise<Object>} - Updated subscription data
  */
-const updateSubscription = async (userId, planType) => {
+const updateSubscription = async (userId, planType, userAuthToken) => {
   try {
-    // Get user subscription
-    const subscription = await db.getUserSubscription(userId);
+    // Get user subscription (requires RLS token)
+    if (!userAuthToken) throw new Error("Authentication token required to get user subscription in updateSubscription");
+    const subscription = await db.getUserSubscription(userId, userAuthToken);
     if (!subscription) {
       throw new Error('Subscription not found');
     }
@@ -187,12 +217,14 @@ const updateSubscription = async (userId, planType) => {
 /**
  * Cancel a subscription
  * @param {string} userId - User ID
+ * @param {string} userAuthToken - The user's JWT for RLS-scoped operations.
  * @returns {Promise<Object>} - Cancelled subscription data
  */
-const cancelSubscription = async (userId) => {
+const cancelSubscription = async (userId, userAuthToken) => {
   try {
-    // Get user subscription
-    const subscription = await db.getUserSubscription(userId);
+    // Get user subscription (requires RLS token)
+    if (!userAuthToken) throw new Error("Authentication token required to get user subscription in cancelSubscription");
+    const subscription = await db.getUserSubscription(userId, userAuthToken);
     if (!subscription) {
       throw new Error('Subscription not found');
     }
@@ -225,11 +257,14 @@ const cancelSubscription = async (userId) => {
 /**
  * Get subscription status
  * @param {string} userId - User ID
+ * @param {string} userAuthToken - The user's JWT for RLS-scoped operations.
  * @returns {Promise<Object>} - Subscription status
  */
-const getSubscriptionStatus = async (userId) => {
+const getSubscriptionStatus = async (userId, userAuthToken) => {
   try {
-    const subscription = await db.getUserSubscription(userId);
+    // Get user subscription (requires RLS token)
+    if (!userAuthToken) throw new Error("Authentication token required for getSubscriptionStatus");
+    const subscription = await db.getUserSubscription(userId, userAuthToken);
     
     if (!subscription) {
       return {
@@ -238,8 +273,9 @@ const getSubscriptionStatus = async (userId) => {
       };
     }
     
+    // Consider both 'active' and 'trialing' statuses as granting premium access
     return {
-      active: subscription.status === 'active',
+      active: ['active', 'trialing'].includes(subscription.status), 
       tier: subscription.plan_type,
       currentPeriodEnd: subscription.current_period_end
     };

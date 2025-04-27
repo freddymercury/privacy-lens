@@ -156,8 +156,8 @@ const createUser = async (req, res) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Create user in database
-    const { data: user, error } = await db.supabase
+    // Create user in database using service role client
+    const { data: user, error } = await supabaseServiceRole
       .from("users")
       .insert({
         username,
@@ -221,8 +221,8 @@ const updatePassword = async (req, res) => {
       });
     }
 
-    // Get user from database
-    const { data: user, error } = await db.supabase
+    // Get user from database using service role client
+    const { data: user, error } = await supabaseServiceRole
       .from("users")
       .select("*")
       .eq("id", userId)
@@ -261,8 +261,8 @@ const updatePassword = async (req, res) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(newPassword, saltRounds);
 
-    // Update password in database
-    const { error: updateError } = await db.supabase
+    // Update password in database using service role client
+    const { error: updateError } = await supabaseServiceRole
       .from("users")
       .update({
         password_hash: passwordHash,

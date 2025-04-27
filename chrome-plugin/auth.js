@@ -224,18 +224,18 @@ async function login(email, password) {
       throw new Error(data.message || 'Login failed');
     }
     
-    // Store authentication data
+    // Store authentication data (user, token, deviceId only)
     await storeAuthData({
       user: data.user,
       token: data.token,
-      subscription: data.subscription,
+      // subscription: data.subscription, // Removed: Subscription data is no longer returned by login
       deviceId
     });
     
     return {
       success: true,
-      user: data.user,
-      subscription: data.subscription
+      user: data.user
+      // subscription: data.subscription // Removed
     };
   } catch (error) {
     console.error('[PrivacyLens Auth] Login error:', error);

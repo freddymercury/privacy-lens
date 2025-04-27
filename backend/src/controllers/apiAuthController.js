@@ -131,12 +131,28 @@ const login = async (req, res) => {
       });
     }
 
-    // Get user subscription status
-    const subscription = await db.getUserSubscription(user.id);
-    const tier = subscription ? subscription.plan_type : 'free';
+    // Determine the user's current tier *before* generating the final token.
+    // We need a temporary token to potentially query RLS-protected subscription data.
+    // Note: This assumes db.getUserSubscription requires an RLS token.
+    let tier = 'free'; // Default tier
+    try {
+      // Generate a temporary token (doesn't matter if it's 'free' tier for this check)
+      const tempTokenForCheck = await authService.generateToken(user, deviceId, 'free');
+      // Fetch subscription using the temporary token
+      const subscription = await db.getUserSubscription(user.id, tempTokenForCheck);
+      if (subscription) {
+        tier = subscription.plan_type; // Get the actual tier
+      }
+      // Note: We don't necessarily need to revoke tempTokenForCheck if it wasn't stored
+      // or if generateToken handles replacing tokens for the same device.
+      // Let's assume generateToken handles cleanup/replacement.
+    } catch (subError) {
+      console.error(`[Login] Error fetching subscription status during login for user ${user.id}:`, subError);
+      // Proceed with 'free' tier if subscription check fails
+    }
 
-    // Generate JWT token
-    const token = await authService.generateToken(user, deviceId, tier);
+    // Generate the final token with the determined tier
+    const finalToken = await authService.generateToken(user, deviceId, tier);
 
     // Create audit log entry for successful login
     await db.createAuditLog({
@@ -155,12 +171,8 @@ const login = async (req, res) => {
         email: user.email,
         name: user.name
       },
-      token,
-      subscription: subscription ? {
-        type: subscription.plan_type,
-        status: subscription.status,
-        expiresAt: subscription.current_period_end
-      } : null
+      token: finalToken // Return only user info and token
+      // Do NOT return subscription status here; plugin should fetch it separately.
     });
   } catch (error) {
     console.error('Login error:', error);

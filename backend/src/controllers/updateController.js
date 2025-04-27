@@ -20,7 +20,13 @@ const checkForUpdates = async (req, res) => {
       });
     }
 
-    const update = await updateService.checkForUpdates(userId, deviceId, currentVersion);
+    // Extract token from header
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ status: 'error', message: 'Authorization token missing' });
+    }
+
+    const update = await updateService.checkForUpdates(userId, deviceId, currentVersion, token);
 
     return res.status(200).json({
       status: 'success',
@@ -54,7 +60,13 @@ const downloadUpdate = async (req, res) => {
       });
     }
 
-    const result = await updateService.applyUpdate(userId, deviceId, updateId);
+    // Extract token from header
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ status: 'error', message: 'Authorization token missing' });
+    }
+
+    const result = await updateService.applyUpdate(userId, deviceId, updateId, token);
 
     if (!result.success) {
       return res.status(400).json({
@@ -87,7 +99,13 @@ const getUpdateHistory = async (req, res) => {
     const userId = req.user.id;
     const deviceId = req.user.deviceId;
 
-    const history = await updateService.getUpdateHistory(userId, deviceId);
+    // Extract token from header
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ status: 'error', message: 'Authorization token missing' });
+    }
+
+    const history = await updateService.getUpdateHistory(userId, deviceId, token);
 
     return res.status(200).json({
       status: 'success',

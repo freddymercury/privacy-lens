@@ -17,13 +17,15 @@ DB_USER=postgres
 DB_PASSWORD=postgres
 
 # Supabase Configuration
-SUPABASE_URL=https://your-supabase-project.supabase.co
-SUPABASE_KEY=your_supabase_public_anon_key_here # Public Anon Key (Used for RLS clients)
-SUPABASE_SERVICE_KEY=your_supabase_service_role_key_here # Service Role Key (Bypasses RLS)
+SUPABASE_SERVICE_KEY=your_supabase_service_key_here
+
+# Supabase Configuration
+SUPABASE_URL=https://saisklaqudigvdwzphlx.supabase.co
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhaXNrbGFxdWRpZ3Zkd3pwaGx4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwMDI3NzEsImV4cCI6MjA1OTU3ODc3MX0.5ni4VMP0vbAssVP2rvHoGQpQsGuPvTHrepigKXt5ua0
 
 # LLM Configuration
-OPENAI_API_KEY=sk_your_openai_api_key_here
-LLM_MODEL=gpt-4 # Or specify another model like gpt-3.5-turbo
+OPENAI_API_KEY=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
+LLM_MODEL=gpt-4
 
 # Stripe Configuration
 STRIPE_SECRET_KEY=sk_test_your_stripe_test_key_here
@@ -39,4 +41,4 @@ EMAIL_PASSWORD=your_email_password
 EMAIL_FROM=noreply@privacylens.com
 
 # API Configuration
-API_URL=https://api.privacy-lens.example.com
+API_URL=https://api.privacylens.dev
