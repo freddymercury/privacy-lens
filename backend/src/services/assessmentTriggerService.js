@@ -5,45 +5,7 @@ const db = require("../utils/db");
 const llmService = require("./llmService");
 const { normalizeUrl } = require("../utils/domainUtils");
 const { supabaseServiceRole } = require("../utils/supabaseClient"); // Import service role client
-const axios = require("axios");
-const crypto = require("crypto");
-
-/**
- * Common paths to try for finding user agreements
- */
-const COMMON_AGREEMENT_PATHS = [
-  "/privacy",
-  "/terms",
-  "/privacy-policy",
-  "/legal/privacy-policy",
-  "/legal/privacy",
-  "/legal/terms",
-  "/about/privacy",
-  "/about/terms",
-  "/privacy-notice",
-  "/data-policy",
-];
-
-/**
- * Google-specific paths to try for finding user agreements
- */
-const GOOGLE_AGREEMENT_PATHS = [
-  "/policies/privacy",
-  "/policies/terms",
-  "/policies",
-  "/intl/en/policies/privacy",
-  "/intl/en/policies/terms",
-  "/intl/en/privacy",
-  "/intl/en/terms",
-  "/about/policies",
-  "/about/privacy",
-  "/about/terms",
-];
-
-/**
- * Maximum retry attempts for finding agreements
- */
-const MAX_RETRY_ATTEMPTS = 3;
+const { findPrivacyPolicyUrl } = require("./policyFinderService"); // Import the new service
 
 // Global set to track URLs currently being processed
 const processingUrls = new Set();
@@ -148,10 +110,10 @@ async function processUnassessedUrls(concurrentLimit = 2) {
 
     // Create audit log entry for process start
     await db.createAuditLog({
-      action: "assessment_trigger_started",
+      action: "assessment_trigger_started", // Correct action
       details: {
-        count: unassessedUrls.length,
-        concurrentLimit
+        count: unassessedUrls.length, // Correct detail
+        concurrentLimit // Correct detail
       },
     });
 
@@ -250,14 +212,14 @@ async function processUnassessedUrl(urlEntry) {
       // Update status to Not Found
       await db.updateUnassessedStatus(url, "Not Found");
 
-      // Create audit log entry
-      await db.createAuditLog({
-        action: "agreement_not_found",
-        details: {
-          url,
-          triedPaths: COMMON_AGREEMENT_PATHS,
-        },
-      });
+       // Create audit log entry
+       await db.createAuditLog({
+         action: "agreement_not_found",
+         details: {
+           url,
+           // triedPaths: COMMON_AGREEMENT_PATHS, // This variable is no longer defined here
+         },
+       });
 
       return {
         success: false,
@@ -405,282 +367,61 @@ async function processUnassessedUrl(urlEntry) {
 }
 
 /**
- * Locate user agreement by trying common paths
- * @param {string} baseUrl - Base URL to check
- * @returns {Promise<Object|null>} - Agreement data or null if not found
+ * Locate user agreement using the policyFinderService.
+ * @param {string} domain - The normalized domain to check (e.g., "example.com").
+ * @returns {Promise<{text: string, agreementUrl: string}|null>} - Agreement text and URL, or null if not found or not processable (e.g., PDF).
  */
-async function locateUserAgreement(baseUrl) {
-  // Normalize URL
-  let normalizedUrl = baseUrl;
-  if (!normalizedUrl.startsWith("http")) {
-    normalizedUrl = `https://${normalizedUrl}`;
+async function locateUserAgreement(domain) {
+  console.log(`[AssessmentTrigger] Locating user agreement for domain: ${domain}`);
+
+  const policyResult = await findPrivacyPolicyUrl(domain);
+
+  if (!policyResult) {
+    console.log(`[AssessmentTrigger] policyFinderService did not find a policy URL for ${domain}.`);
+    return null;
   }
 
-  // Remove trailing slash if present
-  if (normalizedUrl.endsWith("/")) {
-    normalizedUrl = normalizedUrl.slice(0, -1);
+  if (policyResult.isPdf) {
+    console.log(`[AssessmentTrigger] Found policy at ${policyResult.url}, but it is a PDF. Cannot extract text for assessment.`);
+    // TODO: Potentially store the PDF URL even if we can't assess it yet.
+    return null; // Cannot proceed with assessment if it's a PDF and we can't extract text.
   }
 
-  console.log(
-    `[AssessmentTrigger] Looking for user agreement at ${normalizedUrl}`
-  );
-
-  // Check if there are suggested policy URLs for this domain using service role client
-  try {
-    const { data: unassessedEntry } = await supabaseServiceRole
-      .from("unassessed_urls")
-      .select("suggested_policy_urls")
-      .eq("url", normalizeUrl(baseUrl))
-      .single();
-
-    if (
-      unassessedEntry &&
-      unassessedEntry.suggested_policy_urls &&
-      Array.isArray(unassessedEntry.suggested_policy_urls) &&
-      unassessedEntry.suggested_policy_urls.length > 0
-    ) {
-      console.log(
-        `[AssessmentTrigger] Found ${unassessedEntry.suggested_policy_urls.length} suggested policy URLs`
-      );
-
-      // Try each suggested URL
-      for (const policyUrl of unassessedEntry.suggested_policy_urls) {
-        try {
-          console.log(
-            `[AssessmentTrigger] Trying suggested policy URL: ${policyUrl}`
-          );
-
-          const response = await axios.get(policyUrl, {
-            timeout: 15000,
-            headers: {
-              "User-Agent":
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-              Accept:
-                "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-              "Accept-Language": "en-US,en;q=0.5",
-            },
-            maxRedirects: 5,
-          });
-
-          if (response.status === 200 && response.data) {
-            console.log(
-              `[AssessmentTrigger] Got 200 response from ${policyUrl}, content length: ${response.data.length}`
-            );
-
-            // Extract text from HTML
-            const text = extractTextFromHtml(response.data);
-            console.log(
-              `[AssessmentTrigger] Extracted text length: ${text.length} chars`
-            );
-
-            // Check if text is long enough to be a privacy policy
-            if (text.length > 500) {
-              console.log(
-                `[AssessmentTrigger] Found valid user agreement at suggested URL: ${policyUrl}`
-              );
-              return {
-                text,
-                agreementUrl: policyUrl,
-              };
-            } else {
-              console.log(
-                `[AssessmentTrigger] Text too short (${text.length} chars) to be a valid agreement`
-              );
-            }
-          } else {
-            console.log(
-              `[AssessmentTrigger] Got non-200 response: ${response.status}`
-            );
-          }
-        } catch (error) {
-          console.log(
-            `[AssessmentTrigger] Error trying suggested policy URL ${policyUrl}: ${error.message}`
-          );
-        }
-      }
-    }
-  } catch (error) {
-    console.log(
-      `[AssessmentTrigger] Error checking for suggested policy URLs: ${error.message}`
-    );
+  if (!policyResult.content) {
+     console.log(`[AssessmentTrigger] Found policy URL ${policyResult.url}, but content is missing after verification.`);
+     return null; // Should not happen if verification passed, but handle defensively.
   }
 
-  // Determine if this is a Google domain
-  const isGoogleDomain =
-    normalizedUrl.includes("google.com") ||
-    normalizedUrl.includes("google.") ||
-    normalizedUrl === "google";
+  // The policyFinderService already performs basic verification (keywords, length).
+  // We need to extract plain text from the HTML content for the LLM.
+  const text = extractTextFromHtml(policyResult.content);
 
-  console.log(`[AssessmentTrigger] Is Google domain: ${isGoogleDomain}`);
-
-  // Choose the appropriate paths to try
-  const pathsToTry = isGoogleDomain
-    ? [...GOOGLE_AGREEMENT_PATHS, ...COMMON_AGREEMENT_PATHS]
-    : COMMON_AGREEMENT_PATHS;
-
-  console.log(
-    `[AssessmentTrigger] Will try ${pathsToTry.length} possible paths`
-  );
-
-  // Try each path
-  for (const path of pathsToTry) {
-    const agreementUrl = `${normalizedUrl}${path}`;
-
-    try {
-      console.log(`[AssessmentTrigger] Trying path: ${agreementUrl}`);
-
-      const response = await axios.get(agreementUrl, {
-        timeout: 15000, // 15 second timeout (increased from 10)
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-          Accept:
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-          "Accept-Language": "en-US,en;q=0.5",
-        },
-        maxRedirects: 5,
-      });
-
-      // Check if response is valid
-      if (response.status === 200 && response.data) {
-        console.log(
-          `[AssessmentTrigger] Got 200 response from ${agreementUrl}, content length: ${response.data.length}`
-        );
-
-        // Extract text from HTML
-        const text = extractTextFromHtml(response.data);
-        console.log(
-          `[AssessmentTrigger] Extracted text length: ${text.length} chars`
-        );
-
-        // Check if text is long enough to be a privacy policy
-        if (text.length > 500) {
-          console.log(
-            `[AssessmentTrigger] Found valid user agreement at ${agreementUrl}`
-          );
-          return {
-            text,
-            agreementUrl,
-          };
-        } else {
-          console.log(
-            `[AssessmentTrigger] Text too short (${text.length} chars) to be a valid agreement`
-          );
-        }
-      } else {
-        console.log(
-          `[AssessmentTrigger] Got non-200 response: ${response.status}`
-        );
-      }
-    } catch (error) {
-      // Log error but continue trying other paths
-      console.log(
-        `[AssessmentTrigger] Error trying path ${agreementUrl}: ${error.message}`
-      );
-    }
+  if (text.length < 500) { // Apply a minimum length check on extracted text as well
+      console.log(`[AssessmentTrigger] Extracted text from ${policyResult.url} is too short (${text.length} chars). Assuming not a valid policy.`);
+      return null;
   }
 
-  // Special handling for Google
-  if (isGoogleDomain) {
-    console.log(`[AssessmentTrigger] Special handling for Google domain`);
-    try {
-      // Try to get Google's privacy policy directly
-      const googlePrivacyUrl = "https://policies.google.com/privacy";
-      console.log(
-        `[AssessmentTrigger] Trying direct Google privacy URL: ${googlePrivacyUrl}`
-      );
-
-      const response = await axios.get(googlePrivacyUrl, {
-        timeout: 15000,
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-          Accept:
-            "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-          "Accept-Language": "en-US,en;q=0.5",
-        },
-        maxRedirects: 5,
-      });
-
-      if (response.status === 200 && response.data) {
-        console.log(
-          `[AssessmentTrigger] Got 200 response from direct Google URL, content length: ${response.data.length}`
-        );
-
-        // Extract text from HTML
-        const text = extractTextFromHtml(response.data);
-        console.log(
-          `[AssessmentTrigger] Extracted text length: ${text.length} chars`
-        );
-
-        if (text.length > 500) {
-          console.log(`[AssessmentTrigger] Found valid Google privacy policy`);
-          return {
-            text,
-            agreementUrl: googlePrivacyUrl,
-          };
-        }
-      }
-    } catch (error) {
-      console.log(
-        `[AssessmentTrigger] Error with direct Google URL: ${error.message}`
-      );
-    }
-
-    // If we still haven't found anything, use a hardcoded snippet of Google's privacy policy
-    console.log(
-      `[AssessmentTrigger] Using hardcoded Google privacy policy as fallback`
-    );
-    const googlePrivacyText = `Google Privacy Policy
-When you use our services, you're trusting us with your information. We understand this is a big responsibility and work hard to protect your information and put you in control.
-
-This Privacy Policy is meant to help you understand what information we collect, why we collect it, and how you can update, manage, export, and delete your information.
-
-We build a range of services that help millions of people daily to explore and interact with the world in new ways. Our services include:
-- Google apps, sites, and devices, like Search, YouTube, and Google Home
-- Platforms like the Chrome browser and Android operating system
-- Products that are integrated into third-party apps and sites, like ads and embedded Google Maps
-
-You can use our services in a variety of ways to manage your privacy. For example, you can sign up for a Google Account if you want to create and manage content like emails and photos, or see more relevant search results. And you can use many Google services when you're signed out or without creating an account at all, like searching on Google or watching YouTube videos. You can also choose to browse the web privately using Chrome in Incognito mode. And across our services, you can adjust your privacy settings to control what we collect and how your information is used.
-
-We collect information to provide better services to all our users — from figuring out basic stuff like which language you speak, to more complex things like which ads you'll find most useful, the people who matter most to you online, or which YouTube videos you might like.`;
-
-    return {
-      text: googlePrivacyText,
-      agreementUrl: "https://policies.google.com/privacy",
-    };
-  }
-
-  // No agreement found
-  return null;
+  console.log(`[AssessmentTrigger] Successfully found and verified policy text from ${policyResult.url}`);
+  return {
+    text: text,
+    agreementUrl: policyResult.url,
+  };
 }
 
 /**
- * Extract text content from HTML
- * @param {string} html - HTML content
- * @returns {string} - Extracted text
+ * Extract text content from HTML (basic implementation).
+ * @param {string} html - HTML content.
+ * @returns {string} - Extracted text.
  */
 function extractTextFromHtml(html) {
-  // Simple HTML to text conversion
-  // In a real implementation, you would use a proper HTML parser
-  let text = html;
-
-  // Remove scripts
-  text = text.replace(
-    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-    " "
-  );
-
-  // Remove styles
-  text = text.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, " ");
-
-  // Remove HTML tags
-  text = text.replace(/<[^>]*>/g, " ");
-
-  // Normalize whitespace
-  text = text.replace(/\s+/g, " ").trim();
-
-  return text;
+    if (!html) return '';
+    // Basic extraction: remove script/style tags, then all other tags, then normalize whitespace.
+    let text = html;
+    text = text.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, " ");
+    text = text.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, " ");
+    text = text.replace(/<[^>]*>/g, " ");
+    text = text.replace(/\s+/g, " ").trim();
+    return text;
 }
 
 /**
