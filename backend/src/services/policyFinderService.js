@@ -1,7 +1,10 @@
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); // Load .env file
 const axios = require('axios');
 const { JSDOM } = require('jsdom'); // Using jsdom to parse HTML for verification
+// const { getJson } = require("serpapi"); // No longer using serpapi library directly
 
 // --- Configuration (Should be externalized: config file/env vars) ---
+const SERPAPI_ENDPOINT = 'https://serpapi.com/search'; // SerpApi endpoint URL
 const COMMON_PATHS = [
     '/privacy',
     '/privacy/',
@@ -27,7 +30,23 @@ const COMMON_SUBDOMAINS = ['', 'www.', 'privacy.', 'legal.']; // '' represents t
 const REQUEST_TIMEOUT_MS = 5000; // 5 seconds
 const MAX_REDIRECTS = 5;
 const MIN_CONTENT_LENGTH = 500; // Minimum characters for content verification
-const BROWSER_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'; // Standard User-Agent
+// Updated User-Agent to a more recent Chrome version
+const BROWSER_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+
+// Common headers to mimic a browser
+const COMMON_HEADERS = {
+    'User-Agent': BROWSER_USER_AGENT,
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+    'Sec-Ch-Ua-Mobile': '?0',
+    'Sec-Ch-Ua-Platform': '"macOS"',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Sec-Fetch-User': '?1',
+    'Upgrade-Insecure-Requests': '1',
+};
 
 // --- Helper Functions ---
 
@@ -54,10 +73,7 @@ async function checkUrl(url) {
             //     // Accept any status code initially, we'll check it later
             //     return status >= 200 && status < 600;
             // },
-            headers: {
-                'User-Agent': BROWSER_USER_AGENT,
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' // Mimic browser accept header
-            },
+            headers: COMMON_HEADERS, // Use common headers
         });
 
         // axios automatically follows redirects and returns the final URL in response.request.res.responseUrl
@@ -97,9 +113,10 @@ async function verifyContent(url) {
             timeout: REQUEST_TIMEOUT_MS,
             maxRedirects: MAX_REDIRECTS, // Follow redirects again if necessary (though checkUrl should handle most)
             responseType: 'text', // Ensure we get text content
-            headers: {
-                'User-Agent': BROWSER_USER_AGENT,
-                'Accept': 'text/html' // Prioritize HTML for verification
+            headers: { // Use common headers but prioritize text/html for Accept
+                ...COMMON_HEADERS,
+                'Accept': 'text/html',
+                'Sec-Fetch-Site': 'cross-site', // Adjust fetch site if verifying content from a different origin than initial check
             },
             // Limit download size to prevent abuse
             // maxContentLength: 5 * 1024 * 1024, // Example: 5MB limit (adjust as needed)
@@ -176,6 +193,13 @@ async function verifyContent(url) {
  * @returns {Promise<{url: string, content: string|null, isPdf: boolean}|null>} - Object with URL and content/PDF status, or null.
  */
 async function findPrivacyPolicyUrl(domain) {
+    const serpApiKey = process.env.SERPAPI_API_KEY;
+    // Add debug log for API key
+    console.log(`[Debug] Loaded SERPAPI_API_KEY: ${serpApiKey ? '******' + serpApiKey.slice(-4) : 'Not Found'}`);
+    if (!serpApiKey) {
+        console.warn("SERPAPI_API_KEY not found in environment variables. Fallback search will be skipped.");
+    }
+
     console.log(`Starting privacy policy search for domain: ${domain}`);
     if (!domain || typeof domain !== 'string' || domain.includes('/')) {
         console.error("Invalid domain provided:", domain);
@@ -244,12 +268,11 @@ async function findPrivacyPolicyUrl(domain) {
         }
     }
 
-    console.log("Content verification failed for all URLs found in Step 1.");
+     console.log("Content verification failed for all URLs found in Step 1.");
 
-    // --- Step 2: Fallback Search (Search Engine - Placeholder) ---
-    console.log("--- Step 2: Fallback Search (Placeholder) ---");
-    // TODO: Implement fallback search using a Search Engine API (e.g., SerpApi, Google Custom Search)
-    // 1. Choose and configure an API client.
+     // --- Step 2: Fallback Search (Search Engine) --- // Removed Placeholder comment
+     // TODO: Refine fallback search logic (e.g., better prioritization, handling different search engine structures)
+     // 1. Consider alternative search engines or APIs if SerpApi is unreliable/costly.
     // 2. Construct query: `"privacy policy" site:{domain}`
     // 3. Execute search, handle API errors, rate limits, costs.
     // 4. Parse results, filter by domain, check titles/snippets.
@@ -270,25 +293,56 @@ async function findPrivacyPolicyUrl(domain) {
 
     console.log(`Privacy policy search failed for domain: ${domain}`);
     // TODO: Log failure to designated audit/operational log.
-     // --- Step 2: Fallback Search (Search Engine - Placeholder Call) ---
+     // --- Step 2: Fallback Search (Search Engine) ---
      console.log("--- Step 2: Attempting Fallback Search ---");
-     const fallbackResult = await searchEngineFallback(domain);
+     const fallbackResult = serpApiKey ? await searchEngineFallback(domain, serpApiKey) : null;
 
-     if (fallbackResult) {
+     if (fallbackResult && fallbackResult.url) {
          // If fallback finds a URL, verify its content
-         console.log("--- Step 3 (Fallback): Verifying content for Step 2 result ---");
-         const verificationResult = await verifyContent(fallbackResult.url);
-         if (verificationResult.verified) {
-             console.log(`Verified successfully via fallback search: ${fallbackResult.url}`);
-             return {
-                 url: fallbackResult.url,
-                 content: verificationResult.content,
-                 isPdf: verificationResult.isPdf
-             };
-         } else {
-              console.log(`Fallback URL ${fallbackResult.url} content verification failed: ${verificationResult.error || 'Heuristics failed'}`);
+         // Ensure the URL is absolute
+         let absoluteFallbackUrl = fallbackResult.url;
+         try {
+             const parsedUrl = new URL(absoluteFallbackUrl);
+             if (!parsedUrl.protocol) {
+                 // Attempt to fix relative URLs (though SerpApi usually returns absolute)
+                 console.warn(`Fallback URL ${absoluteFallbackUrl} seems relative. Attempting to make absolute using https://${domain}`);
+                 absoluteFallbackUrl = `https://${domain}${absoluteFallbackUrl.startsWith('/') ? '' : '/'}${absoluteFallbackUrl}`;
+             }
+         } catch (e) {
+             console.error(`Error parsing fallback URL ${absoluteFallbackUrl}: ${e.message}. Skipping verification.`);
+             absoluteFallbackUrl = null; // Invalidate URL if parsing fails
          }
+
+         if (absoluteFallbackUrl) {
+             console.log("--- Step 3 (Fallback): Verifying content for Step 2 result ---");
+             const verificationResult = await verifyContent(absoluteFallbackUrl);
+             if (verificationResult.verified) {
+                 console.log(`Verified successfully via fallback search: ${absoluteFallbackUrl}`);
+                 return {
+                     url: absoluteFallbackUrl,
+                     content: verificationResult.content,
+                     isPdf: verificationResult.isPdf
+                 };
+             } else {
+                 console.log(`Fallback URL ${absoluteFallbackUrl} content verification failed: ${verificationResult.error || 'Heuristics failed'}`);
+             }
+         }
+     } else if (fallbackResult && fallbackResult.error) {
+         console.log(`Fallback search failed: ${fallbackResult.error}`);
+     } else if (!serpApiKey) {
+         console.log("Fallback search skipped due to missing API key.");
+     } else {
+         // This 'else' covers the case where fallbackResult was null (meaning SerpApi found no relevant URL or an error occurred before returning a URL object)
+         // and an API key was present. The specific reason (no results vs. API error) is logged within searchEngineFallback or the preceding 'else if'.
+         console.log("Fallback search did not yield a verifiable URL.");
      }
+     // If we reach here, it means either:
+     // - Step 1 found URLs, but none verified.
+     // - Step 1 found no URLs AND:
+     //   - Fallback search was skipped (no API key).
+     //   - Fallback search failed with an error.
+     //   - Fallback search succeeded but found no relevant/verifiable URL.
+     //   - Fallback search found a URL, but it failed verification.
 
      console.log(`Privacy policy search failed for domain: ${domain} after Step 1 and Fallback.`);
      // TODO: Log failure to designated audit/operational log.
@@ -297,32 +351,95 @@ async function findPrivacyPolicyUrl(domain) {
 
 
  /**
-  * Placeholder function for Step 2: Fallback Search using a Search Engine API.
-  * This needs to be implemented with a real API client (e.g., SerpApi, Google Custom Search).
+  * Performs a fallback search using the SerpApi Google Search API.
   * @param {string} domain - The normalized domain name.
-  * @returns {Promise<{url: string}|null>} - An object with the potential URL found, or null.
-  */
- async function searchEngineFallback(domain) {
-     console.log(`[Placeholder] searchEngineFallback called for domain: ${domain}`);
-     console.log(`[Placeholder] TODO: Implement actual search API call here.`);
-     console.log(`[Placeholder] Search Query: "privacy policy" site:${domain}`);
-     // Example structure if API call was made:
-     // try {
-     //   const searchResults = await searchApi.search(`"privacy policy" site:${domain}`);
-     //   const prioritizedUrl = parseAndPrioritizeResults(searchResults, domain); // Implement this parsing/prioritization
-     //   if (prioritizedUrl) {
-     //      console.log(`[Placeholder] Fallback search found potential URL: ${prioritizedUrl}`);
-     //      return { url: prioritizedUrl };
-     //   } else {
-     //      console.log(`[Placeholder] Fallback search did not find a relevant URL.`);
-     //      return null;
-     //   }
-     // } catch (apiError) {
-     //    console.error(`[Placeholder] Error during fallback search API call: ${apiError.message}`);
-     //    return null;
-     // }
-     return null; // Returning null as it's just a placeholder
- }
+  * @param {string} apiKey - The SerpApi API key.
+ * @returns {Promise<{url: string}|{error: string}|null>} - An object with the URL, an error object, or null if no relevant result found.
+ */
+async function searchEngineFallback(domain, apiKey) {
+    const query = `"privacy policy" site:${domain}`;
+    console.log(`[SerpApi/Axios] Performing fallback search for domain: ${domain}`);
+    console.log(`[SerpApi/Axios] Search Query: ${query}`);
+    console.log(`[SerpApi/Axios] Using API Key ending in: ${apiKey ? apiKey.slice(-4) : 'N/A'}`);
+
+    const params = {
+        q: query,
+        api_key: apiKey,
+        num: 5, // Request top 5 results
+        engine: 'google' // Specify Google engine
+    };
+
+    try {
+        console.log(`[SerpApi/Axios] Making GET request to ${SERPAPI_ENDPOINT} with params:`, params);
+        // Use axios.get with params object - axios handles URL encoding
+        const response = await axios.get(SERPAPI_ENDPOINT, {
+            params: params,
+            timeout: REQUEST_TIMEOUT_MS + 5000 // Slightly longer timeout for external API
+        });
+
+        console.log(`[SerpApi/Axios] Request successful (Status: ${response.status}). Response data snippet:`, JSON.stringify(response.data).substring(0, 200));
+
+        const responseData = response.data;
+
+        // Check for API-level errors reported in the response body
+        if (responseData && responseData.error) {
+            console.error(`[SerpApi/Axios] API Error reported in response: ${responseData.error}`);
+            return { error: `SerpApi API Error: ${responseData.error}` };
+        }
+
+        // Check for organic results
+        if (responseData && responseData.organic_results && responseData.organic_results.length > 0) {
+            // Prioritize results (same logic as before)
+            for (const result of responseData.organic_results) {
+                const title = result.title?.toLowerCase() || '';
+                const link = result.link;
+                const snippet = result.snippet?.toLowerCase() || '';
+
+                if (link && typeof link === 'string' && (title.includes('privacy') || title.includes('policy') || snippet.includes('privacy') || snippet.includes('policy'))) {
+                    console.log(`[SerpApi/Axios] Found potential URL: ${link} (Title: ${result.title})`);
+                    try {
+                        const resultDomain = new URL(link).hostname;
+                        if (resultDomain === domain || resultDomain.endsWith('.' + domain)) {
+                            console.log(`[SerpApi/Axios] Prioritized URL (matches domain): ${link}`);
+                            return { url: link };
+                        } else {
+                            console.log(`[SerpApi/Axios] Skipping URL ${link} - domain mismatch (${resultDomain} vs ${domain})`);
+                        }
+                    } catch (e) {
+                        console.warn(`[SerpApi/Axios] Could not parse URL ${link}: ${e.message}`);
+                    }
+                }
+            }
+            console.log(`[SerpApi/Axios] No relevant URL found in top ${responseData.organic_results.length} results matching domain criteria.`);
+            return null;
+        } else {
+            console.log("[SerpApi/Axios] No organic results found in response.");
+            return null;
+        }
+
+    } catch (error) {
+        console.error(`[SerpApi/Axios] Caught error during axios GET request.`);
+        if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error('[SerpApi/Axios] Error Status:', error.response.status);
+            console.error('[SerpApi/Axios] Error Data:', error.response.data);
+            return { error: `SerpApi request failed with status ${error.response.status}: ${error.response.data?.error || error.message}` };
+        } else if (error.request) {
+            // The request was made but no response was received
+            console.error('[SerpApi/Axios] No response received:', error.request);
+            return { error: `SerpApi request failed: No response received (${error.message})` };
+        } else {
+            // Something happened in setting up the request that triggered an Error
+            console.error('[SerpApi/Axios] Error setting up request:', error.message);
+            // Log stack trace if available
+            if (error.stack) {
+                console.error("[SerpApi/Axios] Error stack:", error.stack);
+            }
+            return { error: `SerpApi request setup failed: ${error.message}` };
+        }
+    }
+}
 
 
  /**
