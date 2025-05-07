@@ -1,7 +1,7 @@
 // Assessment Trigger Service for PrivacyLens backend
 // Handles automated processing of unassessed URLs
 
-const db = require("../utils/db");
+const db = require("../utils/db"); // Make sure addPolicyForArchiving is exported from db.js
 const llmService = require("./llmService");
 const { normalizeUrl } = require("../utils/domainUtils");
 const { supabaseServiceRole } = require("../utils/supabaseClient"); // Import service role client
@@ -164,8 +164,8 @@ async function processUnassessedUrls(concurrentLimit = 2) {
  * @returns {Promise<Object>} - Processing result
  */
 async function processUnassessedUrl(urlEntry) {
-  const { url } = urlEntry;
-  console.log(`[AssessmentTrigger] Processing URL: ${url}`);
+  const { url, suggested_policy_urls } = urlEntry; // Destructure suggested_policy_urls
+  console.log(`[AssessmentTrigger] Processing URL: ${url}, Initial Suggested Policies: ${JSON.stringify(suggested_policy_urls)}`);
 
   try {
     // Update status to Processing
@@ -203,8 +203,8 @@ async function processUnassessedUrl(urlEntry) {
       };
     }
 
-    // Try to locate user agreement
-    const agreementResult = await locateUserAgreement(url);
+    // Try to locate user agreement, passing suggested URLs if available
+    const agreementResult = await locateUserAgreement(url, suggested_policy_urls); // Use destructured variable
 
     if (!agreementResult) {
       console.log(`[AssessmentTrigger] No user agreement found for ${url}`);
@@ -303,7 +303,7 @@ async function processUnassessedUrl(urlEntry) {
     );
 
     // Save assessment to database
-    await db.upsertAssessment({
+    const savedAssessment = await db.upsertAssessment({ // Capture the result
       url: url,
       user_agreement_url: agreementResult.agreementUrl,
       user_agreement_hash: agreementHash,
@@ -311,6 +311,23 @@ async function processUnassessedUrl(urlEntry) {
       last_updated: new Date().toISOString(),
       manual_entry: false,
     });
+
+    // --- Add policy to the archiver queue ---
+    // Only add if the assessment was newly created (not copied) and saved successfully
+    if (savedAssessment && savedAssessment.user_agreement_url) {
+      try {
+        await db.addPolicyForArchiving({
+          domainName: url, // Use the original (or normalized) domain
+          policyType: 'privacy', // Assuming privacy for now
+          url: savedAssessment.user_agreement_url,
+        });
+        console.log(`[AssessmentTrigger] Added/Updated policy entry for ${url} for archiving.`);
+      } catch (archiveError) {
+        console.error(`[AssessmentTrigger] Failed to add policy entry for ${url} for archiving:`, archiveError);
+        // Log the error but don't fail the entire assessment process
+      }
+    }
+    // --- End add policy ---
 
     try {
       // Remove from unassessed queue
@@ -369,12 +386,17 @@ async function processUnassessedUrl(urlEntry) {
 /**
  * Locate user agreement using the policyFinderService.
  * @param {string} domain - The normalized domain to check (e.g., "example.com").
+ * @param {string[]} [suggestedUrls=[]] - Optional array of suggested policy URLs to try first.
  * @returns {Promise<{text: string, agreementUrl: string}|null>} - Agreement text and URL, or null if not found or not processable (e.g., PDF).
  */
-async function locateUserAgreement(domain) {
-  console.log(`[AssessmentTrigger] Locating user agreement for domain: ${domain}`);
+async function locateUserAgreement(domain, suggestedUrls = []) {
+  console.log(`[AssessmentTrigger] locateUserAgreement for domain: ${domain}. Received suggestedUrls: ${JSON.stringify(suggestedUrls)}`);
+  // The following log is redundant if the one above shows the content, but kept for consistency with previous state if desired.
+  // if (suggestedUrls && suggestedUrls.length > 0) {
+  //   console.log(`[AssessmentTrigger] Using suggested URLs: ${suggestedUrls.join(', ')}`);
+  // }
 
-  const policyResult = await findPrivacyPolicyUrl(domain);
+  const policyResult = await findPrivacyPolicyUrl(domain, suggestedUrls);
 
   if (!policyResult) {
     console.log(`[AssessmentTrigger] policyFinderService did not find a policy URL for ${domain}.`);
@@ -479,8 +501,21 @@ async function processSingleUrl(url) {
     processingUrls.add(url);
 
     try {
-      // Create a mock entry object for the URL
-      const urlEntry = { url };
+      // Fetch the full entry from the database
+      let urlEntry = await db.getUnassessedEntryByUrl(url);
+
+      if (!urlEntry) {
+        // If not found in unassessed_urls, create a default entry
+        // This might happen if a URL is directly submitted for assessment
+        // without being in the queue first, or if it was already processed and removed.
+        console.log(`[AssessmentTrigger] No existing unassessed entry for ${url}. Creating default entry for processing.`);
+        urlEntry = { url: url, suggested_policy_urls: [] };
+        // Optionally, you might want to add it to the unassessed_urls table here
+        // await db.addToUnassessedQueue(url); 
+        // For now, we'll proceed with a temporary entry.
+      } else {
+        console.log(`[AssessmentTrigger] Found existing unassessed entry for ${url}: ${JSON.stringify(urlEntry)}`);
+      }
 
       // Process this single URL using the existing function
       return await processUnassessedUrl(urlEntry);

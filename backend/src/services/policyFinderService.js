@@ -190,26 +190,65 @@ async function verifyContent(url) {
 /**
  * Finds the privacy policy URL and its content for a given normalized domain.
  * @param {string} domain - The normalized domain name (e.g., "example.com").
+ * @param {string[]} [suggestedUrls=[]] - Optional array of suggested policy URLs to try first.
  * @returns {Promise<{url: string, content: string|null, isPdf: boolean}|null>} - Object with URL and content/PDF status, or null.
  */
-async function findPrivacyPolicyUrl(domain) {
+async function findPrivacyPolicyUrl(domain, suggestedUrls = []) {
     const serpApiKey = process.env.SERPAPI_API_KEY;
     // Add debug log for API key
-    console.log(`[Debug] Loaded SERPAPI_API_KEY: ${serpApiKey ? '******' + serpApiKey.slice(-4) : 'Not Found'}`);
+    console.log(`[PolicyFinder] Loaded SERPAPI_API_KEY: ${serpApiKey ? '******' + serpApiKey.slice(-4) : 'Not Found'}`);
     if (!serpApiKey) {
-        console.warn("SERPAPI_API_KEY not found in environment variables. Fallback search will be skipped.");
+        console.warn("[PolicyFinder] SERPAPI_API_KEY not found in environment variables. Fallback search will be skipped.");
     }
 
-    console.log(`Starting privacy policy search for domain: ${domain}`);
+    console.log(`[PolicyFinder] Starting privacy policy search for domain: ${domain}. Received suggestedUrls: ${JSON.stringify(suggestedUrls)}`);
+
+    // Check if suggestedUrls is a valid, non-empty array before proceeding
+    if (Array.isArray(suggestedUrls) && suggestedUrls.length > 0) {
+        console.log(`[PolicyFinder] Attempting suggested URLs first: ${suggestedUrls.join(', ')}`);
+        for (const suggestedUrl of suggestedUrls) {
+            if (!suggestedUrl || typeof suggestedUrl !== 'string' || !suggestedUrl.trim()) {
+                console.warn(`[PolicyFinder] Invalid or empty suggested URL skipped: '${suggestedUrl}'`);
+                continue;
+            }
+            console.log(`[PolicyFinder] --- Checking Suggested URL: ${suggestedUrl} ---`);
+            // We can directly use checkUrl and verifyContent for suggested URLs
+            // as they are expected to be full URLs.
+            const checkResult = await checkUrl(suggestedUrl);
+            if (checkResult && checkResult.status >= 200 && checkResult.status < 300) {
+                const verificationResult = await verifyContent(checkResult.url); // Use final URL from checkResult
+                if (verificationResult.verified) {
+                    console.log(`[PolicyFinder] Verified successfully (from suggested URL): ${checkResult.url}`);
+                    return {
+                        url: checkResult.url,
+                        content: verificationResult.content,
+                        isPdf: verificationResult.isPdf
+                    };
+                } else {
+                    console.log(`[PolicyFinder] Suggested URL ${checkResult.url} content verification failed: ${verificationResult.error || 'Heuristics failed'}`);
+                }
+            } else {
+                console.log(`[PolicyFinder] Suggested URL ${suggestedUrl} check failed or returned non-2xx status: ${checkResult?.status} - ${checkResult?.error}`);
+            }
+        }
+        console.log("[PolicyFinder] --- Finished checking suggested URLs. None verified or all failed. Proceeding to standard search. ---");
+    } else {
+        console.log("[PolicyFinder] No valid suggested URLs provided or array is empty. Proceeding to standard search.");
+    }
+
     if (!domain || typeof domain !== 'string' || domain.includes('/')) {
-        console.error("Invalid domain provided:", domain);
+        console.error("[PolicyFinder] Invalid domain provided for standard search:", domain);
+        // If suggested URLs were provided and failed, we might still want to return null
+        // or proceed if domain is valid for common path/fallback search.
+        // For now, if domain is invalid, we stop.
         return null;
     }
 
     let potentialUrls = [];
 
     // --- Step 1: Initial Check (Common Paths & Subdomains) ---
-    console.log("--- Step 1: Checking common paths ---");
+    // This is now effectively Step 2 if suggested URLs were processed
+    console.log("[PolicyFinder] --- Step 1 (Standard Search): Checking common paths ---");
     for (const sub of COMMON_SUBDOMAINS) {
         for (const path of COMMON_PATHS) {
             const urlsToCheck = [

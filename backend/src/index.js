@@ -13,6 +13,7 @@ const adminRoutes = require("./api/admin");
 
 // Import services
 const assessmentTriggerService = require("./services/assessmentTriggerService");
+const { startArchiverJob } = require("./jobs/archiverJob"); // Import the archiver job scheduler
 
 // Create Express app
 const app = express();
@@ -76,6 +77,10 @@ app.listen(PORT, () => {
     `Initializing assessment trigger service with interval: ${intervalMinutes} minutes, max concurrent assessments: ${maxConcurrentAssessments}`
   );
   assessmentTriggerService.scheduleProcessing(parseInt(intervalMinutes), parseInt(maxConcurrentAssessments));
+
+  // Start the policy archiver job
+  console.log("Initializing policy archiver job...");
+  startArchiverJob();
 });
 
 module.exports = app; // Export for testing

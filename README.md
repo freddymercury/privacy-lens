@@ -32,6 +32,7 @@ The PrivacyLens system consists of two main components:
 - Stores and manages privacy assessments in a Supabase database
 - Integrates with LLM (via llamaindex) for automated privacy policy assessment
 - Includes an admin dashboard for managing assessments, viewing analytics, and handling unassessed URLs
+- **Policy Archiver Service**: Periodically fetches tracked privacy policies, stores historical versions, calculates differences, and provides an API to access version history.
 
 [Detailed Backend Documentation](./backend/README.md)
 
@@ -69,8 +70,13 @@ PrivacyLens evaluates privacy policies across these key categories:
 2. Set up the backend service:
    ```bash
    cd privacy-guard/backend
-   npm install
-   # Configure environment variables (see backend README)
+   npm install # Installs dependencies including 'diff' for the archiver
+   # Configure environment variables in .env (see backend README and .env.example)
+   # Ensure SUPABASE_URL, SUPABASE_SERVICE_KEY, S3_BUCKET, and ARCHIVE_SCHEDULE are set.
+   # Run database migrations:
+   #   - Execute the SQL commands in 'scripts/create-auth-tables.sql' (if not already done)
+   #   - Execute the SQL commands in 'scripts/create-archive-tables.sql'
+   #   (You can run these manually via the Supabase SQL Editor or create a runner script)
    npm run dev
    ```
 3. Set up the Chrome plugin:
@@ -86,6 +92,14 @@ See the individual README files in each component directory for detailed develop
 
 - [Chrome Plugin Development](./chrome-plugin/README.md)
 - [Backend Development](./backend/README.md)
+
+## Policy Archive API Endpoints
+
+The backend exposes the following public endpoints for accessing historical policy data:
+
+- **`GET /api/v1/policies/:domain?type=<policy_type>`**: Retrieves the latest available snapshot and metadata for a specific policy (e.g., `/api/v1/policies/example.com?type=privacy`). Defaults to `type=privacy`.
+- **`GET /api/v1/policies/:domain/versions?type=<policy_type>`**: Lists metadata (version number, fetch time, hash) for all historical versions of a specific policy. Defaults to `type=privacy`.
+- **`GET /api/v1/policies/:domain/versions/:verId`**: Retrieves the full details (including normalized text and diff summary from the previous version) for a specific version identified by its UUID (`verId`).
 
 ## License
 
