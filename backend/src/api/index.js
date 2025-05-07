@@ -9,6 +9,7 @@ const unassessedController = require("../controllers/unassessedController");
 const apiAuthController = require("../controllers/apiAuthController");
 const subscriptionController = require("../controllers/subscriptionController");
 const updateController = require("../controllers/updateController");
+const archiveController = require("../controllers/archiveController"); // Import the new controller
 
 // Import middleware
 const { validateToken } = require("../middleware/apiAuth");
@@ -65,5 +66,16 @@ router.get("/health", (req, res) => {
     message: "PrivacyLens API is running",
   });
 });
+
+
+/**
+ * Policy Archive Routes (V1)
+ * Note: These are currently public as per the spec (using Anon key via supabaseClient).
+ * Add `validateToken` middleware if authentication is required.
+ */
+router.get("/v1/policies/:domain", archiveController.getLatestPolicy);
+router.get("/v1/policies/:domain/versions", archiveController.listPolicyVersions);
+router.get("/v1/policies/:domain/versions/:verId", archiveController.getVersionWithDiff);
+
 
 module.exports = router;

@@ -60,6 +60,24 @@ const createAuthedClient = (userAuthToken) => {
   });
 };
 
+// Diagnostic check for storage property
+if (!serviceRoleClient.storage) {
+  const keysMissing = !supabaseUrl || !supabaseServiceKey || !supabaseAnonKey;
+  if (keysMissing && isTestEnvironment) {
+    // This is the scenario where the mock is intentionally used.
+    // The console.warn should have already been printed.
+    // If it wasn't, that's another issue, but the lack of .storage on the mock is expected.
+  } else {
+    // If storage is missing, and it's NOT the intentional mock scenario (keys missing & test env),
+    // then something is seriously wrong with Supabase client initialization or env vars.
+    throw new Error(
+      'Supabase serviceRoleClient is missing the .storage property. ' +
+      'This indicates a problem with Supabase initialization or environment variables. ' +
+      `KeysMissing: ${keysMissing}, IsTestEnv: ${isTestEnvironment}, SupabaseURL set: ${!!supabaseUrl}, SupabaseServiceKey set: ${!!supabaseServiceKey}`
+    );
+  }
+}
+
 module.exports = {
   // Export the service role client for operations that NEED to bypass RLS
   supabaseServiceRole: serviceRoleClient,

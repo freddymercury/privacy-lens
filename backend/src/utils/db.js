@@ -864,6 +864,76 @@ const getUserUpdateHistory = async (userId, deviceId, userAuthToken) => {
   return data || [];
 };
 
+/**
+ * Add or update a policy entry for the archiver job.
+ * Uses upsert to avoid duplicates based on domain_name and policy_type.
+ * @param {Object} policyData - Data for the policy.
+ * @param {string} policyData.domainName - The normalized domain name.
+ * @param {string} policyData.policyType - The type of policy (e.g., 'privacy', 'terms').
+ * @param {string} policyData.url - The URL where the policy was found.
+ * @returns {Promise<Object>} - The upserted policy data.
+ */
+const addPolicyForArchiving = async ({ domainName, policyType = 'privacy', url }) => {
+  const normalizedDomain = normalizeUrl(domainName); // Ensure domain is normalized
+  console.log(`[DB] Adding/Updating policy for archiving: Domain: ${normalizedDomain}, Type: ${policyType}, URL: ${url}`);
+
+  const { data, error } = await supabaseServiceRole
+    .from('policies')
+    .upsert(
+      {
+        domain_name: normalizedDomain,
+        policy_type: policyType,
+        url: url,
+        // Add other relevant fields if needed, e.g., is_active: true
+        // last_discovered_at: new Date().toISOString() // Optional: track discovery time
+      },
+      {
+        // Define the conflict target: combination of domain and type
+        onConflict: 'domain_name, policy_type',
+        // If conflict, update the URL (and potentially other fields like last_discovered_at)
+        // Set ignoreDuplicates to false to perform the update on conflict
+        ignoreDuplicates: false
+      }
+    )
+    .select()
+    .single();
+
+  if (error) {
+    console.error(`[DB] Error adding/updating policy for archiving (${normalizedDomain}, ${policyType}):`, error);
+    throw error;
+  }
+
+  console.log(`[DB] Successfully added/updated policy for archiving: ${normalizedDomain} (${policyType})`);
+  return data;
+};
+
+/**
+ * Get a single unassessed URL entry by its URL
+ * @param {string} url - The URL to retrieve
+ * @returns {Promise<Object|null>} - The unassessed URL entry or null if not found
+ */
+const getUnassessedEntryByUrl = async (url) => {
+  const normalizedUrl = normalizeUrl(url);
+  console.log(`[DB] Getting unassessed entry for URL: ${url}, Normalized: ${normalizedUrl}`);
+
+  const { data, error } = await supabaseServiceRole
+    .from("unassessed_urls")
+    .select("*")
+    .eq("url", normalizedUrl)
+    .maybeSingle(); // Use maybeSingle to return null if not found, instead of erroring
+
+  if (error) {
+    // Log unexpected errors, but PGRST116 (no rows) is handled by maybeSingle returning null.
+    console.error(`[DB Error] getUnassessedEntryByUrl failed unexpectedly for ${normalizedUrl}:`, error);
+    throw error;
+  }
+  if (!data) {
+    console.log(`[DB] No unassessed entry found for URL: ${normalizedUrl}`);
+  }
+  return data;
+};
+
+
 module.exports = {
   // Note: supabase (the old generic client) is no longer exported
   getAssessment,
@@ -894,5 +964,7 @@ module.exports = {
   getUpdateById,
   createUpdate,
   recordUpdateApplication,
-  getUserUpdateHistory
+  getUserUpdateHistory,
+  addPolicyForArchiving, // Add the new function here
+  getUnassessedEntryByUrl
 };
