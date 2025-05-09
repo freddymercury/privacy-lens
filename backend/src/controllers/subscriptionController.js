@@ -1,6 +1,7 @@
 // Subscription Controller for PrivacyLens
 
-const subscriptionService = require('../services/subscriptionService');
+import * as subscriptionService from '../services/subscriptionService.js';
+import Stripe from 'stripe';
 
 /**
  * Create subscription
@@ -182,7 +183,7 @@ const handleWebhook = async (req, res) => {
     // Verify webhook signature
     if (endpointSecret) {
       try {
-        const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+        const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
         event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
       } catch (err) {
         console.error('Webhook signature verification failed:', err.message);
@@ -213,7 +214,7 @@ const handleWebhook = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   createSubscription,
   updateSubscription,
   cancelSubscription,

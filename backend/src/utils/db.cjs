@@ -1,10 +1,50 @@
 // Database configuration for PrivacyLens backend
 
-// Database configuration for PrivacyLens backend
-
 // Use specific clients: one for service role (bypasses RLS), one factory for user-scoped (respects RLS)
-const { supabaseServiceRole, createAuthedClient } = require("./supabaseClient");
-const { normalizeUrl } = require("./domainUtils");
+const supabaseWrapper = require("./supabaseClientWrapper.cjs");
+const domainUtilsWrapper = require("./domainUtilsWrapper.cjs");
+
+// Create references to the functions/objects we'll use throughout this module
+let supabaseServiceRole;
+let createAuthedClient;
+let normalizeUrl;
+
+// Flag to track initialization status
+let isInitialized = false;
+let initError = null;
+
+// Initialize the module
+const initPromise = (async () => {
+  try {
+    // Wait for both supabase client and domain utils initialization
+    await Promise.all([
+      supabaseWrapper.initializationPromise,
+      domainUtilsWrapper.initializationPromise
+    ]);
+    
+    // Now we can safely use the exports
+    supabaseServiceRole = supabaseWrapper.supabaseServiceRole;
+    createAuthedClient = supabaseWrapper.createAuthedClient;
+    normalizeUrl = domainUtilsWrapper.normalizeUrl;
+    
+    console.log('[DB] Initialization complete for both supabaseWrapper and domainUtilsWrapper');
+    isInitialized = true;
+  } catch (error) {
+    console.error('[DB] Error during initialization:', error);
+    initError = error;
+    throw error;
+  }
+})();
+
+// Helper function to ensure initialization is complete before proceeding
+const ensureInitialized = async () => {
+  if (!isInitialized) {
+    if (initError) {
+      throw initError;
+    }
+    await initPromise;
+  }
+};
 
 
 /**
@@ -17,6 +57,9 @@ const { normalizeUrl } = require("./domainUtils");
  * @returns {Promise<Object|null>} - Assessment data or null if not found
  */
 const getAssessment = async (url) => {
+  // Ensure initialization is complete before proceeding
+  await ensureInitialized();
+  
   // Normalize the URL to get the base domain
   const normalizedUrl = normalizeUrl(url);
   console.log(
@@ -47,6 +90,9 @@ const getAssessment = async (url) => {
  * @returns {Promise<Object>} - Updated assessment data
  */
 const upsertAssessment = async (assessment) => {
+  // Ensure initialization is complete before proceeding
+  await ensureInitialized();
+  
   // Normalize the URL in the assessment
   const originalUrl = assessment.url;
   const normalizedUrl = normalizeUrl(originalUrl);
@@ -81,6 +127,9 @@ const upsertAssessment = async (assessment) => {
  * @returns {Promise<Object>} - Created queue entry
  */
 const addToUnassessedQueue = async (url) => {
+  // Ensure initialization is complete before proceeding
+  await ensureInitialized();
+  
   // Normalize the URL
   const normalizedUrl = normalizeUrl(url);
   console.log(

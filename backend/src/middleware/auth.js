@@ -37,7 +37,7 @@ const isAdmin = (req, res, next) => {
   });
 };
 
-module.exports = {
+export {
   isAuthenticated,
   isAdmin,
 };

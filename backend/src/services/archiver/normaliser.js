@@ -1,4 +1,4 @@
-const { JSDOM } = require("jsdom");
+import { JSDOM } from "jsdom";
 
 /**
  * Converts raw HTML into cleaned, normalized text.
@@ -6,7 +6,7 @@ const { JSDOM } = require("jsdom");
  * @param {string} html - The raw HTML content.
  * @returns {string} - The cleaned and trimmed text content.
  */
-function htmlToCleanText(html) {
+export function htmlToCleanText(html) {
   if (!html || typeof html !== 'string') {
     console.warn("[Normaliser] Input HTML is empty or not a string.");
     return "";
@@ -34,6 +34,4 @@ function htmlToCleanText(html) {
   }
 }
 
-module.exports = {
-  htmlToCleanText,
-};
+// No default export needed if only one function is exported, or keep as named.

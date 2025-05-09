@@ -1,7 +1,7 @@
 // Authentication Service for PrivacyLens
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const db = require('../utils/db');
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import * as db from '../utils/db.cjs';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
 const FREE_TOKEN_VALIDITY_DAYS = 30;
@@ -160,7 +160,7 @@ const revokeToken = async (token) => {
   }
 };
 
-module.exports = {
+export {
   generateToken,
   validateToken,
   refreshToken,

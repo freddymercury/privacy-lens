@@ -1,9 +1,12 @@
 // Subscription Service for PrivacyLens
+import Stripe from 'stripe';
+import * as db from '../utils/db.cjs';
+
 let stripe;
 
 // Initialize Stripe with API key if available
 if (process.env.STRIPE_SECRET_KEY) {
-  stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+  stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 } else {
   // Allow missing API key in development/test environment
   const isTestEnvironment = process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development';
@@ -38,7 +41,6 @@ if (process.env.STRIPE_SECRET_KEY) {
     throw new Error('Stripe API key (STRIPE_SECRET_KEY) is required in production environment');
   }
 }
-const db = require('../utils/db');
 
 /**
  * Create a subscription for a user
@@ -451,7 +453,7 @@ const handleInvoicePaymentFailed = async (invoice) => {
   }
 };
 
-module.exports = {
+export {
   createSubscription,
   updateSubscription,
   cancelSubscription,

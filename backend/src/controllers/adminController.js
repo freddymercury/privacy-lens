@@ -1,11 +1,11 @@
 // Admin Controller for PrivacyLens admin dashboard
 
-const db = require("../utils/db");
+import * as db from "../utils/db.cjs";
 // Import the service role client directly for admin operations
-const { supabaseServiceRole } = require("../utils/supabaseClient");
-const llmService = require("../services/llmService");
-const assessmentTriggerService = require("../services/assessmentTriggerService");
-const axios = require("axios");
+import { supabaseServiceRole } from "../utils/supabaseClient.js";
+import llmService from "../services/llmService.js";
+import * as assessmentTriggerService from "../services/assessmentTriggerService.js";
+import axios from "axios";
 
 /**
  * Render admin dashboard home page
@@ -1148,7 +1148,7 @@ const triggerAllAssessments = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   dashboard,
   listAssessments,
   viewAssessment,

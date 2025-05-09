@@ -1,6 +1,6 @@
 // Unassessed URLs Controller for PrivacyLens backend
 
-const db = require("../utils/db");
+import * as db from "../utils/db.cjs";
 
 /**
  * Report an unassessed URL
@@ -271,7 +271,7 @@ const updateSuggestedPolicyUrls = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   reportUnassessed,
   getUnassessedUrls,
   updateUnassessedStatus,

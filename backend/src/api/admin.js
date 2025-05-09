@@ -1,14 +1,14 @@
 // Admin Routes for PrivacyLens backend
 
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
 // Import controllers
-const authController = require("../controllers/authController");
-const adminController = require("../controllers/adminController");
+import * as authController from "../controllers/authController.js";
+import * as adminController from "../controllers/adminController.js";
 
 // Import middleware
-const { isAuthenticated } = require("../middleware/auth");
+import { isAuthenticated } from "../middleware/auth.js";
 
 /**
  * Authentication routes
@@ -85,4 +85,4 @@ router.delete("/users/:id", isAuthenticated, adminController.deleteUser);
  */
 router.get("/audit-logs", isAuthenticated, adminController.auditLogs);
 
-module.exports = router;
+export default router;

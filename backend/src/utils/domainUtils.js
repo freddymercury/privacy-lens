@@ -5,7 +5,7 @@
  * @param {string} hostname - The hostname to normalize (e.g., "legal.yahoo.com")
  * @returns {string} - The normalized domain (e.g., "yahoo.com")
  */
-function getNormalizedDomain(hostname) {
+export function getNormalizedDomain(hostname) {
   // If hostname is null or undefined, return empty string
   if (!hostname) {
     return "";
@@ -54,7 +54,7 @@ function getNormalizedDomain(hostname) {
  * @param {string} url - The URL to normalize (e.g., "https://legal.yahoo.com/privacy")
  * @returns {string} - The normalized domain (e.g., "yahoo.com")
  */
-function normalizeUrl(url) {
+export function normalizeUrl(url) {
   try {
     // Handle null, undefined, or empty strings
     if (!url) {
@@ -105,7 +105,7 @@ function normalizeUrl(url) {
  * @param {string} url - The URL or domain to check
  * @returns {boolean} - True if the domain is a Google domain, false otherwise
  */
-function isGoogleDomain(url) {
+export function isGoogleDomain(url) {
   if (!url) return false;
   
   const normalizedDomain = normalizeUrl(url);
@@ -132,8 +132,4 @@ function isGoogleDomain(url) {
   return googleDomains.some(domain => normalizedDomain === domain || normalizedDomain.endsWith('.' + domain));
 }
 
-module.exports = {
-  getNormalizedDomain,
-  normalizeUrl,
-  isGoogleDomain
-};
+// Using named exports, no default export needed unless preferred.

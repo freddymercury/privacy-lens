@@ -1,11 +1,12 @@
 // Assessment Trigger Service for PrivacyLens backend
 // Handles automated processing of unassessed URLs
 
-const db = require("../utils/db"); // Make sure addPolicyForArchiving is exported from db.js
-const llmService = require("./llmService");
-const { normalizeUrl } = require("../utils/domainUtils");
-const { supabaseServiceRole } = require("../utils/supabaseClient"); // Import service role client
-const { findPrivacyPolicyUrl } = require("./policyFinderService"); // Import the new service
+import * as db from "../utils/db.cjs"; // Make sure addPolicyForArchiving is exported from db.js
+import llmService from "./llmService.js";
+import { normalizeUrl } from "../utils/domainUtils.js";
+import { supabaseServiceRole } from "../utils/supabaseClient.js"; // Import service role client
+import policyFinderService from "./policyFinderService.js"; // Import the new service
+const { findPrivacyPolicyUrl } = policyFinderService;
 
 // Global set to track URLs currently being processed
 const processingUrls = new Set();
@@ -534,7 +535,7 @@ async function processSingleUrl(url) {
   }
 }
 
-module.exports = {
+export {
   processUnassessedUrls,
   processUnassessedUrl,
   processSingleUrl,

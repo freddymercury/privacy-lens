@@ -1,6 +1,8 @@
 // LLM Service for PrivacyLens backend
 
-const db = require('../utils/db');
+import * as db from '../utils/db.cjs';
+import crypto from 'crypto'; // Added for computeTextHash
+import axios from 'axios'; // Added for extractUserAgreement
 
 // Check if we're running in a test environment
 const isTestEnvironment =
@@ -8,35 +10,43 @@ const isTestEnvironment =
 
 let OpenAI, llm;
 
-if (!isTestEnvironment) {
-  try {
-    // Only import and initialize OpenAI in non-test environments
-    const llamaindex = require("llamaindex");
-    OpenAI = llamaindex.OpenAI;
+// Initialize LLM
+const initializeLLM = async () => {
+  if (!isTestEnvironment) {
+    try {
+      // Only import and initialize OpenAI in non-test environments
+      const llamaindex = await import("llamaindex");
+      OpenAI = llamaindex.OpenAI;
 
-    // Initialize OpenAI as the LLM provider
-    llm = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      model: process.env.LLM_MODEL || "gpt-4",
-      temperature: 0.2, // Lower temperature for more consistent results
-    });
-  } catch (error) {
-    console.error("Error initializing LLM:", error);
-    // Provide a minimal mock for development without API keys
+      // Initialize OpenAI as the LLM provider
+      llm = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+        model: process.env.LLM_MODEL || "gpt-4",
+        temperature: 0.2, // Lower temperature for more consistent results
+      });
+    } catch (error) {
+      console.error("Error initializing LLM:", error);
+      // Provide a minimal mock for development without API keys
+      llm = {
+        complete: async () => ({
+          text: '{"categories":{},"overallRisk":"Unknown","summary":"Mock response"}',
+        }),
+      };
+    }
+  } else {
+    // Provide a minimal mock for tests
     llm = {
       complete: async () => ({
         text: '{"categories":{},"overallRisk":"Unknown","summary":"Mock response"}',
       }),
     };
   }
-} else {
-  // Provide a minimal mock for tests
-  llm = {
-    complete: async () => ({
-      text: '{"categories":{},"overallRisk":"Unknown","summary":"Mock response"}',
-    }),
-  };
-}
+};
+
+// Initialize LLM immediately
+initializeLLM().catch(err => {
+  console.error("Failed to initialize LLM:", err);
+});
 
 /**
  * Privacy risk categories
@@ -295,10 +305,6 @@ Respond with JSON:
  * @param {string} text - Text to hash
  * @returns {string} - SHA-256 hash
  */
-const computeTextHash = (text) => {
-  const crypto = require("crypto");
-  return crypto.createHash("sha256").update(text).digest("hex");
-};
 
 /**
  * Extract text content from HTML
@@ -326,6 +332,15 @@ function extractTextFromHtml(html) {
 
   return text;
 }
+
+/**
+ * Compute SHA-256 hash of text
+ * @param {string} text - Text to hash
+ * @returns {string} - SHA-256 hash
+ */
+const computeTextHash = (text) => {
+  return crypto.createHash("sha256").update(text).digest("hex");
+};
 
 // Exported service object
 const llmService = {
@@ -604,7 +619,6 @@ async function extractUserAgreement(url) {
       try {
         console.log(`[LLMService] Trying path: ${agreementUrl}`);
 
-        const axios = require("axios");
         const response = await axios.get(agreementUrl, {
           timeout: 15000, // 15 second timeout (increased from 10)
           headers: {
@@ -672,7 +686,6 @@ async function extractUserAgreement(url) {
           `[LLMService] Trying direct Google privacy URL: ${googlePrivacyUrl}`
         );
 
-        const axios = require("axios");
         const response = await axios.get(googlePrivacyUrl, {
           timeout: 15000,
           headers: {
@@ -750,4 +763,24 @@ We collect information to provide better services to all our users — from figu
   }
 }
 
-module.exports = llmService;
+const GOOGLE_AGREEMENT_PATHS = [ // Added this missing constant
+  "/policies/privacy/",
+  "/privacy/",
+  "/policies/terms/",
+  "/terms/",
+];
+
+const COMMON_AGREEMENT_PATHS = [ // Added this missing constant
+  "/privacy-policy",
+  "/privacy_policy",
+  "/privacypolicy",
+  "/privacy",
+  "/terms-of-service",
+  "/terms_of_service",
+  "/termsofservice",
+  "/terms",
+  "/legal/privacy",
+  "/legal/terms",
+];
+
+export default llmService;

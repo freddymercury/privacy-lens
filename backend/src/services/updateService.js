@@ -1,6 +1,6 @@
 // Update Service for PrivacyLens
-const db = require('../utils/db');
-const semver = require('semver');
+import * as db from '../utils/db.cjs';
+import semver from 'semver';
 
 /**
  * Check for available updates
@@ -194,7 +194,7 @@ const createUpdate = async (updateData) => {
   }
 };
 
-module.exports = {
+export {
   checkForUpdates,
   applyUpdate,
   getUpdateHistory,
