@@ -1,5 +1,5 @@
 import axios from 'axios'; // For making HEAD requests
-// import psl from 'psl'; // psl.get(hostname) can be used if re-checking domain constraints is needed
+import { linkFilterLogger as logger } from './logger.js';
 
 const DEFAULT_USER_AGENT = 'PrivacyLensBot/1.0 (+https://privacylens.dev)';
 const DEFAULT_TIMEOUT = 10000; // 10 seconds for HEAD requests
@@ -45,7 +45,7 @@ export async function filterLinks(urls, options = {}) {
       // Check 1: Size
       const contentLength = response.headers['content-length'];
       if (contentLength && parseInt(contentLength, 10) > maxSizeBytes) {
-        console.log(`LinkFilter: ${url} rejected (size ${contentLength} > ${maxSizeBytes})`);
+        logger.info(`${url} rejected (size ${contentLength} > ${maxSizeBytes})`);
         if (requestDelayMs > 0) await new Promise(resolve => setTimeout(resolve, requestDelayMs));
         continue;
       }
@@ -53,7 +53,7 @@ export async function filterLinks(urls, options = {}) {
       // Check 2: MIME type
       const contentTypeHeader = response.headers['content-type'];
       if (!contentTypeHeader) {
-        console.log(`LinkFilter: ${url} rejected (no content-type header)`);
+        logger.info(`${url} rejected (no content-type header)`);
         if (requestDelayMs > 0) await new Promise(resolve => setTimeout(resolve, requestDelayMs));
         continue;
       }
@@ -62,7 +62,7 @@ export async function filterLinks(urls, options = {}) {
       const isAllowedMime = allowedMimeTypes.some(allowedType => mimeType === allowedType);
 
       if (!isAllowedMime) {
-        console.log(`LinkFilter: ${url} rejected (MIME type ${mimeType} not allowed)`);
+        logger.info(`${url} rejected (MIME type ${mimeType} not allowed)`);
         if (requestDelayMs > 0) await new Promise(resolve => setTimeout(resolve, requestDelayMs));
         continue;
       }
@@ -78,7 +78,7 @@ export async function filterLinks(urls, options = {}) {
       } else if (error.request) {
         errorMessage = 'no response received';
       }
-      console.warn(`LinkFilter: Error fetching HEAD for ${url} (${errorMessage}). Skipping.`);
+      logger.warn(`Error fetching HEAD for ${url} (${errorMessage}). Skipping.`);
     }
 
     // Delay between requests

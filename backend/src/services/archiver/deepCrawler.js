@@ -5,7 +5,7 @@ import { dedupByHash } from './dedup.js';
 import { assembleSnapshot } from './concatAssembler.js';
 import { getNormalizedDomain } from '../../utils/domainUtils.js'; // Assuming this path from domain-normalization.md
 import { sha256, uploadToStorage, generateStoragePath } from './utils.js'; // For hashing final snapshot & storage
-// import { upsertVersionAndAssets } from './versioner.js'; // This will be the next step
+import { deepCrawlerLogger as logger } from './logger.js';
 
 const DEFAULT_KEYWORD_REGEX = /(privacy|policy|dpa|gdpr|ccpa|cookies|terms|agreement|legal|notice)/i;
 const S3_BUCKET_NAME = process.env.S3_BUCKET || 'privacylens-archive'; // From .env
@@ -45,7 +45,7 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
 
   const policyDomain = getNormalizedDomain(new URL(rootUrl).hostname);
   if (!policyDomain) {
-    console.error(`DeepCrawler: Could not normalize domain for root URL: ${rootUrl}`);
+    logger.error(`Could not normalize domain for root URL: ${rootUrl}`);
     return null;
   }
 
@@ -54,15 +54,15 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
   const allFetchedAssets = []; // Stores { url, rawBody, depth, mimeType, bytes, asset_hash, finalUrl }
 
   // 0. Pre-check URL accessibility
-  console.log(`DeepCrawler: Starting crawl for ${rootUrl} (Domain: ${policyDomain}, Type: ${policyType})`);
+  logger.info(`Starting crawl for ${rootUrl} (Domain: ${policyDomain}, Type: ${policyType})`);
   const accessibilityCheck = await checkUrlAccessibility(rootUrl, { userAgent, timeout: requestTimeout / 2 });
   
   if (!accessibilityCheck.accessible) {
-    console.error(`DeepCrawler: Root URL ${rootUrl} is not accessible: ${accessibilityCheck.error}`);
-    console.log(`DeepCrawler: Attempting full fetch anyway as HEAD requests are sometimes blocked...`);
+    logger.error(`Root URL ${rootUrl} is not accessible: ${accessibilityCheck.error}`);
+    logger.info(`Attempting full fetch anyway as HEAD requests are sometimes blocked...`);
     // Continue with fetch attempt despite HEAD failure - some sites block HEAD but allow GET
   } else {
-    console.log(`DeepCrawler: Root URL ${rootUrl} is accessible (status: ${accessibilityCheck.status})`);
+    logger.info(`Root URL ${rootUrl} is accessible (status: ${accessibilityCheck.status})`);
   }
 
   // 1. Fetch root asset (depth 0)
@@ -73,16 +73,16 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
   });
 
   if (rootAssetFetch.error || !rootAssetFetch.rawBody) {
-    console.error(`DeepCrawler: Failed to fetch root URL ${rootUrl}: ${rootAssetFetch.error}`);
+    logger.error(`Failed to fetch root URL ${rootUrl}: ${rootAssetFetch.error}`);
     
     if (rootAssetFetch.errorDetails) {
-      console.debug(`DeepCrawler: Detailed error for root URL:`, JSON.stringify(rootAssetFetch.errorDetails, null, 2));
+      logger.debug(`Detailed error for root URL:`, JSON.stringify(rootAssetFetch.errorDetails, null, 2));
     }
     
     // Try with an alternative user agent as a last resort if not already tried
     if (!userAgent || userAgent === DEFAULT_USER_AGENT) {
       const altUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
-      console.log(`DeepCrawler: Trying one last fetch with alternative user agent for ${rootUrl}`);
+      logger.info(`Trying one last fetch with alternative user agent for ${rootUrl}`);
       
       const lastResortFetch = await fetchAsset(rootUrl, {
         userAgent: altUserAgent,
@@ -91,7 +91,7 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
       });
       
       if (!lastResortFetch.error && lastResortFetch.rawBody) {
-        console.log(`DeepCrawler: Last resort fetch with alternative user agent succeeded for ${rootUrl}`);
+        logger.info(`Last resort fetch with alternative user agent succeeded for ${rootUrl}`);
         // Continue with this successful fetch
         rootAssetFetch.rawBody = lastResortFetch.rawBody;
         rootAssetFetch.finalUrl = lastResortFetch.finalUrl;
@@ -109,7 +109,7 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
   if (rootAssetFetch.mimeType !== 'text/html') {
       // If root is not HTML, we can't extract links from it.
       // We'll still archive it as a single-asset policy.
-      console.warn(`DeepCrawler: Root URL ${rootUrl} is not HTML (${rootAssetFetch.mimeType}). Archiving as single asset.`);
+      logger.warn(`Root URL ${rootUrl} is not HTML (${rootAssetFetch.mimeType}). Archiving as single asset.`);
       // Add to allFetchedAssets and proceed to snapshot/versioning
        const rootAsset = {
         url: rootUrl, // Original requested URL
@@ -182,11 +182,11 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
         await new Promise(resolve => setTimeout(resolve, crawlDelayMs));
       }
       
-      console.log(`DeepCrawler: Fetching depth ${currentDepth + 1} asset: ${linkUrl}`);
+      logger.info(`Fetching depth ${currentDepth + 1} asset: ${linkUrl}`);
       const assetFetch = await fetchAsset(linkUrl, { userAgent, timeout: requestTimeout, maxSizeBytes: maxAssetSizeBytes });
 
       if (assetFetch.error || !assetFetch.rawBody) {
-        console.warn(`DeepCrawler: Failed to fetch asset ${linkUrl}: ${assetFetch.error || 'No body'}`);
+        logger.warn(`Failed to fetch asset ${linkUrl}: ${assetFetch.error || 'No body'}`);
         continue;
       }
 
@@ -211,14 +211,14 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
   // 3. De-duplicate assets
   // dedupByHash will add/update 'asset_hash' on each asset object
   const uniqueAssets = await dedupByHash(allFetchedAssets); 
-  console.log(`DeepCrawler: Fetched ${allFetchedAssets.length} assets, ${uniqueAssets.length} unique after dedup.`);
+  logger.info(`Fetched ${allFetchedAssets.length} assets, ${uniqueAssets.length} unique after dedup.`);
 
   // 4. Assemble snapshot (concatenated text and HTML)
   // The first asset in uniqueAssets should be the root if it was HTML, or the only asset.
   // Ensure rootAsset is correctly identified for assembleSnapshot if it was non-HTML initially.
   const actualRootAssetForAssembly = uniqueAssets.find(a => a.depth === 0 && a.url === rootUrl);
   if (!actualRootAssetForAssembly) {
-      console.error("DeepCrawler: Root asset missing after processing. This should not happen.");
+      logger.error("Root asset missing after processing. This should not happen.");
       return null;
   }
   const subAssetsForAssembly = uniqueAssets.filter(a => !(a.depth === 0 && a.url === rootUrl));
@@ -236,7 +236,7 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
   // 7. Database: Insert into policy_versions and policy_assets.
   //    This will likely be handled by a modified versioner.js function.
 
-  console.log(`DeepCrawler: Crawl finished for ${rootUrl}. Snapshot assembled.`);
+  logger.info(`Crawl finished for ${rootUrl}. Snapshot assembled.`);
   
   return {
     rootAsset: actualRootAssetForAssembly, // The root asset object
@@ -252,9 +252,9 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
 // performDeepCrawl('https://example.com/privacy', 'privacy', { maxDepth: 1, includePdfs: true })
 //   .then(result => {
 //     if (result) {
-//       console.log('Crawl successful:', result.snapshotData.concatText.substring(0, 200));
-//       console.log('Assets:', result.snapshotData.allAssetsCleanText.map(a => ({url: a.url, hash: a.asset_hash, depth: a.depth})));
+//       logger.info('Crawl successful:', result.snapshotData.concatText.substring(0, 200));
+//       logger.info('Assets:', result.snapshotData.allAssetsCleanText.map(a => ({url: a.url, hash: a.asset_hash, depth: a.depth})));
 //     } else {
-//       console.log('Crawl failed.');
+//       logger.info('Crawl failed.');
 //     }
 //   });

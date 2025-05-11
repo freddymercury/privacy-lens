@@ -4,6 +4,24 @@
 const supabaseWrapper = require("./supabaseClientWrapper.cjs");
 const domainUtilsWrapper = require("./domainUtilsWrapper.cjs");
 
+// Logger placeholder until dynamic import completes
+let logger = {
+  info: (...args) => console.log('[DB]', ...args),
+  error: (...args) => console.error('[DB]', ...args),
+  warn: (...args) => console.warn('[DB]', ...args)
+};
+
+// Dynamic import for logger
+(async () => {
+  try {
+    const loggerModule = await import('../lib/logger-phase3.js');
+    const createLogger = loggerModule.createLogger;
+    logger = createLogger('DB');
+  } catch (error) {
+    console.error('[DB] Error loading logger:', error);
+  }
+})();
+
 // Create references to the functions/objects we'll use throughout this module
 let supabaseServiceRole;
 let createAuthedClient;
@@ -27,10 +45,10 @@ const initPromise = (async () => {
     createAuthedClient = supabaseWrapper.createAuthedClient;
     normalizeUrl = domainUtilsWrapper.normalizeUrl;
     
-    console.log('[DB] Initialization complete for both supabaseWrapper and domainUtilsWrapper');
+    logger.info('Initialization complete for both supabaseWrapper and domainUtilsWrapper');
     isInitialized = true;
   } catch (error) {
-    console.error('[DB] Error during initialization:', error);
+    logger.error('Error during initialization:', { error });
     initError = error;
     throw error;
   }
@@ -62,8 +80,8 @@ const getAssessment = async (url) => {
   
   // Normalize the URL to get the base domain
   const normalizedUrl = normalizeUrl(url);
-  console.log(
-    `[DB] Getting assessment for URL: ${url}, Normalized: ${normalizedUrl} (using service role)`
+  logger.info(
+    `Getting assessment for URL: ${url}, Normalized: ${normalizedUrl} (using service role)`
   );
 
   // Using service role, assuming public read access to assessments or system lookup
@@ -97,8 +115,8 @@ const upsertAssessment = async (assessment) => {
   const originalUrl = assessment.url;
   const normalizedUrl = normalizeUrl(originalUrl);
 
-  console.log(
-    `[DB] Upserting assessment for URL: ${originalUrl}, Normalized: ${normalizedUrl} (using service role)`
+  logger.info(
+    `Upserting assessment for URL: ${originalUrl}, Normalized: ${normalizedUrl} (using service role)`
   );
 
   // Create a new assessment object with the normalized URL
@@ -132,8 +150,8 @@ const addToUnassessedQueue = async (url) => {
   
   // Normalize the URL
   const normalizedUrl = normalizeUrl(url);
-  console.log(
-    `[DB] Adding URL to unassessed queue: ${url}, Normalized: ${normalizedUrl} (using service role)`
+  logger.info(
+    `Adding URL to unassessed queue: ${url}, Normalized: ${normalizedUrl} (using service role)`
   );
 
   // Check if normalized URL already exists in queue (using service role)
@@ -144,8 +162,8 @@ const addToUnassessedQueue = async (url) => {
     .single();
 
   if (existing) {
-    console.log(
-      `[DB] URL already exists in unassessed queue: ${normalizedUrl}`
+    logger.info(
+      `URL already exists in unassessed queue: ${normalizedUrl}`
     );
     return existing;
   }
@@ -204,8 +222,8 @@ const getUnassessedUrls = async (status = null, limit = 100) => {
 const updateUnassessedStatus = async (url, status) => {
   // Normalize the URL
   const normalizedUrl = normalizeUrl(url);
-  console.log(
-    `[DB] Updating unassessed URL status: ${url}, Normalized: ${normalizedUrl}, Status: ${status} (using service role)`
+  logger.info(
+    `Updating unassessed URL status: ${url}, Normalized: ${normalizedUrl}, Status: ${status} (using service role)`
   );
 
   // Use service role for system/admin task
@@ -232,8 +250,8 @@ const removeFromUnassessedQueue = async (url) => {
   try {
     // Normalize the URL
     const normalizedUrl = normalizeUrl(url);
-    console.log(
-      `[DB] Removing URL from unassessed queue: ${url}, Normalized: ${normalizedUrl} (using service role)`
+    logger.info(
+      `Removing URL from unassessed queue: ${url}, Normalized: ${normalizedUrl} (using service role)`
     );
 
     // First check if the URL exists in the queue (using service role)
@@ -246,17 +264,17 @@ const removeFromUnassessedQueue = async (url) => {
     if (checkError) {
       if (checkError.code === "PGRST116") {
         // Entry doesn't exist, which is fine for removal.
-        console.log(`[DB] URL not found in queue, nothing to remove: ${normalizedUrl}`);
+        logger.info(`URL not found in queue, nothing to remove: ${normalizedUrl}`);
         return; // Exit gracefully
       } else {
         // For any other error during the check, re-throw it.
-        console.error(`[DB] Error checking existence for ${normalizedUrl}:`, checkError);
+        logger.error(`Error checking existence for ${normalizedUrl}:`, { error: checkError });
         throw checkError; 
       }
     }
 
     if (!existingEntry) {
-      console.log(`[DB] URL not found in unassessed queue: ${normalizedUrl}`);
+      logger.info(`URL not found in unassessed queue: ${normalizedUrl}`);
       return;
     }
 
@@ -267,20 +285,20 @@ const removeFromUnassessedQueue = async (url) => {
       .eq("url", normalizedUrl);
 
     if (deleteError) {
-      console.error(
-        `[DB] Error deleting URL from unassessed queue: ${normalizedUrl}`,
-        deleteError
+      logger.error(
+        `Error deleting URL from unassessed queue: ${normalizedUrl}`,
+        { error: deleteError }
       );
       throw deleteError;
     }
 
-    console.log(
-      `[DB] Successfully removed URL from unassessed queue: ${normalizedUrl}`
+    logger.info(
+      `Successfully removed URL from unassessed queue: ${normalizedUrl}`
     );
   } catch (error) {
-    console.error(
-      `[DB] Error in removeFromUnassessedQueue for URL ${url}:`,
-      error
+    logger.error(
+      `Error in removeFromUnassessedQueue for URL ${url}:`,
+      { error }
     );
     throw error;
   }
@@ -342,8 +360,8 @@ const createAuditLog = async (logEntry) => {
 const updateSuggestedPolicyUrls = async (url, policyUrls) => {
   // Normalize the URL
   const normalizedUrl = normalizeUrl(url);
-  console.log(
-    `[DB] Updating suggested policy URLs for: ${url}, Normalized: ${normalizedUrl} (using service role)`
+  logger.info(
+    `Updating suggested policy URLs for: ${url}, Normalized: ${normalizedUrl} (using service role)`
   );
 
   // Use service role for system/admin task
@@ -366,7 +384,7 @@ const updateSuggestedPolicyUrls = async (url, policyUrls) => {
  * @returns {Promise<Object>} - Object with domains as keys and assessments as values
  */
 const getAllAssessments = async () => {
-  console.log('[DB] Getting all assessments (using service role)');
+  logger.info('Getting all assessments (using service role)');
 
   // Use service role assuming public read or admin view
   const { data, error } = await supabaseServiceRole
@@ -390,7 +408,7 @@ const getAllAssessments = async () => {
     };
   }
   
-  console.log(`[DB] Retrieved ${Object.keys(assessments).length} assessments`);
+  logger.info(`Retrieved ${Object.keys(assessments).length} assessments`);
   
   return assessments;
 };
@@ -449,11 +467,11 @@ const getUserActiveTokens = async (userId, userAuthToken) => {
   if (userAuthToken) {
     // If token is provided, use RLS client
     client = createAuthedClient(userAuthToken);
-    console.log(`[DB] Getting active tokens for user ${userId} (using RLS client)`);
+    logger.info(`Getting active tokens for user ${userId} (using RLS client)`);
   } else {
     // If no token (e.g., internal call during token generation), use service role
     client = supabaseServiceRole;
-    console.warn(`[DB] Getting active tokens for user ${userId} (using service role - internal call assumed)`);
+    logger.warn(`Getting active tokens for user ${userId} (using service role - internal call assumed)`);
   }
 
   // RLS policy `auth.uid() = user_id` should enforce this if using userSupabase
@@ -491,7 +509,7 @@ const updateTokenLastUsed = async (tokenId /*, userAuthToken - No longer needed 
 
   if (error) {
     // If the service role update fails (e.g., token ID doesn't exist), log and throw
-    console.error(`[DB] Service role failed to update last_used_at for token ID ${tokenId}:`, error);
+    logger.error(`Service role failed to update last_used_at for token ID ${tokenId}:`, { error });
     throw error;
   }
 
@@ -509,7 +527,7 @@ const revokeToken = async (tokenId /*, userAuthToken - No longer needed */) => {
   // Rationale: The calling context (e.g., authService.refreshToken) should have already
   // verified the token's validity and ownership before attempting revocation.
   // Using RLS here caused issues similar to updateTokenLastUsed.
-  console.log(`[DB] Revoking token ${tokenId} (using service role)`);
+  logger.info(`Revoking token ${tokenId} (using service role)`);
   const { data, error } = await supabaseServiceRole // Use service role client
     .from('user_tokens')
     .update({ revoked: true })
@@ -626,11 +644,11 @@ const updateUser = async (userId, userData, userAuthToken) => {
 const getUserSubscription = async (userId, userAuthToken) => {
   if (!userAuthToken) throw new Error("Authentication token required for getUserSubscription");
   
-  console.log(`[DB getUserSubscription] Attempting to fetch subscription for userId: ${userId}`);
-  // console.log(`[DB getUserSubscription] Using token starting with: ${userAuthToken.substring(0, 10)}...`); // Optional: Log part of token for debugging
+  logger.info(`Attempting to fetch subscription for userId: ${userId}`);
+  // logger.info(`Using token starting with: ${userAuthToken.substring(0, 10)}...`); // Optional: Log part of token for debugging
   
   // const userSupabase = createAuthedClient(userAuthToken); // RLS Client - REPLACED WITH SERVICE ROLE BELOW
-  console.log(`[DB getUserSubscription] Bypassing RLS: Using Service Role client for userId: ${userId}`);
+  logger.info(`Bypassing RLS: Using Service Role client for userId: ${userId}`);
 
   // RLS policy `auth.uid() = user_id` is bypassed by using supabaseServiceRole
   let data, error;
@@ -650,22 +668,22 @@ const getUserSubscription = async (userId, userAuthToken) => {
     error = queryResult.error;
 
   } catch (queryError) {
-    console.error(`[DB getUserSubscription] EXCEPTION during query for userId ${userId}:`, queryError);
+    logger.error(`EXCEPTION during query for userId ${userId}:`, { error: queryError });
     throw queryError; // Re-throw unexpected exceptions
   }
 
   if (error) {
     // Log Supabase-specific errors returned in the 'error' object
-    console.error(`[DB getUserSubscription] Supabase error fetching subscription for userId ${userId}:`, error);
+    logger.error(`Supabase error fetching subscription for userId ${userId}:`, { error });
     // Throw the error to make it visible upstream
     throw error; 
   } 
   
   // Log the result before returning
   if (data && data.length > 0) {
-    console.log(`[DB getUserSubscription] Found subscription for userId ${userId}:`, data[0]);
+    logger.info(`Found subscription for userId ${userId}:`, data[0]);
   } else {
-    console.log(`[DB getUserSubscription] No active/trialing subscription found for userId ${userId}. Raw data:`, data);
+    logger.info(`No active/trialing subscription found for userId ${userId}. Raw data:`, data);
   }
 
   // Store the result from the RLS query
@@ -674,7 +692,7 @@ const getUserSubscription = async (userId, userAuthToken) => {
   // --- DIAGNOSTIC STEP REMOVED as we are now using Service Role directly ---
   /* 
   if (!subscription && !error) { 
-    console.warn(`[DB getUserSubscription DIAGNOSTIC] ...`);
+    logger.warn(`[DB getUserSubscription DIAGNOSTIC] ...`);
     try {
       const { data: serviceData, error: serviceError } = await supabaseServiceRole
         .from('subscriptions')
@@ -757,14 +775,9 @@ const getSubscriptionByStripeId = async (stripeSubscriptionId) => {
   if (error) {
     // Log unexpected errors, but PGRST116 (no rows) is handled by maybeSingle returning null.
     // Errors from multiple rows are avoided by limit(1).maybeSingle().
-    console.error(`[DB Error] getSubscriptionByStripeId failed unexpectedly for ${stripeSubscriptionId}:`, error);
+    logger.error(`getSubscriptionByStripeId failed unexpectedly for ${stripeSubscriptionId}:`, { error });
     throw error;
-    /* Old check removed as maybeSingle handles the null case:
-    if (error.code === 'PGRST116') {
-      return null;
-    }
-    throw error; */
-  } // <-- This closing brace should be outside the comment
+  }
 
   return data;
 };
@@ -915,7 +928,6 @@ const getUserUpdateHistory = async (userId, deviceId, userAuthToken) => {
 
 /**
  * Add or update a policy entry for the archiver job.
- * Uses upsert to avoid duplicates based on domain_name and policy_type.
  * @param {Object} policyData - Data for the policy.
  * @param {string} policyData.domainName - The normalized domain name.
  * @param {string} policyData.policyType - The type of policy (e.g., 'privacy', 'terms').
@@ -923,87 +935,121 @@ const getUserUpdateHistory = async (userId, deviceId, userAuthToken) => {
  * @returns {Promise<Object>} - The upserted policy data.
  */
 const addPolicyForArchiving = async ({ domainName, policyType = 'privacy', url }) => {
-  const normalizedDomain = normalizeUrl(domainName); // Ensure domain is normalized
-  console.log(`[DB] Adding/Updating policy for archiving: Domain: ${normalizedDomain}, Type: ${policyType}, URL: ${url}`);
-
-  const { data, error } = await supabaseServiceRole
-    .from('policies')
-    .upsert(
-      {
+  try {
+    const normalizedDomain = normalizeUrl(domainName);
+    logger.info(`Adding policy for archiving: ${normalizedDomain} (${policyType}): ${url}`);
+    
+    const { data, error } = await supabaseServiceRole
+      .from('policies')
+      .upsert({
         domain_name: normalizedDomain,
         policy_type: policyType,
         url: url,
-        // Add other relevant fields if needed, e.g., is_active: true
-        // last_discovered_at: new Date().toISOString() // Optional: track discovery time
-      },
-      {
-        // Define the conflict target: combination of domain and type
-        onConflict: 'domain_name, policy_type',
-        // If conflict, update the URL (and potentially other fields like last_discovered_at)
-        // Set ignoreDuplicates to false to perform the update on conflict
-        ignoreDuplicates: false
-      }
-    )
-    .select()
-    .single();
-
-  if (error) {
-    console.error(`[DB] Error adding/updating policy for archiving (${normalizedDomain}, ${policyType}):`, error);
+        is_active: true,
+        last_updated: new Date().toISOString()
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      logger.error(`Error adding policy for archiving: ${normalizedDomain} (${policyType}): ${url}`, { error });
+      throw error;
+    }
+    
+    return data;
+  } catch (error) {
+    logger.error(`Exception in addPolicyForArchiving for ${domainName}:`, { error });
     throw error;
   }
-
-  console.log(`[DB] Successfully added/updated policy for archiving: ${normalizedDomain} (${policyType})`);
-  return data;
 };
 
 /**
- * Get a single unassessed URL entry by its URL
- * @param {string} url - The URL to retrieve
- * @returns {Promise<Object|null>} - The unassessed URL entry or null if not found
+ * Get unassessed entry by URL
+ * @param {string} url - The URL to get entry for
+ * @returns {Promise<Object|null>} - Unassessed entry or null if not found
  */
 const getUnassessedEntryByUrl = async (url) => {
-  const normalizedUrl = normalizeUrl(url);
-  console.log(`[DB] Getting unassessed entry for URL: ${url}, Normalized: ${normalizedUrl}`);
-
-  const { data, error } = await supabaseServiceRole
-    .from("unassessed_urls")
-    .select("*")
-    .eq("url", normalizedUrl)
-    .maybeSingle(); // Use maybeSingle to return null if not found, instead of erroring
-
-  if (error) {
-    // Log unexpected errors, but PGRST116 (no rows) is handled by maybeSingle returning null.
-    console.error(`[DB Error] getUnassessedEntryByUrl failed unexpectedly for ${normalizedUrl}:`, error);
+  try {
+    // Ensure initialization is complete before proceeding
+    await ensureInitialized();
+    
+    // Normalize the URL
+    const normalizedUrl = normalizeUrl(url);
+    logger.info(`Getting unassessed entry for URL: ${url}, Normalized: ${normalizedUrl} (using service role)`);
+    
+    // Query the unassessed_urls table for the normalized URL
+    const { data, error } = await supabaseServiceRole
+      .from("unassessed_urls")
+      .select("*")
+      .eq("url", normalizedUrl)
+      .single();
+    
+    if (error) {
+      if (error.code === "PGRST116") {
+        // PGRST116 is the error code for "no rows returned"
+        logger.info(`No unassessed entry found for URL: ${normalizedUrl}`);
+        return null;
+      }
+      logger.error(`Error getting unassessed entry for URL: ${normalizedUrl}`, { error });
+      throw error;
+    }
+    
+    return data;
+  } catch (error) {
+    logger.error(`Exception in getUnassessedEntryByUrl for URL ${url}:`, { error });
     throw error;
   }
-  if (!data) {
-    console.log(`[DB] No unassessed entry found for URL: ${normalizedUrl}`);
-  }
-  return data;
 };
 
+/**
+ * Get all active policies for a domain
+ * @param {string} domainName - The domain name to get policies for
+ * @returns {Promise<Array>} - Array of policy objects
+ */
+const getPoliciesForDomain = async (domainName) => {
+  try {
+    const normalizedDomain = normalizeUrl(domainName);
+    logger.info(`Getting policies for domain: ${normalizedDomain}`);
+    
+    const { data, error } = await supabaseServiceRole
+      .from('policies')
+      .select('*')
+      .eq('domain_name', normalizedDomain)
+      .eq('is_active', true);
+    
+    if (error) {
+      logger.error(`Error getting policies for domain: ${normalizedDomain}`, { error });
+      throw error;
+    }
+    
+    return data || [];
+  } catch (error) {
+    logger.error(`Exception in getPoliciesForDomain for ${domainName}:`, { error });
+    throw error;
+  }
+};
 
+// Export all functions
 module.exports = {
-  // Note: supabase (the old generic client) is no longer exported
   getAssessment,
-  getAllAssessments,
   upsertAssessment,
   addToUnassessedQueue,
   getUnassessedUrls,
   updateUnassessedStatus,
   removeFromUnassessedQueue,
   getUserByUsername,
-  getUserByEmail,
-  getUserById,
-  createUser,
-  updateUser,
   createAuditLog,
   updateSuggestedPolicyUrls,
+  getAllAssessments,
   storeToken,
   getTokenByHash,
   getUserActiveTokens,
   updateTokenLastUsed,
   revokeToken,
+  getUserById,
+  getUserByEmail,
+  createUser,
+  updateUser,
   getUserSubscription,
   createSubscription,
   updateSubscription,
@@ -1014,6 +1060,9 @@ module.exports = {
   createUpdate,
   recordUpdateApplication,
   getUserUpdateHistory,
-  addPolicyForArchiving, // Add the new function here
-  getUnassessedEntryByUrl
+  addPolicyForArchiving,
+  getPoliciesForDomain,
+  getUnassessedEntryByUrl,
+  // Expose initialization promise for other modules to await
+  initializationPromise: initPromise
 };

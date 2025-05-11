@@ -3,6 +3,10 @@ import { supabaseServiceRole } from "../utils/supabaseClient.js";
 import { performDeepCrawl } from "../services/archiver/deepCrawler.js";
 import { upsertDeepVersion } from "../services/archiver/versioner.js";
 import { checkUrlAccessibility } from "../services/archiver/assetFetcher.js";
+import { createLogger } from "../lib/logger-phase3.js";
+
+// Create a logger for this component
+const logger = createLogger('ArchiverJob');
 
 // Default schedule: Run every hour at the beginning of the hour.
 // Can be overridden by ARCHIVE_SCHEDULE environment variable (cron format).
@@ -32,7 +36,7 @@ let job = null; // To hold the scheduled job instance
  * @returns {Promise<Array<{id: string, domain_name: string, policy_type: string, url: string, failure_count: number, last_failure_date: Date}>>} - List of policies.
  */
 async function getPoliciesToScan() {
-  console.log("[ArchiverJob] Fetching policies to scan from database...");
+  logger.info("Fetching policies to scan from database...");
   
   // First, get all policies
   const { data: policies, error } = await supabaseServiceRole
@@ -41,7 +45,7 @@ async function getPoliciesToScan() {
     // TODO: Add filtering if needed, e.g., .eq('is_active', true) or based on last_scanned_at
 
   if (error) {
-    console.error("[ArchiverJob] Error fetching policies:", error);
+    logger.error("Error fetching policies:", { error });
     return [];
   }
   
@@ -62,9 +66,9 @@ async function getPoliciesToScan() {
     .eq("outcome", "error");
   
   if (scanEventsError) {
-    console.error("[ArchiverJob] Error fetching scan events:", scanEventsError);
+    logger.error("Error fetching scan events:", { error: scanEventsError });
     // Continue with policies but without failure tracking
-    console.log(`[ArchiverJob] Found ${policies.length} policies to scan (without failure tracking).`);
+    logger.info(`Found ${policies.length} policies to scan (without failure tracking).`);
     return policies.map(p => ({ ...p, failure_count: 0 }));
   }
   
@@ -97,7 +101,7 @@ async function getPoliciesToScan() {
   // Sort policies to prioritize those with fewer failures
   policiesWithFailureData.sort((a, b) => a.failure_count - b.failure_count);
   
-  console.log(`[ArchiverJob] Found ${policiesWithFailureData.length} policies to scan.`);
+  logger.info(`Found ${policiesWithFailureData.length} policies to scan.`);
   return policiesWithFailureData;
 }
 
@@ -120,10 +124,10 @@ async function logScanFailure(policyId, errorMessage) {
       });
     
     if (error) {
-      console.error(`[ArchiverJob] Error logging scan failure for policy ${policyId}:`, error);
+      logger.error(`Error logging scan failure for policy ${policyId}:`, { error });
     }
   } catch (err) {
-    console.error(`[ArchiverJob] Exception while logging scan failure for policy ${policyId}:`, err);
+    logger.error(`Exception while logging scan failure for policy ${policyId}:`, { error: err });
   }
 }
 
@@ -134,12 +138,12 @@ async function logScanFailure(policyId, errorMessage) {
  */
 async function preCheckUrl(url) {
   try {
-    console.log(`[ArchiverJob] Pre-checking URL accessibility: ${url}`);
+    logger.info(`Pre-checking URL accessibility: ${url}`);
     return await checkUrlAccessibility(url, {
       timeout: CRAWL_REQUEST_TIMEOUT / 2
     });
   } catch (error) {
-    console.error(`[ArchiverJob] Error during URL pre-check for ${url}:`, error);
+    logger.error(`Error during URL pre-check for ${url}:`, { error });
     return { accessible: false, error: error.message };
   }
 }
@@ -149,11 +153,11 @@ async function preCheckUrl(url) {
  * Fetches policies and processes each one sequentially using deep crawl.
  */
 export async function runArchiverScan() {
-  console.log(`[ArchiverJob] Starting scheduled DEEP scan at ${new Date().toISOString()}...`);
+  logger.info(`Starting scheduled DEEP scan at ${new Date().toISOString()}...`);
   const policies = await getPoliciesToScan();
 
   if (!policies || policies.length === 0) {
-    console.log("[ArchiverJob] No policies found to scan. Exiting job run.");
+    logger.info("No policies found to scan. Exiting job run.");
     return;
   }
 
@@ -173,17 +177,19 @@ export async function runArchiverScan() {
   for (const policy of policies) {
     // Skip policies with excessive failures
     if (policy.failure_count >= MAX_FAILURES_BEFORE_SKIP) {
-      console.log(`[ArchiverJob] Skipping policy ${policy.domain_name} (${policy.policy_type}) due to ${policy.failure_count} recent failures. Last failure: ${policy.last_failure_date?.toISOString() || 'unknown'}`);
+      logger.info(`Skipping policy ${policy.domain_name} (${policy.policy_type}) due to ${policy.failure_count} recent failures. Last failure: ${policy.last_failure_date?.toISOString() || 'unknown'}`);
       continue;
     }
     
-    console.log(`[ArchiverJob] Processing policy: ${policy.domain_name} (${policy.policy_type}) - URL: ${policy.url} (Previous failures: ${policy.failure_count})`);
+    logger.info(`Processing policy: ${policy.domain_name} (${policy.policy_type}) - URL: ${policy.url}`, { 
+      previousFailures: policy.failure_count 
+    });
     
     // Pre-check URL accessibility
     const urlCheck = await preCheckUrl(policy.url);
     if (!urlCheck.accessible) {
-      console.warn(`[ArchiverJob] URL pre-check failed for ${policy.url}: ${urlCheck.error}`);
-      console.log(`[ArchiverJob] Will attempt crawl anyway as some sites block HEAD requests but allow GET.`);
+      logger.warn(`URL pre-check failed for ${policy.url}: ${urlCheck.error}`);
+      logger.info(`Will attempt crawl anyway as some sites block HEAD requests but allow GET.`);
       // We don't skip here, as the deep crawler will try with GET and alternative user agents
     }
     
@@ -191,7 +197,7 @@ export async function runArchiverScan() {
       const crawlResult = await performDeepCrawl(policy.url, policy.policy_type, crawlOptions);
 
       if (!crawlResult) {
-        console.warn(`[ArchiverJob] Deep crawl failed or returned no result for ${policy.url}. Skipping versioning.`);
+        logger.warn(`Deep crawl failed or returned no result for ${policy.url}. Skipping versioning.`);
         await logScanFailure(policy.id, `Deep crawl failed or returned no result for ${policy.url}`);
         continue;
       }
@@ -209,10 +215,10 @@ export async function runArchiverScan() {
         // suppressAlert can be added if needed, e.g. for backfill jobs
       });
 
-      console.log(`[ArchiverJob] Result for ${policy.domain_name} (${policy.policy_type}): ${versioningResult.changed ? `Changed (New Version ID: ${versioningResult.versionId})` : 'No Change'}${versioningResult.error ? ` Error: ${versioningResult.error.message}` : ''}`);
+      logger.info(`Result for ${policy.domain_name} (${policy.policy_type}): ${versioningResult.changed ? `Changed (New Version ID: ${versioningResult.versionId})` : 'No Change'}${versioningResult.error ? ` Error: ${versioningResult.error.message}` : ''}`);
 
     } catch (error) {
-      console.error(`[ArchiverJob] Failed to process policy ${policy.id} (${policy.domain_name}):`, error.message, error.stack);
+      logger.error(`Failed to process policy ${policy.id} (${policy.domain_name}):`, { error });
       await logScanFailure(policy.id, `Exception during processing: ${error.message}`);
       // Error logging is handled within upsertDeepVersion via logScanEvent for versioning errors.
       // Crawl errors are logged in performDeepCrawl.
@@ -220,7 +226,7 @@ export async function runArchiverScan() {
     }
   }
 
-  console.log(`[ArchiverJob] Finished scheduled DEEP scan at ${new Date().toISOString()}.`);
+  logger.info(`Finished scheduled DEEP scan at ${new Date().toISOString()}.`);
 }
 
 /**
@@ -228,22 +234,22 @@ export async function runArchiverScan() {
  */
 export function startArchiverJob() {
   if (job) {
-    console.warn("[ArchiverJob] Job already scheduled. Skipping initialization.");
+    logger.warn("Job already scheduled. Skipping initialization.");
     return;
   }
 
-  console.log(`[ArchiverJob] Scheduling policy DEEP archive job with schedule: ${cronSchedule}`);
+  logger.info(`Scheduling policy DEEP archive job with schedule: ${cronSchedule}`);
   job = schedule.scheduleJob(cronSchedule, runArchiverScan);
 
   if (job) {
-    console.log(`[ArchiverJob] Job scheduled successfully. Next invocation: ${job.nextInvocation()}`);
+    logger.info(`Job scheduled successfully. Next invocation: ${job.nextInvocation()}`);
     // Optionally run once immediately on startup:
     // if (process.env.RUN_ARCHIVER_ON_STARTUP === 'true') {
-    //   console.log("[ArchiverJob] Running initial DEEP scan on startup...");
-    //   runArchiverScan().catch(err => console.error("[ArchiverJob] Initial DEEP scan failed:", err));
+    //   logger.info("Running initial DEEP scan on startup...");
+    //   runArchiverScan().catch(err => logger.error("Initial DEEP scan failed:", { error: err }));
     // }
   } else {
-    console.error("[ArchiverJob] Failed to schedule DEEP job!");
+    logger.error("Failed to schedule DEEP job!");
   }
 }
 
@@ -252,18 +258,18 @@ export function startArchiverJob() {
  */
 export function stopArchiverJob() {
   if (job) {
-    console.log("[ArchiverJob] Cancelling scheduled DEEP job...");
+    logger.info("Cancelling scheduled DEEP job...");
     job.cancel();
     job = null;
-    console.log("[ArchiverJob] DEEP Job cancelled.");
+    logger.info("DEEP Job cancelled.");
   } else {
-    console.log("[ArchiverJob] No DEEP job scheduled to cancel.");
+    logger.info("No DEEP job scheduled to cancel.");
   }
 }
 
 // Optional: Handle graceful shutdown
 function gracefulShutdown() {
-  console.log("[ArchiverJob] Received shutdown signal. Shutting down scheduler...");
+  logger.info("Received shutdown signal. Shutting down scheduler...");
   stopArchiverJob();
   process.exit(0);
 }

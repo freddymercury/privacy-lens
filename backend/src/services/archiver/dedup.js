@@ -1,5 +1,5 @@
 import { sha256 } from './utils.js'; // Assuming sha256 is in utils.js within the same directory
-                                     // Or adjust path if it's in a more general utils location e.g. ../../utils/db.js
+import { dedupLogger as logger } from './logger.js';
 
 /**
  * De-duplicates a list of fetched assets based on the hash of their rawBody.
@@ -23,7 +23,7 @@ export async function dedupByHash(assets) {
   for (const asset of assets) {
     if (!asset || typeof asset.rawBody === 'undefined') {
       // Skip invalid asset objects
-      console.warn('Dedup: Skipping invalid asset object:', asset);
+      logger.warn('Skipping invalid asset object:', asset);
       continue;
     }
 
@@ -38,7 +38,7 @@ export async function dedupByHash(assets) {
       seenHashes.add(currentHash);
       uniqueAssets.push(asset);
     } else {
-      console.log(`Dedup: Duplicate asset found and skipped (URL: ${asset.url}, Hash: ${currentHash})`);
+      logger.info(`Duplicate asset found and skipped (URL: ${asset.url}, Hash: ${currentHash})`);
     }
   }
 

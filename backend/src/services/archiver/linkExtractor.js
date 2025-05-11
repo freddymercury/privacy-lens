@@ -1,5 +1,6 @@
 import { JSDOM } from 'jsdom';
 import psl from 'psl'; // Using psl for registrable domain check
+import { linkExtractorLogger as logger } from './logger.js';
 
 /**
  * Extracts candidate policy links from HTML content.
@@ -41,7 +42,7 @@ export function extractPolicyLinks(html, baseHostname, currentUrl, keywordRegex,
       absoluteUrl = new URL(href, baseUrl).toString();
     } catch (e) {
       // Invalid URL, skip
-      console.warn(`Invalid URL encountered in linkExtractor: ${href} on page ${currentUrl}`);
+      logger.warn(`Invalid URL encountered in linkExtractor: ${href} on page ${currentUrl}`);
       continue;
     }
 
@@ -51,7 +52,7 @@ export function extractPolicyLinks(html, baseHostname, currentUrl, keywordRegex,
     try {
       linkHostname = new URL(absoluteUrl).hostname;
     } catch (e) {
-      console.warn(`Could not parse hostname from absolute URL: ${absoluteUrl}`);
+      logger.warn(`Could not parse hostname from absolute URL: ${absoluteUrl}`);
       continue;
     }
 

@@ -1,6 +1,23 @@
 // CommonJS wrapper for domainUtils.js to be used by db.cjs
 // This allows db.cjs to use the ES module exports from domainUtils.js
 
+// Logger placeholder until dynamic import completes
+let logger = {
+  info: (...args) => console.log('[domainUtilsWrapper]', ...args),
+  error: (...args) => console.error('[domainUtilsWrapper]', ...args)
+};
+
+// Dynamic import for logger
+(async () => {
+  try {
+    const loggerModule = await import('../lib/logger-phase3.js');
+    const createLogger = loggerModule.createLogger;
+    logger = createLogger('domainUtilsWrapper');
+  } catch (error) {
+    console.error('[domainUtilsWrapper] Error loading logger:', error);
+  }
+})();
+
 // Use dynamic import to load the ES module
 let normalizeUrl;
 let getNormalizedDomain;
@@ -17,11 +34,11 @@ const initializationPromise = new Promise((resolve, reject) => {
       normalizeUrl = domainUtils.normalizeUrl;
       getNormalizedDomain = domainUtils.getNormalizedDomain;
       isGoogleDomain = domainUtils.isGoogleDomain;
-      console.log('[domainUtilsWrapper] Successfully loaded domainUtils.js');
+      logger.info('Successfully loaded domainUtils.js');
       initializationComplete = true;
       resolve();
     } catch (error) {
-      console.error('[domainUtilsWrapper] Error loading domainUtils.js:', error);
+      logger.error('Error loading domainUtils.js:', { error });
       initializationError = error;
       reject(error);
     }

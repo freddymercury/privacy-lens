@@ -1,6 +1,23 @@
 // CommonJS wrapper for supabaseClient.js to be used by db.cjs
 // This allows db.cjs to use the ES module exports from supabaseClient.js
 
+// Logger placeholder until dynamic import completes
+let logger = {
+  info: (...args) => console.log('[supabaseClientWrapper]', ...args),
+  error: (...args) => console.error('[supabaseClientWrapper]', ...args)
+};
+
+// Dynamic import for logger
+(async () => {
+  try {
+    const loggerModule = await import('../lib/logger-phase3.js');
+    const createLogger = loggerModule.createLogger;
+    logger = createLogger('supabaseClientWrapper');
+  } catch (error) {
+    console.error('[supabaseClientWrapper] Error loading logger:', error);
+  }
+})();
+
 // Use dynamic import to load the ES module
 let supabaseServiceRole;
 let createAuthedClient;
@@ -15,11 +32,11 @@ const initializationPromise = new Promise((resolve, reject) => {
       const supabaseClient = await import('./supabaseClient.js');
       supabaseServiceRole = supabaseClient.supabaseServiceRole;
       createAuthedClient = supabaseClient.createAuthedClient;
-      console.log('[supabaseClientWrapper] Successfully loaded supabaseClient.js');
+      logger.info('Successfully loaded supabaseClient.js');
       initializationComplete = true;
       resolve();
     } catch (error) {
-      console.error('[supabaseClientWrapper] Error loading supabaseClient.js:', error);
+      logger.error('Error loading supabaseClient.js:', { error });
       initializationError = error;
       reject(error);
     }

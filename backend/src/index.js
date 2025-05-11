@@ -4,8 +4,11 @@ import path from "path";
 import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
-import morgan from "morgan";
 import session from "express-session";
+
+// Import our custom logger and context middleware
+import { logger, requestLogger } from "./lib/logger-phase3.js";
+import { contextMiddleware } from "./lib/context.js";
 
 // Replicate __dirname behavior for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -34,7 +37,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev"));
+
+// Add context middleware before request logger
+app.use(contextMiddleware());
+app.use(requestLogger());
 
 // Session configuration
 app.use(
@@ -67,7 +73,7 @@ app.get("/", (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error("Internal server error", { error: err.message, stack: err.stack });
   res.status(500).json({
     status: "error",
     message: "Internal server error",
@@ -77,20 +83,21 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`PrivacyLens backend server running on port ${PORT}`);
+  logger.info(`PrivacyLens backend server running on port ${PORT}`);
 
   // Initialize assessment trigger service
   const intervalMinutes =
     process.env.ASSESSMENT_TRIGGER_INTERVAL_MINUTES || 600; // Changed from 60 to 600 (10 hours)
   const maxConcurrentAssessments = 
     process.env.MAX_CONCURRENT_ASSESSMENTS || 1; // Default to 1 concurrent assessment to avoid rate limits
-  console.log(
-    `Initializing assessment trigger service with interval: ${intervalMinutes} minutes, max concurrent assessments: ${maxConcurrentAssessments}`
-  );
+  logger.info("Initializing assessment trigger service", { 
+    intervalMinutes, 
+    maxConcurrentAssessments 
+  });
   assessmentTriggerService.scheduleProcessing(parseInt(intervalMinutes), parseInt(maxConcurrentAssessments));
 
   // Start the policy archiver job
-  console.log("Initializing policy archiver job...");
+  logger.info("Initializing policy archiver job...");
   startArchiverJob();
 });
 
