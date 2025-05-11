@@ -15,7 +15,7 @@ const cronSchedule = process.env.ARCHIVE_SCHEDULE || "0 * * * *";
 // Crawler options from environment variables or defaults
 const CRAWL_MAX_DEPTH = parseInt(process.env.CRAWL_MAX_DEPTH, 10) || 2;
 const CRAWL_MAX_LINKS_PER_PAGE = parseInt(process.env.CRAWL_MAX_LINKS, 10) || 20; // Renamed from CRAWL_MAX_LINKS
-const CRAWL_INCLUDE_PDFS = process.env.CRAWL_INCLUDE_PDFS === 'true' || false;
+const CRAWL_INCLUDE_PDFS = process.env.CRAWL_INCLUDE_PDFS !== 'false'; // Include PDFs by default
 const CRAWL_DELAY_MS = parseInt(process.env.CRAWL_DELAY_MS, 10) || 500;
 // Additional options not in spec but useful for deepCrawler.js
 const CRAWL_FILTER_DELAY_MS = parseInt(process.env.CRAWL_FILTER_DELAY_MS, 10) || 200;

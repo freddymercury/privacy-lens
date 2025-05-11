@@ -18,7 +18,7 @@ const S3_BUCKET_NAME = process.env.S3_BUCKET || 'privacylens-archive'; // From .
  * @param {object} crawlOptions Configuration for the crawler.
  * @param {number} [crawlOptions.maxDepth=2] Max depth to crawl. 0 is root only.
  * @param {number} [crawlOptions.maxLinksPerPage=20] Max links to extract per page.
- * @param {boolean} [crawlOptions.includePdfs=false] Whether to fetch and process PDFs.
+ * @param {boolean} [crawlOptions.includePdfs=true] Whether to fetch and process PDFs.
  * @param {number} [crawlOptions.crawlDelayMs=500] Delay between GET requests to the same host.
  * @param {number} [crawlOptions.filterDelayMs=200] Delay between HEAD requests for filtering.
  * @param {RegExp} [crawlOptions.keywordRegex=DEFAULT_KEYWORD_REGEX] Regex for link discovery.
@@ -33,7 +33,7 @@ export async function performDeepCrawl(rootUrl, policyType, crawlOptions = {}) {
   const {
     maxDepth = 2,
     maxLinksPerPage = 20,
-    includePdfs = false,
+    includePdfs = true, // Include PDFs by default
     crawlDelayMs = 500,
     filterDelayMs = 200, // Shorter delay for HEAD requests
     keywordRegex = DEFAULT_KEYWORD_REGEX,
