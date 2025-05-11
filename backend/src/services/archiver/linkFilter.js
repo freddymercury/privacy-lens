@@ -12,7 +12,7 @@ const DEFAULT_TIMEOUT = 10000; // 10 seconds for HEAD requests
  * @param {object} options Filtering options.
  * @param {string} options.baseHostname The normalized base hostname, for context (e.g. 'example.com').
  * @param {number} [options.maxSizeBytes=2097152] Maximum allowed asset size in bytes (default 2MB).
- * @param {boolean} [options.includePdfs=false] Whether to include PDF files.
+ * @param {boolean} [options.includePdfs=true] Whether to include PDF files.
  * @param {number} [options.requestDelayMs=500] Delay between HEAD requests to be polite.
  * @param {string} [options.userAgent=DEFAULT_USER_AGENT] User agent for requests.
  * @param {number} [options.timeout=DEFAULT_TIMEOUT] Timeout for HEAD requests.
@@ -22,7 +22,7 @@ export async function filterLinks(urls, options = {}) {
   const {
     // baseHostname, // Not strictly needed if linkExtractor already guarantees same-domain
     maxSizeBytes = 2 * 1024 * 1024, // 2MB
-    includePdfs = false,
+    includePdfs = true, // Include PDFs by default
     requestDelayMs = 500,
     userAgent = DEFAULT_USER_AGENT,
     timeout = DEFAULT_TIMEOUT,
@@ -91,7 +91,7 @@ export async function filterLinks(urls, options = {}) {
 }
 
 // Helper function (could be used by main crawler if it has metadata)
-export function isAllowedMime(mimeType, includePdfs = false) {
+export function isAllowedMime(mimeType, includePdfs = true) {
   if (!mimeType) return false;
   const normalizedMime = mimeType.split(';')[0].trim().toLowerCase();
   if (normalizedMime === 'text/html') return true;
