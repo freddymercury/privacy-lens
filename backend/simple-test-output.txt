@@ -1,0 +1,3 @@
+DB module exports: ["getAssessment","upsertAssessment","addToUnassessedQueue","getUnassessedUrls","updateUnassessedStatus","removeFromUnassessedQueue","getUserByUsername","createAuditLog","updateSuggestedPolicyUrls","getAllAssessments","storeToken","getTokenByHash","getUserActiveTokens","updateTokenLastUsed","revokeToken","getUserById","getUserByEmail","createUser","updateUser","getUserSubscription","createSubscription","updateSubscription","getSubscriptionByStripeId","getLatestPluginUpdate","getLatestServerUpdate","getUpdateById","createUpdate","recordUpdateApplication","getUserUpdateHistory","addPolicyForArchiving","getPoliciesForDomain","getUnassessedEntryByUrl","initializationPromise"]
+
+getUnassessedEntryByUrl exists: true

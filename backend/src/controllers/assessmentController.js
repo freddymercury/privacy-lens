@@ -1,7 +1,9 @@
 // Assessment Controller for PrivacyLens backend
 
-const db = require("../utils/db");
-const llmService = require("../services/llmService");
+import * as db from "../utils/db.cjs";
+import llmService from "../services/llmService.js";
+import * as assessmentTriggerService from "../services/assessmentTriggerService.js";
+import { supabaseServiceRole } from "../utils/supabaseClient.js"; // Added import
 
 /**
  * Get privacy assessment for a URL
@@ -151,9 +153,6 @@ const triggerAssessment = async (req, res) => {
       console.log(
         `[AssessmentController] Using single URL processing for: ${url}`
       );
-
-      // Import the assessment trigger service
-      const assessmentTriggerService = require("../services/assessmentTriggerService");
 
       // Process the single URL without batch processing
       const result = await assessmentTriggerService.processSingleUrl(url);
@@ -348,7 +347,7 @@ const getAllAssessments = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getAssessment,
   getAllAssessments,
   triggerAssessment,

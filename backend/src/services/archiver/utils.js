@@ -1,18 +1,19 @@
-const crypto = require("node:crypto");
-const { supabaseServiceRole: supabase } = require("../../utils/supabaseClient"); // Assuming existing client setup
-const path = require('node:path');
+import crypto from "node:crypto";
+import { supabaseServiceRole as supabase } from "../../utils/supabaseClient.js"; // Assuming existing client setup & .js extension if it's ESM
+import path from 'node:path';
 
 /**
- * Computes the SHA-256 hash of a string.
- * @param {string} str - The input string.
+ * Computes the SHA-256 hash of a string or Buffer.
+ * @param {string | Buffer} data - The input data.
  * @returns {string} - The SHA-256 hash in hexadecimal format.
  */
-function sha256(str) {
-  if (typeof str !== 'string') {
-    console.warn("[Utils] Input to sha256 is not a string.");
-    return ''; // Or throw an error
+export function sha256(data) {
+  if (typeof data !== 'string' && !Buffer.isBuffer(data)) {
+    console.warn("[Utils] Input to sha256 is not a string or Buffer.");
+    // Consider throwing an error for stricter handling
+    return crypto.createHash("sha256").update(String(data)).digest("hex"); // Fallback: try to convert to string
   }
-  return crypto.createHash("sha256").update(str).digest("hex");
+  return crypto.createHash("sha256").update(data).digest("hex");
 }
 
 /**
@@ -24,7 +25,7 @@ function sha256(str) {
  * @param {string} contentType - The MIME type of the content (e.g., 'text/html', 'text/plain').
  * @returns {Promise<{path: string, error: Error | null}>} - Object containing the storage path or an error.
  */
-async function uploadToStorage(bucketName, filePath, data, contentType) {
+export async function uploadToStorage(bucketName, filePath, data, contentType) {
   console.log(`[Utils] Uploading to Supabase Storage: ${bucketName}/${filePath}`);
   try {
     const { data: uploadData, error } = await supabase.storage
@@ -62,7 +63,7 @@ async function uploadToStorage(bucketName, filePath, data, contentType) {
  * @param {'html' | 'txt'} extension - The file extension.
  * @returns {string} - The generated storage path.
  */
-function generateStoragePath(domain, policyType, version, fetchedAt, extension) {
+export function generateStoragePath(domain, policyType, version, fetchedAt, extension) {
     const year = fetchedAt.getFullYear();
     const month = String(fetchedAt.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
     const timestamp = fetchedAt.toISOString().replace(/[:.]/g, '-'); // ISO string safe for paths
@@ -89,7 +90,7 @@ function generateStoragePath(domain, policyType, version, fetchedAt, extension) 
  * @param {'html' | 'txt'} extension - The file extension.
  * @returns {string} - The generated storage path for the latest pointer.
  */
-function generateLatestPointerPath(domain, policyType, extension) {
+export function generateLatestPointerPath(domain, policyType, extension) {
     const filePath = [
         domain,
         policyType,
@@ -98,9 +99,10 @@ function generateLatestPointerPath(domain, policyType, extension) {
     return filePath;
 }
 
-module.exports = {
-    sha256,
-    uploadToStorage,
-    generateStoragePath,
-    generateLatestPointerPath,
-};
+// Default export can be an object if preferred, or individual exports as above.
+// export default {
+//     sha256,
+//     uploadToStorage,
+//     generateStoragePath,
+//     generateLatestPointerPath,
+// };

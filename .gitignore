@@ -15,7 +15,7 @@ dist/
 */dist/
 build/
 */build/
-chrome-plugin/icons/*.png
+
 
 # Logs
 logs
@@ -23,6 +23,7 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*/log.out
 
 # Editor directories and files
 .idea/

@@ -1,6 +1,6 @@
 // Update Controller for PrivacyLens
 
-const updateService = require('../services/updateService');
+import * as updateService from '../services/updateService.js';
 
 /**
  * Check for available updates
@@ -162,7 +162,7 @@ const createUpdate = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   checkForUpdates,
   downloadUpdate,
   getUpdateHistory,

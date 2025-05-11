@@ -1,4 +1,5 @@
-const { JSDOM } = require("jsdom");
+import { JSDOM } from "jsdom";
+import { normaliserLogger as logger } from "./logger.js";
 
 /**
  * Converts raw HTML into cleaned, normalized text.
@@ -6,9 +7,9 @@ const { JSDOM } = require("jsdom");
  * @param {string} html - The raw HTML content.
  * @returns {string} - The cleaned and trimmed text content.
  */
-function htmlToCleanText(html) {
+export function htmlToCleanText(html) {
   if (!html || typeof html !== 'string') {
-    console.warn("[Normaliser] Input HTML is empty or not a string.");
+    logger.warn("Input HTML is empty or not a string.");
     return "";
   }
 
@@ -25,15 +26,13 @@ function htmlToCleanText(html) {
     // Normalize whitespace: replace multiple spaces/newlines with single space, then trim
     const cleanedText = textContent.replace(/\s+/g, " ").trim();
 
-    console.log(`[Normaliser] Cleaned text length: ${cleanedText.length}`);
+    logger.info(`Cleaned text length: ${cleanedText.length}`);
     return cleanedText;
   } catch (error) {
-    console.error("[Normaliser] Error processing HTML:", error);
+    logger.error("Error processing HTML:", error);
     // Return empty string or re-throw, depending on desired error handling
     return "";
   }
 }
 
-module.exports = {
-  htmlToCleanText,
-};
+// No default export needed if only one function is exported, or keep as named.

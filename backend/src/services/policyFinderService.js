@@ -1,7 +1,16 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); // Load .env file
-const axios = require('axios');
-const { JSDOM } = require('jsdom'); // Using jsdom to parse HTML for verification
-// const { getJson } = require("serpapi"); // No longer using serpapi library directly
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import axios from 'axios';
+import { JSDOM } from 'jsdom'; // Using jsdom to parse HTML for verification
+// import { getJson } from "serpapi"; // No longer using serpapi library directly
+
+// Setup dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env file
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // --- Configuration (Should be externalized: config file/env vars) ---
 const SERPAPI_ENDPOINT = 'https://serpapi.com/search'; // SerpApi endpoint URL
@@ -514,7 +523,7 @@ function calculatePriority(url, subdomain, path) {
 }
 
 
-module.exports = {
+export default {
     findPrivacyPolicyUrl,
     // Export helpers if needed for testing
     _checkUrl: checkUrl,

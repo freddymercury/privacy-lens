@@ -75,8 +75,20 @@ PrivacyLens evaluates privacy policies across these key categories:
    # Ensure SUPABASE_URL, SUPABASE_SERVICE_KEY, S3_BUCKET, and ARCHIVE_SCHEDULE are set.
    # Run database migrations:
    #   - Execute the SQL commands in 'scripts/create-auth-tables.sql' (if not already done)
-   #   - Execute the SQL commands in 'scripts/create-archive-tables.sql'
+   #   - Execute the SQL commands in 'scripts/create-archive-tables.sql' (for basic archiving)
    #   (You can run these manually via the Supabase SQL Editor or create a runner script)
+   
+   # Deep Crawler Setup (extends Policy Archiver):
+   #   - Ensure new dependencies are installed (axios-retry, mime-types):
+   #     (Already included if you ran `npm install` after recent updates to package.json)
+   #   - Execute the SQL commands in 'scripts/create_deep_crawler_tables.sql' to create 
+   #     the 'policy_assets' and 'backfill_tasks' tables.
+   #   - Configure Deep Crawler Environment Variables (add to .env if customizing defaults):
+   #     CRAWL_MAX_DEPTH (default: 2)
+   #     CRAWL_MAX_LINKS (default: 20) - Max links to process per page
+   #     CRAWL_INCLUDE_PDFS (default: false)
+   #     CRAWL_DELAY_MS (default: 500) - Delay between GET requests
+   #     (See backend/src/jobs/archiverJob.js and backend/src/jobs/run_backfill_batch.js for more env options)
    npm run dev
    ```
 3. Set up the Chrome plugin:
@@ -93,13 +105,21 @@ See the individual README files in each component directory for detailed develop
 - [Chrome Plugin Development](./chrome-plugin/README.md)
 - [Backend Development](./backend/README.md)
 
-## Policy Archive API Endpoints
+## Policy Archive & Deep Crawler API Endpoints (Version 1)
 
-The backend exposes the following public endpoints for accessing historical policy data:
+The backend exposes the following public endpoints for accessing historical policy data, including deep crawled assets:
 
-- **`GET /api/v1/policies/:domain?type=<policy_type>`**: Retrieves the latest available snapshot and metadata for a specific policy (e.g., `/api/v1/policies/example.com?type=privacy`). Defaults to `type=privacy`.
-- **`GET /api/v1/policies/:domain/versions?type=<policy_type>`**: Lists metadata (version number, fetch time, hash) for all historical versions of a specific policy. Defaults to `type=privacy`.
-- **`GET /api/v1/policies/:domain/versions/:verId`**: Retrieves the full details (including normalized text and diff summary from the previous version) for a specific version identified by its UUID (`verId`).
+- **`GET /api/v1/policies/:domain/latest`**: Retrieves the latest policy snapshot (concatenated text of root and all sub-documents) and a list of all its assets.
+  - Example: `/api/v1/policies/example.com/latest`
+- **`GET /api/v1/policies/:domain/versions`**: Lists paginated metadata (version ID, number, fetch time, concatenated text hash) for all historical versions of a specific policy.
+  - Supports `?page=` and `?limit=` query parameters.
+  - Example: `/api/v1/policies/example.com/versions?page=1&limit=10`
+- **`GET /api/v1/policies/:domain/versions/:versionId`**: Retrieves full details for a specific policy version, including its list of assets (sub-documents).
+  - Example: `/api/v1/policies/example.com/versions/123`
+- **`GET /api/v1/policies/:domain/versions/:versionId/assets/:assetId`**: Streams the raw content of a specific asset (HTML, PDF, etc.) belonging to a policy version. Typically redirects to a pre-signed storage URL.
+  - Example: `/api/v1/policies/example.com/versions/123/assets/456`
+- **`GET /api/v1/policies/:domain/diff/:olderVersionId/:newerVersionId`**: Returns a unified diff of the concatenated texts between two specified versions and a list of asset IDs that changed in the newer version relative to its immediate predecessor.
+  - Example: `/api/v1/policies/example.com/diff/120/123`
 
 ## License
 

@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 /**
  * Fetches the raw HTML content of a given URL.
@@ -6,7 +6,7 @@ const axios = require("axios");
  * @returns {Promise<string>} - A promise that resolves with the HTML content.
  * @throws {Error} - Throws an error if the request fails or times out.
  */
-async function fetchHTML(url) {
+export async function fetchHTML(url) {
   console.log(`[Crawler] Fetching HTML for: ${url}`);
   try {
     const { data } = await axios.get(url, {
@@ -39,6 +39,4 @@ async function fetchHTML(url) {
   }
 }
 
-module.exports = {
-  fetchHTML,
-};
+// No default export needed if only one function is exported.

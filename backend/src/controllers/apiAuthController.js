@@ -1,8 +1,8 @@
 // API Authentication Controller for PrivacyLens
 
-const bcrypt = require('bcrypt');
-const db = require('../utils/db');
-const authService = require('../services/authService');
+import bcrypt from 'bcrypt';
+import * as db from '../utils/db.cjs';
+import * as authService from '../services/authService.js';
 
 /**
  * Register a new user
@@ -307,7 +307,7 @@ const revoke = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   register,
   login,
   validate,

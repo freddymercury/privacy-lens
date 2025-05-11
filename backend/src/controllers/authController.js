@@ -1,7 +1,7 @@
 // Authentication Controller for PrivacyLens admin dashboard
 
-const bcrypt = require("bcrypt");
-const db = require("../utils/db");
+import bcrypt from "bcrypt";
+import * as db from "../utils/db.cjs";
 
 /**
  * Render login page
@@ -297,7 +297,7 @@ const updatePassword = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   loginPage,
   login,
   logout,

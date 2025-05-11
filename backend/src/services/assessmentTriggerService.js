@@ -1,11 +1,15 @@
 // Assessment Trigger Service for PrivacyLens backend
 // Handles automated processing of unassessed URLs
 
-const db = require("../utils/db"); // Make sure addPolicyForArchiving is exported from db.js
-const llmService = require("./llmService");
-const { normalizeUrl } = require("../utils/domainUtils");
-const { supabaseServiceRole } = require("../utils/supabaseClient"); // Import service role client
-const { findPrivacyPolicyUrl } = require("./policyFinderService"); // Import the new service
+import * as db from "../utils/db.cjs"; // Make sure addPolicyForArchiving is exported from db.js
+import llmService from "./llmService.js";
+import { normalizeUrl } from "../utils/domainUtils.js";
+import { supabaseServiceRole } from "../utils/supabaseClient.js"; // Import service role client
+import policyFinderService from "./policyFinderService.js"; // Import the new service
+import { createLogger } from "../lib/logger-phase3.js";
+
+const logger = createLogger('AssessmentTrigger');
+const { findPrivacyPolicyUrl } = policyFinderService;
 
 // Global set to track URLs currently being processed
 const processingUrls = new Set();
@@ -37,7 +41,7 @@ async function processBatchWithConcurrency(urls, concurrentLimit) {
       
       // Skip if already being processed elsewhere
       if (processingUrls.has(urlEntry.url)) {
-        console.log(`[AssessmentTrigger] Skipping ${urlEntry.url} - already being processed`);
+        logger.info(`Skipping ${urlEntry.url} - already being processed`);
         results.skipped++;
         results.processed++;
         continue;
@@ -62,9 +66,9 @@ async function processBatchWithConcurrency(urls, concurrentLimit) {
           }
         })
         .catch(error => {
-          console.error(
-            `[AssessmentTrigger] Error processing URL ${urlEntry.url}:`,
-            error
+          logger.error(
+            `Error processing URL ${urlEntry.url}:`,
+            { error }
           );
           results.processed++;
           results.failed++;
@@ -92,12 +96,12 @@ async function processBatchWithConcurrency(urls, concurrentLimit) {
  */
 async function processUnassessedUrls(concurrentLimit = 2) {
   try {
-    console.log(`[AssessmentTrigger] Starting processing of unassessed URLs (max concurrent: ${concurrentLimit})`);
+    logger.info(`Starting processing of unassessed URLs (max concurrent: ${concurrentLimit})`);
 
     // Get pending unassessed URLs
     const unassessedUrls = await db.getUnassessedUrls("Pending");
-    console.log(
-      `[AssessmentTrigger] Found ${unassessedUrls.length} pending URLs to process`
+    logger.info(
+      `Found ${unassessedUrls.length} pending URLs to process`
     );
 
     const results = {
@@ -134,16 +138,16 @@ async function processUnassessedUrls(concurrentLimit = 2) {
       details: results,
     });
 
-    console.log(
-      `[AssessmentTrigger] Completed processing. Results: ${JSON.stringify(
+    logger.info(
+      `Completed processing. Results: ${JSON.stringify(
         results
       )}`
     );
     return results;
   } catch (error) {
-    console.error(
-      "[AssessmentTrigger] Error processing unassessed URLs:",
-      error
+    logger.error(
+      "Error processing unassessed URLs:",
+      { error }
     );
 
     // Create audit log entry for process failure
@@ -165,7 +169,7 @@ async function processUnassessedUrls(concurrentLimit = 2) {
  */
 async function processUnassessedUrl(urlEntry) {
   const { url, suggested_policy_urls } = urlEntry; // Destructure suggested_policy_urls
-  console.log(`[AssessmentTrigger] Processing URL: ${url}, Initial Suggested Policies: ${JSON.stringify(suggested_policy_urls)}`);
+  logger.info(`Processing URL: ${url}, Initial Suggested Policies: ${JSON.stringify(suggested_policy_urls)}`);
 
   try {
     // Update status to Processing
@@ -180,18 +184,18 @@ async function processUnassessedUrl(urlEntry) {
     // Check if URL already has an assessment
     const existingAssessment = await db.getAssessment(url);
     if (existingAssessment) {
-      console.log(`[AssessmentTrigger] URL ${url} already has an assessment`);
+      logger.info(`URL ${url} already has an assessment`);
 
       try {
         // Remove from unassessed queue
         await db.removeFromUnassessedQueue(url);
-        console.log(
-          `[AssessmentTrigger] Removed ${url} from unassessed queue (already assessed)`
+        logger.info(
+          `Removed ${url} from unassessed queue (already assessed)`
         );
       } catch (error) {
-        console.error(
-          `[AssessmentTrigger] Error removing ${url} from unassessed queue:`,
-          error
+        logger.error(
+          `Error removing ${url} from unassessed queue:`,
+          { error }
         );
         // Continue even if removal fails
       }
@@ -207,7 +211,7 @@ async function processUnassessedUrl(urlEntry) {
     const agreementResult = await locateUserAgreement(url, suggested_policy_urls); // Use destructured variable
 
     if (!agreementResult) {
-      console.log(`[AssessmentTrigger] No user agreement found for ${url}`);
+      logger.info(`No user agreement found for ${url}`);
 
       // Update status to Not Found
       await db.updateUnassessedStatus(url, "Not Found");
@@ -229,8 +233,8 @@ async function processUnassessedUrl(urlEntry) {
     }
 
     // Agreement found, process it
-    console.log(
-      `[AssessmentTrigger] User agreement found for ${url} at ${agreementResult.agreementUrl}`
+    logger.info(
+      `User agreement found for ${url} at ${agreementResult.agreementUrl}`
     );
 
     // Compute hash of agreement text
@@ -244,8 +248,8 @@ async function processUnassessedUrl(urlEntry) {
       .maybeSingle();
 
     if (existingWithHash) {
-      console.log(
-        `[AssessmentTrigger] Found existing assessment with same hash for ${existingWithHash.url}`
+      logger.info(
+        `Found existing assessment with same hash for ${existingWithHash.url}`
       );
 
       // Copy the existing assessment
@@ -266,13 +270,13 @@ async function processUnassessedUrl(urlEntry) {
       try {
         // Remove from unassessed queue
         await db.removeFromUnassessedQueue(url);
-        console.log(
-          `[AssessmentTrigger] Removed ${url} from unassessed queue (copied assessment)`
+        logger.info(
+          `Removed ${url} from unassessed queue (copied assessment)`
         );
       } catch (error) {
-        console.error(
-          `[AssessmentTrigger] Error removing ${url} from unassessed queue:`,
-          error
+        logger.error(
+          `Error removing ${url} from unassessed queue:`,
+          { error }
         );
         // Continue even if removal fails
       }
@@ -321,9 +325,9 @@ async function processUnassessedUrl(urlEntry) {
           policyType: 'privacy', // Assuming privacy for now
           url: savedAssessment.user_agreement_url,
         });
-        console.log(`[AssessmentTrigger] Added/Updated policy entry for ${url} for archiving.`);
+        logger.info(`Added/Updated policy entry for ${url} for archiving.`);
       } catch (archiveError) {
-        console.error(`[AssessmentTrigger] Failed to add policy entry for ${url} for archiving:`, archiveError);
+        logger.error(`Failed to add policy entry for ${url} for archiving:`, { error: archiveError });
         // Log the error but don't fail the entire assessment process
       }
     }
@@ -332,13 +336,13 @@ async function processUnassessedUrl(urlEntry) {
     try {
       // Remove from unassessed queue
       await db.removeFromUnassessedQueue(url);
-      console.log(
-        `[AssessmentTrigger] Removed ${url} from unassessed queue (new assessment)`
+      logger.info(
+        `Removed ${url} from unassessed queue (new assessment)`
       );
     } catch (error) {
-      console.error(
-        `[AssessmentTrigger] Error removing ${url} from unassessed queue:`,
-        error
+      logger.error(
+        `Error removing ${url} from unassessed queue:`,
+        { error }
       );
       // Continue even if removal fails
     }
@@ -360,7 +364,7 @@ async function processUnassessedUrl(urlEntry) {
       riskLevel: assessment.riskLevel,
     };
   } catch (error) {
-    console.error(`[AssessmentTrigger] Error processing URL ${url}:`, error);
+    logger.error(`Error processing URL ${url}:`, { error });
 
     // Update status to Failed
     await db.updateUnassessedStatus(url, "Failed");
@@ -390,27 +394,27 @@ async function processUnassessedUrl(urlEntry) {
  * @returns {Promise<{text: string, agreementUrl: string}|null>} - Agreement text and URL, or null if not found or not processable (e.g., PDF).
  */
 async function locateUserAgreement(domain, suggestedUrls = []) {
-  console.log(`[AssessmentTrigger] locateUserAgreement for domain: ${domain}. Received suggestedUrls: ${JSON.stringify(suggestedUrls)}`);
+  logger.info(`locateUserAgreement for domain: ${domain}. Received suggestedUrls: ${JSON.stringify(suggestedUrls)}`);
   // The following log is redundant if the one above shows the content, but kept for consistency with previous state if desired.
   // if (suggestedUrls && suggestedUrls.length > 0) {
-  //   console.log(`[AssessmentTrigger] Using suggested URLs: ${suggestedUrls.join(', ')}`);
+  //   logger.info(`Using suggested URLs: ${suggestedUrls.join(', ')}`);
   // }
 
   const policyResult = await findPrivacyPolicyUrl(domain, suggestedUrls);
 
   if (!policyResult) {
-    console.log(`[AssessmentTrigger] policyFinderService did not find a policy URL for ${domain}.`);
+    logger.info(`policyFinderService did not find a policy URL for ${domain}.`);
     return null;
   }
 
   if (policyResult.isPdf) {
-    console.log(`[AssessmentTrigger] Found policy at ${policyResult.url}, but it is a PDF. Cannot extract text for assessment.`);
+    logger.info(`Found policy at ${policyResult.url}, but it is a PDF. Cannot extract text for assessment.`);
     // TODO: Potentially store the PDF URL even if we can't assess it yet.
     return null; // Cannot proceed with assessment if it's a PDF and we can't extract text.
   }
 
   if (!policyResult.content) {
-     console.log(`[AssessmentTrigger] Found policy URL ${policyResult.url}, but content is missing after verification.`);
+     logger.info(`Found policy URL ${policyResult.url}, but content is missing after verification.`);
      return null; // Should not happen if verification passed, but handle defensively.
   }
 
@@ -419,11 +423,11 @@ async function locateUserAgreement(domain, suggestedUrls = []) {
   const text = extractTextFromHtml(policyResult.content);
 
   if (text.length < 500) { // Apply a minimum length check on extracted text as well
-      console.log(`[AssessmentTrigger] Extracted text from ${policyResult.url} is too short (${text.length} chars). Assuming not a valid policy.`);
+      logger.info(`Extracted text from ${policyResult.url} is too short (${text.length} chars). Assuming not a valid policy.`);
       return null;
   }
 
-  console.log(`[AssessmentTrigger] Successfully found and verified policy text from ${policyResult.url}`);
+  logger.info(`Successfully found and verified policy text from ${policyResult.url}`);
   return {
     text: text,
     agreementUrl: policyResult.url,
@@ -455,21 +459,21 @@ function extractTextFromHtml(html) {
 function scheduleProcessing(intervalMinutes = 60, concurrentLimit = 2) {
   const intervalMs = intervalMinutes * 60 * 1000;
 
-  console.log(
-    `[AssessmentTrigger] Scheduling processing every ${intervalMinutes} minutes (max concurrent: ${concurrentLimit})`
+  logger.info(
+    `Scheduling processing every ${intervalMinutes} minutes (max concurrent: ${concurrentLimit})`
   );
 
   // Run immediately
   processUnassessedUrls(concurrentLimit).catch((error) => {
-    console.error("[AssessmentTrigger] Error in initial processing:", error);
+    logger.error("Error in initial processing:", { error });
   });
 
   // Schedule periodic runs
   const timer = setInterval(() => {
     processUnassessedUrls(concurrentLimit).catch((error) => {
-      console.error(
-        "[AssessmentTrigger] Error in scheduled processing:",
-        error
+      logger.error(
+        "Error in scheduled processing:",
+        { error }
       );
     });
   }, intervalMs);
@@ -483,12 +487,12 @@ function scheduleProcessing(intervalMinutes = 60, concurrentLimit = 2) {
  * @returns {Promise<Object>} - Processing result
  */
 async function processSingleUrl(url) {
-  console.log(`[AssessmentTrigger] Processing single URL: ${url}`);
+  logger.info(`Processing single URL: ${url}`);
 
   try {
     // Check if URL is already being processed
     if (processingUrls.has(url)) {
-      console.log(`[AssessmentTrigger] URL ${url} is already being processed, skipping`);
+      logger.info(`URL ${url} is already being processed, skipping`);
       return {
         success: false,
         status: "Already Processing",
@@ -508,13 +512,13 @@ async function processSingleUrl(url) {
         // If not found in unassessed_urls, create a default entry
         // This might happen if a URL is directly submitted for assessment
         // without being in the queue first, or if it was already processed and removed.
-        console.log(`[AssessmentTrigger] No existing unassessed entry for ${url}. Creating default entry for processing.`);
+        logger.info(`No existing unassessed entry for ${url}. Creating default entry for processing.`);
         urlEntry = { url: url, suggested_policy_urls: [] };
         // Optionally, you might want to add it to the unassessed_urls table here
         // await db.addToUnassessedQueue(url); 
         // For now, we'll proceed with a temporary entry.
       } else {
-        console.log(`[AssessmentTrigger] Found existing unassessed entry for ${url}: ${JSON.stringify(urlEntry)}`);
+        logger.info(`Found existing unassessed entry for ${url}: ${JSON.stringify(urlEntry)}`);
       }
 
       // Process this single URL using the existing function
@@ -524,9 +528,9 @@ async function processSingleUrl(url) {
       processingUrls.delete(url);
     }
   } catch (error) {
-    console.error(
-      `[AssessmentTrigger] Error processing single URL ${url}:`,
-      error
+    logger.error(
+      `Error processing single URL ${url}:`,
+      { error }
     );
     // Make sure to remove from processing set even on error
     processingUrls.delete(url);
@@ -534,7 +538,7 @@ async function processSingleUrl(url) {
   }
 }
 
-module.exports = {
+export {
   processUnassessedUrls,
   processUnassessedUrl,
   processSingleUrl,

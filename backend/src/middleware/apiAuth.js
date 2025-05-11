@@ -1,6 +1,6 @@
 // API Authentication Middleware for PrivacyLens
 
-const authService = require('../services/authService');
+import * as authService from '../services/authService.js';
 
 /**
  * Validate JWT token middleware
@@ -88,7 +88,7 @@ const isPremium = (req, res, next) => {
   next();
 };
 
-module.exports = {
+export {
   validateToken,
   hasFeature,
   isPremium
