@@ -15,6 +15,7 @@ Based on analysis of the codebase, here's how privacy policies are added and que
    - The `assessmentTriggerService.js` periodically processes URLs from the `unassessed_urls` table
    - It runs on a schedule defined by `ASSESSMENT_TRIGGER_INTERVAL_MINUTES` (default: 600 minutes/10 hours)
    - It processes URLs with concurrency control (`MAX_CONCURRENT_ASSESSMENTS`, default: 1)
+   - For detailed information about this service and its retry mechanism, see [Assessment Trigger Service Specification](assessment_trigger_service_spec.md)
 
 3. **Policy Discovery**:
    - For each unassessed URL, the system tries to locate the privacy policy using `policyFinderService.js`
