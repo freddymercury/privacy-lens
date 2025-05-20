@@ -24,7 +24,8 @@ The PrivacyLens system consists of two main components:
 - Displays privacy risk indicators to users
 - Reports unassessed URLs to the backend for future evaluation
 
-[Detailed Chrome Plugin Documentation](./chrome-plugin/README.md)
+- [Detailed Chrome Plugin Documentation](./chrome-plugin/README.md)
+- [Chrome Plugin API Endpoints](./docs/chrome_plugin_endpoints.md)
 
 ### 2. Backend Service + Admin Dashboard
 
@@ -34,7 +35,7 @@ The PrivacyLens system consists of two main components:
 - Includes an admin dashboard for managing assessments, viewing analytics, and handling unassessed URLs
 - **Policy Archiver Service**: Periodically fetches tracked privacy policies, stores historical versions, calculates differences, and provides an API to access version history.
 
-[Detailed Backend Documentation](./backend/README.md)
+- [Detailed Backend Documentation](./backend/README.md)
 
 ## Privacy Risk Categories
 
@@ -98,12 +99,94 @@ PrivacyLens evaluates privacy policies across these key categories:
    # Load the extension in Chrome (see Chrome plugin README)
    ```
 
+## Nginx Setup (Development)
+
+### Install Nginx (macOS/Homebrew)
+```sh
+brew install nginx
+```
+
+### Use the Provided Nginx Config
+- The config file is at `privacy-lens/nginx.dev.conf`.
+- You can run Nginx with this config directly:
+  ```sh
+  sudo nginx -c $(pwd)/privacy-lens/nginx.dev.conf
+  ```
+- Or, copy/symlink it to your Nginx config directory (e.g., `/usr/local/etc/nginx/nginx.conf` for Homebrew installs).
+
+### Start Nginx
+```sh
+sudo nginx -c $(pwd)/privacy-lens/nginx.dev.conf
+```
+Or, if you replaced the default config:
+```sh
+sudo nginx
+```
+Or, with Homebrew:
+```sh
+brew services start nginx
+```
+
+### Reload/Restart Nginx After Changes
+```sh
+sudo nginx -s reload
+```
+Or:
+```sh
+brew services restart nginx
+```
+
+### Stop Nginx
+```sh
+sudo nginx -s stop
+```
+Or:
+```sh
+brew services stop nginx
+```
+
+### Notes
+- Nginx will listen on port 3000 and proxy requests to the correct backend service based on the route.
+- If you see an error about `mime.types`, update the `include` line in `nginx.dev.conf` to use the full path (e.g., `/usr/local/etc/nginx/mime.types`).
+
+---
+
+## Redis Setup (Development)
+
+### Install Redis (macOS/Homebrew)
+```sh
+brew install redis
+```
+
+### Start Redis
+```sh
+brew services start redis
+```
+Or, run manually:
+```sh
+redis-server
+```
+
+### Stop Redis
+```sh
+brew services stop redis
+```
+Or, if running manually, just Ctrl+C the terminal.
+
+### Usage
+- The backend services expect Redis to be running on `localhost:6379` by default.
+- No extra configuration is needed for development unless you want to change the port or add a password.
+
+---
+
 ## Development
 
 See the individual README files in each component directory for detailed development instructions:
 
 - [Chrome Plugin Development](./chrome-plugin/README.md)
 - [Backend Development](./backend/README.md)
+- [Process Separation Design](./docs/process_separation_design.md)
+- [Process Separation Architecture Diagram](./docs/process_separation_diagram.md)
 
 ## Policy Archive & Deep Crawler API Endpoints (Version 1)
 

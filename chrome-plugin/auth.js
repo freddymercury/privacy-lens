@@ -3,7 +3,7 @@
 import { getObjectStore } from './db.js';
 
 // API URL
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'http://localhost:3002/api';
 
 /**
  * Default user tier configuration
@@ -204,38 +204,45 @@ async function register(email, password, name = '') {
  */
 async function login(email, password) {
   try {
+    console.log('[PrivacyLens Auth] login: start');
     const deviceId = await getDeviceId();
-    
+    console.log('[PrivacyLens Auth] login: got deviceId', deviceId);
+
+    const fetchBody = JSON.stringify({
+      email,
+      password,
+      deviceId
+    });
+    console.log('[PrivacyLens Auth] login: fetch body', fetchBody);
+
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        email,
-        password,
-        deviceId
-      })
+      body: fetchBody
     });
-    
+    console.log('[PrivacyLens Auth] login: got response', response);
+
     const data = await response.json();
-    
+    console.log('[PrivacyLens Auth] login: got data', data);
+
     if (!response.ok) {
+      console.error('[PrivacyLens Auth] login: response not ok', data);
       throw new Error(data.message || 'Login failed');
     }
-    
+
     // Store authentication data (user, token, deviceId only)
     await storeAuthData({
       user: data.user,
       token: data.token,
-      // subscription: data.subscription, // Removed: Subscription data is no longer returned by login
       deviceId
     });
-    
+    console.log('[PrivacyLens Auth] login: stored auth data');
+
     return {
       success: true,
       user: data.user
-      // subscription: data.subscription // Removed
     };
   } catch (error) {
     console.error('[PrivacyLens Auth] Login error:', error);

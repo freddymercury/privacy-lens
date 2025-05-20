@@ -1035,8 +1035,8 @@ export function requestLogger(options = {}) {
    import { contextMiddleware } from '../lib/context.js';
    import { requestLogger } from '../lib/logger-phase3.js';
    
-   app.use(contextMiddleware());
-   app.use(requestLogger());
+   app.use(contextMiddleware);
+   app.use(requestLogger);
    ```
 
 **Benefits:**

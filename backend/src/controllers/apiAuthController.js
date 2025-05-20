@@ -82,6 +82,7 @@ const register = async (req, res) => {
  */
 const login = async (req, res) => {
   try {
+    console.log('[apiAuthController] login: handler start', { body: req.body });
     const { email, password, deviceId } = req.body;
 
     if (!email || !password || !deviceId) {
@@ -164,6 +165,7 @@ const login = async (req, res) => {
       }
     });
 
+    console.log('[apiAuthController] login: sending success response', { userId: user.id });
     return res.status(200).json({
       status: 'success',
       user: {
