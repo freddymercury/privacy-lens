@@ -2,6 +2,10 @@
 
 This directory contains documentation for various components and features of the PrivacyLens system.
 
+## API Documentation
+
+- [API Endpoints](api_endpoints.md) - Comprehensive list of all API endpoints in the system
+
 ## Core System Documentation
 
 - [Assessment Trigger Service Specification](assessment_trigger_service_spec.md) - Details the service that periodically processes unassessed URLs
