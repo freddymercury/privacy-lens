@@ -1,9 +1,7 @@
 // User authentication and subscription management for PrivacyLens Chrome Plugin
 
 import { getObjectStore } from './db.js';
-
-// API URL
-const API_URL = 'http://localhost:3000/api';
+import { API_BASE_URL } from './config.js';
 
 /**
  * Default user tier configuration
@@ -157,7 +155,7 @@ async function register(email, password, name = '') {
   try {
     const deviceId = await getDeviceId();
     
-    const response = await fetch(`${API_URL}/auth/register`, {
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -206,7 +204,7 @@ async function login(email, password) {
   try {
     const deviceId = await getDeviceId();
     
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -257,7 +255,7 @@ async function logout() {
     if (authData && authData.token) {
       // Revoke token on server
       try {
-        await fetch(`${API_URL}/auth/revoke`, {
+        await fetch(`${API_BASE_URL}/auth/revoke`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -301,7 +299,7 @@ async function isAuthenticated() {
     }
     
     // Validate token
-    const response = await fetch(`${API_URL}/auth/validate`, {
+    const response = await fetch(`${API_BASE_URL}/auth/validate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -338,7 +336,7 @@ async function refreshToken() {
       return false;
     }
     
-    const response = await fetch(`${API_URL}/auth/refresh`, {
+    const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -382,7 +380,7 @@ async function getUserTier() {
     }
     
     // Get subscription status from server
-    const response = await fetch(`${API_URL}/subscription/status`, {
+    const response = await fetch(`${API_BASE_URL}/subscription/status`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -463,7 +461,7 @@ async function createSubscription(planType, paymentMethodId) {
       throw new Error('User not authenticated');
     }
     
-    const response = await fetch(`${API_URL}/subscription/create`, {
+    const response = await fetch(`${API_BASE_URL}/subscription/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -514,7 +512,7 @@ async function updateSubscription(planType) {
       throw new Error('User not authenticated');
     }
     
-    const response = await fetch(`${API_URL}/subscription/update`, {
+    const response = await fetch(`${API_BASE_URL}/subscription/update`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -562,7 +560,7 @@ async function cancelSubscription() {
       throw new Error('User not authenticated');
     }
     
-    const response = await fetch(`${API_URL}/subscription/cancel`, {
+    const response = await fetch(`${API_BASE_URL}/subscription/cancel`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

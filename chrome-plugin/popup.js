@@ -24,6 +24,7 @@ import {
   checkForUpdates,
   getDeviceId
 } from "./updater.js";
+import { API_BASE_URL } from './config.js';
 
 // Check if URL is valid for assessment
 function isValidUrl(url) {
@@ -275,8 +276,6 @@ async function checkForAvailableUpdates() {
 
 // Fetch assessment from server and update local database
 async function fetchFromServer(domain, tabId) {
-  const API_BASE_URL = "http://localhost:3000/api";
-  
   try {
     // Verify user has server fetch feature
     const canFetchFromServer = await hasFeature("serverFetch");
@@ -672,8 +671,6 @@ function setupUserMenuButtons() {
 // Query the service layer for privacy assessment and update local database
 // This should ONLY be called for premium tier users
 async function checkPrivacyAssessment(url, tabId) {
-  const API_BASE_URL = "http://localhost:3000/api"; // Should match background.js
-
   try {
     // First check if user is in premium tier
     const isPaidTier = await isPremium();
