@@ -2,5 +2,6 @@
 module.exports = {
   jwt: require('./jwt'),
   password: require('./password'),
-  session: require('./session')
+  session: require('./session'),
+  service: require('./service')
 }; 
