@@ -1,14 +1,16 @@
 // Load environment variables FIRST before any other imports
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config();
 
-import express from 'express';
-import cors from 'cors';
-import pino from 'pino';
-import pinoHttp from 'pino-http';
+const express = require('express');
+const cors = require('cors');
+const pino = require('pino');
+const pinoHttp = require('pino-http');
 
 // Import routes
-import authRoutes from './routes/auth.js';
+const authRoutes = require('./routes/auth.js');
+const assessmentRoutes = require('./routes/assessment.js');
+const { triggerAssessment, reportUnassessed } = require('./controllers/assessmentController.js');
 
 // Initialize logger
 const logger = pino({
@@ -40,6 +42,13 @@ app.get('/health', (req, res) => {
 
 // Routes - THIS IS THE KEY LINE THAT WAS MISSING!
 app.use('/api/auth', authRoutes);
+app.use('/api/assessment', assessmentRoutes);
+
+// Direct route for trigger assessment to match original API structure
+app.post('/api/trigger-assessment/:url', triggerAssessment);
+
+// Direct route for report unassessed to match original API structure
+app.post('/api/report-unassessed', reportUnassessed);
 
 // Basic error handling middleware
 app.use((err, req, res, next) => {
@@ -61,4 +70,4 @@ app.listen(port, () => {
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
-export default app; 
+module.exports = app; 

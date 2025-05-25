@@ -1,12 +1,10 @@
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
-import { createRequire } from 'module';
+const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
 
 // Import shared modules (using require since shared is CommonJS)
-const require = createRequire(import.meta.url);
 const { db, auth } = require('@privacy-lens/shared');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
@@ -16,7 +14,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const register = async (req, res) => {
+const register = async (req, res) => {
   try {
     const { email, password, name, deviceId } = req.body;
 
@@ -90,7 +88,7 @@ export const register = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password, deviceId } = req.body;
 
@@ -204,7 +202,7 @@ export const login = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const validate = async (req, res) => {
+const validate = async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -249,7 +247,7 @@ export const validate = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const refresh = async (req, res) => {
+const refresh = async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -288,7 +286,7 @@ export const refresh = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const revoke = async (req, res) => {
+const revoke = async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -320,4 +318,12 @@ export const revoke = async (req, res) => {
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
-}; 
+};
+
+module.exports = {
+  register,
+  login,
+  validate,
+  refresh,
+  revoke
+};

@@ -2,7 +2,6 @@
   "name": "privacy-lens-client-api",
   "version": "1.0.0",
   "description": "Client API process for PrivacyLens Chrome plugin",
-  "type": "module",
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
