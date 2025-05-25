@@ -1,3 +1,4 @@
+// Load environment variables FIRST before any other imports
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -5,6 +6,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
+
 // Import routes
 import authRoutes from './routes/auth.js';
 
@@ -36,7 +38,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Routes - Register auth routes
+// Routes - THIS IS THE KEY LINE THAT WAS MISSING!
 app.use('/api/auth', authRoutes);
 
 // Basic error handling middleware

@@ -1,33 +1,31 @@
 {
-  "name": "@privacy-lens/client-api",
+  "name": "privacy-lens-client-api",
   "version": "1.0.0",
   "description": "Client API process for PrivacyLens Chrome plugin",
-  "main": "src/app.js",
   "type": "module",
+  "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
-    "dev": "nodemon src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/app.js"
   },
   "keywords": [
-    "privacy-lens",
+    "privacy",
     "client-api",
     "chrome-plugin"
   ],
-  "author": "PrivacyLens Team",
-  "license": "ISC",
-  "engines": {
-    "node": ">=14.0.0"
-  },
+  "author": "",
+  "license": "MIT",
   "dependencies": {
     "@privacy-lens/shared": "file:../shared",
-    "bcrypt": "^5.1.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.0",
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2"
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcrypt": "^5.1.1",
+    "pino": "^9.6.0",
+    "pino-http": "^10.4.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   }
-}
+} 
