@@ -10,6 +10,7 @@ const pinoHttp = require('pino-http');
 // Import routes
 const authRoutes = require('./routes/auth.js');
 const assessmentRoutes = require('./routes/assessment.js');
+const subscriptionRoutes = require('./routes/subscription.js');
 const { triggerAssessment, reportUnassessed } = require('./controllers/assessmentController.js');
 
 // Initialize logger
@@ -43,6 +44,7 @@ app.get('/health', (req, res) => {
 // Routes - THIS IS THE KEY LINE THAT WAS MISSING!
 app.use('/api/auth', authRoutes);
 app.use('/api/assessment', assessmentRoutes);
+app.use('/api/subscription', subscriptionRoutes);
 
 // Direct route for trigger assessment to match original API structure
 app.post('/api/trigger-assessment/:url', triggerAssessment);

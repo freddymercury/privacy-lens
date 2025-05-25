@@ -1,6 +1,7 @@
 // Subscription Service for PrivacyLens
 import Stripe from 'stripe';
 import * as db from '../utils/db.cjs';
+import { subscription as subscriptionCore } from '../../../shared/index.js';
 
 let stripe;
 
@@ -42,6 +43,12 @@ if (process.env.STRIPE_SECRET_KEY) {
   }
 }
 
+// Price configuration for pure functions
+const getPriceConfig = () => ({
+  monthly: process.env.STRIPE_MONTHLY_PRICE_ID,
+  annual: process.env.STRIPE_ANNUAL_PRICE_ID
+});
+
 /**
  * Create a subscription for a user
  * @param {string} userId - User ID
@@ -52,13 +59,18 @@ if (process.env.STRIPE_SECRET_KEY) {
  */
 const createSubscription = async (userId, planType, paymentMethodId, userAuthToken) => {
   try {
-    // Check if user already has an active subscription (requires RLS token)
-    // Note: getUserSubscription likely needs the userAuthToken for RLS
+    // Validate parameters using pure function
+    const validation = subscriptionCore.validateSubscriptionCreationParams(userId, planType, paymentMethodId);
+    if (!validation.isValid) {
+      throw new Error(validation.errors.join(', '));
+    }
+
+    // Check authentication token
     if (!userAuthToken) throw new Error("Authentication token required to check existing subscription in createSubscription");
+    
+    // Check if user already has an active subscription (requires RLS token)
     const existingSubscription = await db.getUserSubscription(userId, userAuthToken);
-    if (existingSubscription && ['active', 'trialing'].includes(existingSubscription.status)) {
-      // User already has an active or trialing subscription, prevent creating a new one.
-      // Consider returning a specific error or the existing subscription details.
+    if (subscriptionCore.hasActiveSubscription(existingSubscription)) {
       throw new Error(`User already has an active or trialing subscription (Status: ${existingSubscription.status}).`);
     }
 
@@ -71,13 +83,8 @@ const createSubscription = async (userId, planType, paymentMethodId, userAuthTok
     // Get or create Stripe customer
     let stripeCustomerId = user.stripe_customer_id;
     if (!stripeCustomerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        name: user.name,
-        metadata: {
-          userId
-        }
-      });
+      const customerData = subscriptionCore.createStripeCustomerData(user, userId);
+      const customer = await stripe.customers.create(customerData);
       stripeCustomerId = customer.id;
       
       // Update user with Stripe customer ID (requires RLS token)
@@ -85,37 +92,26 @@ const createSubscription = async (userId, planType, paymentMethodId, userAuthTok
       await db.updateUser(userId, { stripe_customer_id: stripeCustomerId }, userAuthToken);
     }
 
-    // Attach payment method to customer
-    await stripe.paymentMethods.attach(paymentMethodId, {
-      customer: stripeCustomerId
-    });
+    // Attach payment method to customer using pure function for data
+    const attachmentData = subscriptionCore.createPaymentMethodAttachmentData(stripeCustomerId);
+    await stripe.paymentMethods.attach(paymentMethodId, attachmentData);
 
-    // Set as default payment method
-    await stripe.customers.update(stripeCustomerId, {
-      invoice_settings: {
-        default_payment_method: paymentMethodId
-      }
-    });
+    // Set as default payment method using pure function for data
+    const customerUpdateData = subscriptionCore.createCustomerUpdateData(paymentMethodId);
+    await stripe.customers.update(stripeCustomerId, customerUpdateData);
 
-    // Determine price ID based on plan type
-    const priceId = planType === 'annual' 
-      ? process.env.STRIPE_ANNUAL_PRICE_ID 
-      : process.env.STRIPE_MONTHLY_PRICE_ID;
+    // Determine price ID using pure function
+    const priceConfig = getPriceConfig();
+    const priceId = subscriptionCore.getPriceIdForPlan(planType, priceConfig);
 
-    // Create subscription
-    const subscription = await stripe.subscriptions.create({
-      customer: stripeCustomerId,
-      items: [{ price: priceId }],
-      expand: ['latest_invoice.payment_intent']
-    });
+    // Create subscription using pure function for data
+    const subscriptionData = subscriptionCore.createStripeSubscriptionData(stripeCustomerId, priceId);
+    const subscription = await stripe.subscriptions.create(subscriptionData);
 
     // --- Check if this Stripe Subscription ID already exists in our DB ---
-    // This is crucial for handling the mock client returning the same ID repeatedly.
     console.log(`[SubscriptionService] Checking if Stripe subscription ID ${subscription.id} already exists in DB...`);
     const existingDbSub = await db.getSubscriptionByStripeId(subscription.id);
     if (existingDbSub) {
-      // If the Stripe ID already exists in the DB (common with mock 'sub_mock'),
-      // throw a specific error immediately to halt execution before the insert attempt.
       const specificErrorMsg = `[PRE-INSERT CHECK FAILED] Stripe subscription ID ${subscription.id} already exists in the database (DB ID: ${existingDbSub.id}). Cannot create duplicate.`;
       console.error(specificErrorMsg);
       throw new Error(specificErrorMsg);
@@ -124,34 +120,23 @@ const createSubscription = async (userId, planType, paymentMethodId, userAuthTok
     }
     // --- End Check ---
 
+    // Store subscription in database using pure function for data transformation
+    const dbSubscriptionData = subscriptionCore.createSubscriptionData(subscription, userId, planType);
+    const dbSubscription = await db.createSubscription(dbSubscriptionData);
 
-    // Store subscription in database (only if it didn't exist)
-    const subscriptionData = {
-      user_id: userId,
-      stripe_subscription_id: subscription.id,
+    // Create audit log entry using pure function for data
+    const auditLogData = subscriptionCore.createAuditLogData('subscription_created', userId, {
       plan_type: planType,
-      status: subscription.status,
-      current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-      current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    const dbSubscription = await db.createSubscription(subscriptionData);
-
-    // Create audit log entry
-    await db.createAuditLog({
-      action: 'subscription_created',
-      user_id: userId,
-      details: {
-        plan_type: planType,
-        subscription_id: subscription.id
-      }
+      subscription_id: subscription.id
     });
+    await db.createAuditLog(auditLogData);
+
+    // Extract client secret using pure function
+    const clientSecret = subscriptionCore.extractClientSecret(subscription);
 
     return {
       subscription: dbSubscription,
-      clientSecret: subscription.latest_invoice.payment_intent.client_secret
+      clientSecret
     };
   } catch (error) {
     console.error('Subscription creation error:', error);
@@ -168,6 +153,12 @@ const createSubscription = async (userId, planType, paymentMethodId, userAuthTok
  */
 const updateSubscription = async (userId, planType, userAuthToken) => {
   try {
+    // Validate parameters using pure function
+    const validation = subscriptionCore.validateSubscriptionUpdateParams(userId, planType);
+    if (!validation.isValid) {
+      throw new Error(validation.errors.join(', '));
+    }
+
     // Get user subscription (requires RLS token)
     if (!userAuthToken) throw new Error("Authentication token required to get user subscription in updateSubscription");
     const subscription = await db.getUserSubscription(userId, userAuthToken);
@@ -175,39 +166,35 @@ const updateSubscription = async (userId, planType, userAuthToken) => {
       throw new Error('Subscription not found');
     }
 
-    // Determine new price ID
-    const priceId = planType === 'annual' 
-      ? process.env.STRIPE_ANNUAL_PRICE_ID 
-      : process.env.STRIPE_MONTHLY_PRICE_ID;
+    // Determine new price ID using pure function
+    const priceConfig = getPriceConfig();
+    const priceId = subscriptionCore.getPriceIdForPlan(planType, priceConfig);
 
     // Update Stripe subscription
     const stripeSubscription = await stripe.subscriptions.retrieve(
       subscription.stripe_subscription_id
     );
 
-    await stripe.subscriptions.update(subscription.stripe_subscription_id, {
-      items: [{
-        id: stripeSubscription.items.data[0].id,
-        price: priceId
-      }],
-      proration_behavior: 'create_prorations'
-    });
+    // Extract subscription item ID using pure function
+    const subscriptionItemId = subscriptionCore.extractFirstSubscriptionItemId(stripeSubscription);
+    if (!subscriptionItemId) {
+      throw new Error('No subscription items found');
+    }
 
-    // Update subscription in database
-    const updatedSubscription = await db.updateSubscription(subscription.id, {
+    // Create update data using pure function
+    const updateData = subscriptionCore.createStripeSubscriptionUpdateData(subscriptionItemId, priceId);
+    await stripe.subscriptions.update(subscription.stripe_subscription_id, updateData);
+
+    // Update subscription in database using pure function for data
+    const dbUpdateData = subscriptionCore.createSubscriptionUpdateData(planType);
+    const updatedSubscription = await db.updateSubscription(subscription.id, dbUpdateData);
+
+    // Create audit log entry using pure function for data
+    const auditLogData = subscriptionCore.createAuditLogData('subscription_updated', userId, {
       plan_type: planType,
-      updated_at: new Date().toISOString()
+      subscription_id: subscription.stripe_subscription_id
     });
-
-    // Create audit log entry
-    await db.createAuditLog({
-      action: 'subscription_updated',
-      user_id: userId,
-      details: {
-        plan_type: planType,
-        subscription_id: subscription.stripe_subscription_id
-      }
-    });
+    await db.createAuditLog(auditLogData);
 
     return updatedSubscription;
   } catch (error) {
@@ -234,20 +221,15 @@ const cancelSubscription = async (userId, userAuthToken) => {
     // Cancel Stripe subscription
     await stripe.subscriptions.cancel(subscription.stripe_subscription_id);
 
-    // Update subscription in database
-    const cancelledSubscription = await db.updateSubscription(subscription.id, {
-      status: 'canceled',
-      updated_at: new Date().toISOString()
-    });
+    // Update subscription in database using pure function for data
+    const cancellationData = subscriptionCore.createSubscriptionCancellationData();
+    const cancelledSubscription = await db.updateSubscription(subscription.id, cancellationData);
 
-    // Create audit log entry
-    await db.createAuditLog({
-      action: 'subscription_cancelled',
-      user_id: userId,
-      details: {
-        subscription_id: subscription.stripe_subscription_id
-      }
+    // Create audit log entry using pure function for data
+    const auditLogData = subscriptionCore.createAuditLogData('subscription_cancelled', userId, {
+      subscription_id: subscription.stripe_subscription_id
     });
+    await db.createAuditLog(auditLogData);
 
     return cancelledSubscription;
   } catch (error) {
@@ -257,7 +239,7 @@ const cancelSubscription = async (userId, userAuthToken) => {
 };
 
 /**
- * Get subscription status
+ * Get subscription status for a user
  * @param {string} userId - User ID
  * @param {string} userAuthToken - The user's JWT for RLS-scoped operations.
  * @returns {Promise<Object>} - Subscription status
@@ -275,9 +257,11 @@ const getSubscriptionStatus = async (userId, userAuthToken) => {
       };
     }
     
-    // Consider both 'active' and 'trialing' statuses as granting premium access
+    // Use pure function to check if subscription is active
+    const isActive = subscriptionCore.isActiveSubscriptionStatus(subscription.status);
+    
     return {
-      active: ['active', 'trialing'].includes(subscription.status), 
+      active: isActive,
       tier: subscription.plan_type,
       currentPeriodEnd: subscription.current_period_end
     };
@@ -294,6 +278,17 @@ const getSubscriptionStatus = async (userId, userAuthToken) => {
  */
 const handleWebhookEvent = async (event) => {
   try {
+    // Validate event structure using pure function
+    if (!subscriptionCore.isValidWebhookEvent(event)) {
+      throw new Error('Invalid webhook event structure');
+    }
+
+    // Check if we should process this event type using pure function
+    if (!subscriptionCore.shouldProcessWebhookEvent(event.type)) {
+      console.log(`Ignoring unsupported webhook event type: ${event.type}`);
+      return;
+    }
+
     switch (event.type) {
       case 'customer.subscription.updated':
         await handleSubscriptionUpdated(event.data.object);
@@ -328,23 +323,18 @@ const handleSubscriptionUpdated = async (subscription) => {
       return;
     }
 
-    // Update subscription in database
-    await db.updateSubscription(dbSubscription.id, {
-      status: subscription.status,
-      current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-      current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
-      updated_at: new Date().toISOString()
-    });
+    // Transform Stripe subscription data using pure function
+    const updateData = subscriptionCore.transformStripeSubscriptionForUpdate(subscription);
+    await db.updateSubscription(dbSubscription.id, updateData);
 
-    // Create audit log entry
-    await db.createAuditLog({
-      action: 'subscription_updated_webhook',
-      user_id: dbSubscription.user_id,
-      details: {
-        subscription_id: subscription.id,
-        status: subscription.status
-      }
+    // Create audit log entry using pure functions
+    const action = subscriptionCore.getAuditLogActionFromEventType('customer.subscription.updated');
+    const details = subscriptionCore.createWebhookAuditLogDetails('customer.subscription.updated', {
+      subscription_id: subscription.id,
+      status: subscription.status
     });
+    const auditLogData = subscriptionCore.createAuditLogData(action, dbSubscription.user_id, details);
+    await db.createAuditLog(auditLogData);
   } catch (error) {
     console.error('Subscription update webhook error:', error);
     throw error;
@@ -365,20 +355,17 @@ const handleSubscriptionDeleted = async (subscription) => {
       return;
     }
 
-    // Update subscription in database
-    await db.updateSubscription(dbSubscription.id, {
-      status: 'canceled',
-      updated_at: new Date().toISOString()
-    });
+    // Update subscription in database using pure function for data
+    const cancellationData = subscriptionCore.createSubscriptionCancellationData();
+    await db.updateSubscription(dbSubscription.id, cancellationData);
 
-    // Create audit log entry
-    await db.createAuditLog({
-      action: 'subscription_cancelled_webhook',
-      user_id: dbSubscription.user_id,
-      details: {
-        subscription_id: subscription.id
-      }
+    // Create audit log entry using pure functions
+    const action = subscriptionCore.getAuditLogActionFromEventType('customer.subscription.deleted');
+    const details = subscriptionCore.createWebhookAuditLogDetails('customer.subscription.deleted', {
+      subscription_id: subscription.id
     });
+    const auditLogData = subscriptionCore.createAuditLogData(action, dbSubscription.user_id, details);
+    await db.createAuditLog(auditLogData);
   } catch (error) {
     console.error('Subscription deletion webhook error:', error);
     throw error;
@@ -403,16 +390,21 @@ const handleInvoicePaymentSucceeded = async (invoice) => {
       return;
     }
 
-    // Create audit log entry
-    await db.createAuditLog({
-      action: 'payment_succeeded',
-      user_id: dbSubscription.user_id,
-      details: {
-        subscription_id: invoice.subscription,
-        amount: invoice.amount_paid,
-        invoice_id: invoice.id
-      }
+    // Extract invoice data using pure function
+    const invoiceData = subscriptionCore.extractInvoiceDataFromEvent({
+      type: 'invoice.payment_succeeded',
+      data: { object: invoice }
     });
+
+    // Create audit log entry using pure functions
+    const action = subscriptionCore.getAuditLogActionFromEventType('invoice.payment_succeeded');
+    const details = subscriptionCore.createWebhookAuditLogDetails('invoice.payment_succeeded', {
+      subscription_id: invoice.subscription,
+      amount_paid: invoice.amount_paid,
+      invoice_id: invoice.id
+    });
+    const auditLogData = subscriptionCore.createAuditLogData(action, dbSubscription.user_id, details);
+    await db.createAuditLog(auditLogData);
   } catch (error) {
     console.error('Invoice payment succeeded webhook error:', error);
     throw error;
@@ -437,16 +429,21 @@ const handleInvoicePaymentFailed = async (invoice) => {
       return;
     }
 
-    // Create audit log entry
-    await db.createAuditLog({
-      action: 'payment_failed',
-      user_id: dbSubscription.user_id,
-      details: {
-        subscription_id: invoice.subscription,
-        invoice_id: invoice.id,
-        attempt_count: invoice.attempt_count
-      }
+    // Extract invoice data using pure function
+    const invoiceData = subscriptionCore.extractInvoiceDataFromEvent({
+      type: 'invoice.payment_failed',
+      data: { object: invoice }
     });
+
+    // Create audit log entry using pure functions
+    const action = subscriptionCore.getAuditLogActionFromEventType('invoice.payment_failed');
+    const details = subscriptionCore.createWebhookAuditLogDetails('invoice.payment_failed', {
+      subscription_id: invoice.subscription,
+      invoice_id: invoice.id,
+      attempt_count: invoice.attempt_count
+    });
+    const auditLogData = subscriptionCore.createAuditLogData(action, dbSubscription.user_id, details);
+    await db.createAuditLog(auditLogData);
   } catch (error) {
     console.error('Invoice payment failed webhook error:', error);
     throw error;

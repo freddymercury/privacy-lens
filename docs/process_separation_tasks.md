@@ -408,17 +408,194 @@ async function assessUrl(url) {
 - [ ] Update plugin error handling for new endpoint responses
 - [ ] Verify all plugin features work with separated endpoints
 
+## Phase 6 - Part 2: Subscription Implementation
+
+### Task 6.5: Extract subscription core logic to shared modules
+**Goal:** Move reusable subscription code to `/shared` following pure function principles  
+**Start:** Completed Task 6.4  
+**End:** Subscription logic is available as shared modules with pure functions  
+**Test:** Import and use subscription logic from shared module in both processes  
+
+- [ ] **Apply pure function principles:** Extract subscription business logic
+  - [ ] Create `/shared/subscription/core.js` with pure subscription validation functions
+  - [ ] Extract pure plan type validation (monthly/annual validation)
+  - [ ] Extract pure subscription status calculation logic
+  - [ ] Extract pure pricing calculation functions
+  - [ ] Create pure subscription data transformation functions
+  - [ ] Separate pure validation from database operations and external API calls
+- [ ] Create `/shared/subscription/stripe.js` with pure Stripe data processing
+  - [ ] Extract pure Stripe webhook event validation
+  - [ ] Extract pure Stripe subscription data normalization
+  - [ ] Create pure functions for Stripe price ID mapping
+- [ ] Export all functions from `/shared/subscription/index.js`
+- [ ] **Create wrapper functions:** Separate side effects from pure logic
+  - [ ] Database operations wrapper functions
+  - [ ] Stripe API calls wrapper functions
+  - [ ] Audit logging wrapper functions
+- [ ] Update monolith to import subscription utilities from shared module
+- [ ] Run subscription tests to ensure functionality works
+
+### Task 6.6: Implement subscription controller in Client API
+**Goal:** Create subscription endpoints in Client API using shared logic  
+**Start:** Completed Task 6.5  
+**End:** Client API handles all subscription operations  
+**Test:** All subscription endpoints work correctly in Client API  
+
+- [ ] Create `/client-api/src/controllers/subscriptionController.js`
+- [ ] **Implement pure function-based controllers:**
+  - [ ] Import pure functions from `/shared/subscription`
+  - [ ] Implement `createSubscription` using pure validation + side effect wrappers
+  - [ ] Implement `updateSubscription` using pure plan validation + database wrappers
+  - [ ] Implement `cancelSubscription` using pure status logic + API wrappers
+  - [ ] Implement `getSubscriptionStatus` using pure data transformation
+  - [ ] Implement `handleWebhook` using pure event validation + processing wrappers
+- [ ] **Apply authentication and authorization:**
+  - [ ] Add authentication middleware to all subscription endpoints
+  - [ ] Implement user context validation for subscription operations
+  - [ ] Add proper error handling for authentication failures
+- [ ] **Add comprehensive input validation:**
+  - [ ] Validate plan types (monthly/annual) using pure functions
+  - [ ] Validate payment method IDs and Stripe data
+  - [ ] Validate webhook signatures and event data
+- [ ] Test: All controller functions work with pure logic and proper error handling
+
+### Task 6.7: Create subscription routes in Client API
+**Goal:** Set up subscription routing in Client API  
+**Start:** Completed Task 6.6  
+**End:** Subscription routes are properly configured and accessible  
+**Test:** All subscription endpoints respond correctly via routes  
+
+- [ ] Create `/client-api/src/routes/subscription.js`
+- [ ] Add subscription routes with proper HTTP methods:
+  - [ ] POST `/api/subscription/create` - Create new subscription
+  - [ ] POST `/api/subscription/update` - Update existing subscription
+  - [ ] POST `/api/subscription/cancel` - Cancel subscription
+  - [ ] POST `/api/subscription/status` - Get subscription status
+  - [ ] POST `/api/subscription/webhook` - Handle Stripe webhooks
+- [ ] **Configure middleware for each route:**
+  - [ ] Add authentication middleware to user-facing endpoints
+  - [ ] Add webhook signature validation for webhook endpoint
+  - [ ] Add request body validation middleware
+  - [ ] Add rate limiting for subscription operations
+- [ ] Update `/client-api/src/app.js` to include subscription routes
+- [ ] Test: All routes are accessible and return appropriate responses
+
+### Task 6.8: Update NGINX configuration for subscription routing ✅
+**Goal:** Route subscription endpoints to Client API through NGINX  
+**Start:** Completed Task 6.7  
+**End:** NGINX correctly routes subscription requests to Client API  
+**Test:** Subscription requests are properly routed through NGINX proxy  
+
+- [x] Update `/nginx/privacy-lens.dev.conf` to include subscription routing:
+  - [x] Add `location /api/subscription/` block routing to Client API (port 3001)
+  - [x] Configure proper CORS headers for subscription endpoints
+  - [x] Add OPTIONS method handling for preflight requests
+  - [x] Set appropriate proxy headers for Stripe webhook handling
+- [x] Update `/nginx/privacy-lens.prod.conf` with same subscription routing
+- [x] **Test subscription routing:**
+  - [x] Test subscription creation through NGINX proxy
+  - [x] Test subscription status retrieval through proxy
+  - [x] Test webhook delivery through proxy
+  - [x] Verify CORS headers work for Chrome plugin requests
+- [x] Update `/nginx/test-routing.sh` to include subscription endpoint tests
+- [x] Test: All subscription endpoints are accessible through NGINX
+
+### Task 6.9: Implement subscription features in Chrome plugin ✅
+**Goal:** Add subscription functionality to Chrome plugin  
+**Start:** Completed Task 6.8  
+**End:** Chrome plugin can manage user subscriptions  
+**Test:** Plugin subscription features work end-to-end  
+
+- [x] **Update Chrome plugin subscription logic:**
+  - [x] Update `/chrome-plugin/auth.js` to use new subscription endpoints
+  - [x] Implement subscription status checking using `/api/subscription/status`
+  - [x] Add subscription creation flow using `/api/subscription/create`
+  - [x] Add subscription update functionality using `/api/subscription/update`
+  - [x] Add subscription cancellation using `/api/subscription/cancel`
+- [x] **Create subscription UI components:**
+  - [x] Add subscription status display to plugin popup
+  - [x] Create subscription upgrade/downgrade interface
+  - [x] Add subscription management buttons and flows
+  - [x] Implement subscription expiration warnings
+- [x] **Update plugin feature gating:**
+  - [x] Check subscription status before allowing premium features
+  - [x] Display appropriate messages for free vs. paid users
+  - [x] Handle subscription expiration gracefully
+  - [x] Update assessment limits based on subscription tier
+- [x] **Add error handling:**
+  - [x] Handle subscription API errors gracefully
+  - [x] Display user-friendly error messages
+  - [x] Implement retry logic for failed subscription operations
+- [x] Test: Plugin subscription features work correctly with new endpoints
+
+### Task 6.10: Create subscription endpoint tests
+**Goal:** Comprehensive testing for subscription functionality  
+**Start:** Completed Task 6.9  
+**End:** All subscription features are thoroughly tested  
+**Test:** Test suite covers all subscription scenarios and edge cases  
+
+- [ ] **Create pure function tests:**
+  - [ ] Test all pure functions in `/shared/subscription/core.js`
+  - [ ] Test subscription validation functions with various inputs
+  - [ ] Test plan type validation and pricing calculations
+  - [ ] Test Stripe data transformation functions
+  - [ ] Ensure pure functions are deterministic and side-effect free
+- [ ] **Create Client API subscription tests:**
+  - [ ] Test subscription creation with valid and invalid data
+  - [ ] Test subscription updates and plan changes
+  - [ ] Test subscription cancellation flows
+  - [ ] Test subscription status retrieval
+  - [ ] Test webhook handling with various Stripe events
+- [ ] **Create integration tests:**
+  - [ ] Test end-to-end subscription creation flow
+  - [ ] Test subscription routing through NGINX
+  - [ ] Test Chrome plugin subscription integration
+  - [ ] Test error scenarios and edge cases
+- [ ] **Create load tests for subscription endpoints:**
+  - [ ] Test subscription creation under load
+  - [ ] Test webhook handling performance
+  - [ ] Verify subscription status queries scale properly
+- [ ] Run all tests and ensure 100% coverage for pure functions
+
+### Task 6.11: Update subscription documentation ✅
+**Goal:** Document subscription implementation and architecture  
+**Start:** Completed Task 6.10  
+**End:** Complete documentation for subscription features  
+**Test:** Documentation is accurate and helpful for developers  
+
+- [x] **Update API documentation:**
+  - [x] Document all subscription endpoints with request/response examples
+  - [x] Document authentication requirements for subscription endpoints
+  - [x] Document webhook endpoint and Stripe integration
+  - [x] Document error codes and responses for subscription operations
+- [x] **Update Chrome plugin documentation:**
+  - [x] Document subscription features in plugin README
+  - [x] Document subscription UI components and flows
+  - [x] Document subscription-based feature gating
+  - [x] Update plugin configuration for subscription endpoints
+- [x] **Update architecture documentation:**
+  - [x] Document subscription data flow between components
+  - [x] Update process separation diagrams to include subscription routing
+  - [x] Document pure function architecture for subscription logic
+  - [x] Document Stripe integration and webhook handling
+- [x] **Create troubleshooting guides:**
+  - [x] Document common subscription issues and solutions
+  - [x] Document webhook debugging procedures
+  - [x] Document subscription testing procedures
+- [x] Test: Documentation is complete and accurate
+
 ## Phase 7: Testing and Cleanup
 
 ### Task 7.1: Create integration tests for Client API
 **Goal:** Ensure Client API endpoints work correctly in isolation  
-**Start:** Completed Task 6.4  
+**Start:** Completed Task 6.11  
 **End:** Comprehensive test suite validates all Client API functionality  
 **Test:** All tests pass and cover major use cases  
 
 - [ ] Create test setup for Client API with test database
 - [ ] Write tests for all authentication endpoints
 - [ ] Write tests for all assessment endpoints
+- [ ] Write tests for all subscription endpoints
 - [ ] Write tests for authentication middleware
 - [ ] Write tests for error handling and edge cases
 - [ ] Run test suite and ensure all tests pass
@@ -432,6 +609,7 @@ async function assessUrl(url) {
 - [ ] Set up load testing tools (k6, Artillery, or similar)
 - [ ] Create load test scenarios for authentication endpoints
 - [ ] Create load test scenarios for assessment endpoints
+- [ ] Create load test scenarios for subscription endpoints
 - [ ] Run load tests and measure response times
 - [ ] Verify performance meets or exceeds monolith performance
 
@@ -450,11 +628,12 @@ async function assessUrl(url) {
 ### Task 7.4: Remove migrated code from monolith
 **Goal:** Clean up monolith by removing migrated endpoint logic  
 **Start:** Completed Task 7.3  
-**End:** Monolith no longer contains auth or assessment endpoint code  
+**End:** Monolith no longer contains auth, assessment, or subscription endpoint code  
 **Test:** Monolith starts successfully without migrated code  
 
 - [ ] Remove authentication route handlers from monolith
-- [ ] Remove assessment route handlers from monolith  
+- [ ] Remove assessment route handlers from monolith
+- [ ] Remove subscription route handlers from monolith
 - [ ] Remove related controller code that's been migrated
 - [ ] Update monolith imports to use shared modules where applicable
 - [ ] Test: Monolith starts and serves remaining endpoints correctly
@@ -474,10 +653,13 @@ async function assessUrl(url) {
 ## Success Criteria
 
 - [ ] All authentication endpoints (`/api/auth/*`) work in Client API process
-- [ ] All assessment endpoints work in Client API process  
-- [ ] Chrome plugin successfully authenticates and requests assessments
+- [ ] All assessment endpoints work in Client API process
+- [ ] All subscription endpoints (`/api/subscription/*`) work in Client API process
+- [ ] Chrome plugin successfully authenticates, requests assessments, and manages subscriptions
 - [ ] Client API process runs independently of monolith
 - [ ] NGINX correctly routes requests to Client API
+- [ ] Subscription features work end-to-end (creation, updates, cancellation, webhooks)
+- [ ] Pure function architecture is implemented for all shared subscription logic
 - [ ] Performance is equal to or better than monolith
 - [ ] All tests pass for both Client API and remaining monolith
 - [ ] Documentation is updated and accurate
@@ -491,3 +673,4 @@ async function assessUrl(url) {
 - Maintain backward compatibility until full migration is complete
 - **Pure Function Priority:** When refactoring, always prioritize extracting pure functions first, then wrap them with impure functions that handle side effects
 - **Testing Strategy:** Pure functions should have extensive test coverage since they're easier to test and more critical to system reliability
+- **Subscription Integration:** Ensure subscription functionality maintains the same level of reliability and performance as other Client API features

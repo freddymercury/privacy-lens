@@ -381,7 +381,7 @@ async function getUserTier() {
     
     // Get subscription status from server
     const response = await fetch(`${API_BASE_URL}/subscription/status`, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${authData.token}`
@@ -397,15 +397,19 @@ async function getUserTier() {
     // Update stored subscription data
     await storeAuthData({
       ...authData,
-      subscription: data.subscription
+      subscription: {
+        active: data.active,
+        tier: data.tier,
+        currentPeriodEnd: data.currentPeriodEnd
+      }
     });
     
     // Map subscription to tier
-    if (data.subscription && data.subscription.active) {
+    if (data.active) {
       return {
-        tier: data.subscription.tier,
-        features: ['basic', 'advanced', 'premium'],
-        expiresAt: data.subscription.currentPeriodEnd
+        tier: data.tier,
+        features: ['basic', 'advanced', 'premium', 'serverFetch'],
+        expiresAt: data.currentPeriodEnd
       };
     }
     
@@ -594,6 +598,57 @@ async function cancelSubscription() {
 }
 
 /**
+ * Get subscription status
+ * @returns {Promise<Object>} - Subscription status
+ */
+async function getSubscriptionStatus() {
+  try {
+    const authData = await getAuthData();
+    
+    if (!authData || !authData.token) {
+      throw new Error('User not authenticated');
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/subscription/status`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authData.token}`
+      }
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to get subscription status');
+    }
+    
+    // Update stored subscription data if available
+    if (data.subscription) {
+      await storeAuthData({
+        ...authData,
+        subscription: data.subscription
+      });
+    }
+    
+    return {
+      success: true,
+      active: data.active,
+      tier: data.tier,
+      currentPeriodEnd: data.currentPeriodEnd
+    };
+  } catch (error) {
+    console.error('[PrivacyLens Auth] Subscription status error:', error);
+    return {
+      success: false,
+      error: error.message,
+      active: false,
+      tier: 'free'
+    };
+  }
+}
+
+/**
  * Get the authenticated user's token
  * @returns {Promise<string|null>} - JWT token or null if not authenticated
  */
@@ -636,5 +691,6 @@ export {
   cancelSubscription,
   getAuthToken,
   getCurrentUser,
-  getDeviceId
+  getDeviceId,
+  getSubscriptionStatus
 };
