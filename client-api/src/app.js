@@ -4,8 +4,6 @@ dotenv.config();
 
 const express = require('express');
 const cors = require('cors');
-const pino = require('pino');
-const pinoHttp = require('pino-http');
 
 // Import routes
 const authRoutes = require('./routes/auth.js');
@@ -13,33 +11,35 @@ const assessmentRoutes = require('./routes/assessment.js');
 const subscriptionRoutes = require('./routes/subscription.js');
 const { triggerAssessment, reportUnassessed } = require('./controllers/assessmentController.js');
 
-// Initialize logger
-const logger = pino({
-  name: 'client-api',
-  level: process.env.LOG_LEVEL || 'info'
-});
+// Import comprehensive logging middleware
+const { 
+  logger, 
+  contextMiddleware, 
+  requestLogger, 
+  errorLogger, 
+  healthCheck 
+} = require('./middleware/logging.js');
 
 // Initialize Express app
 const app = express();
 const port = process.env.CLIENT_API_PORT || 3001;
 
-// Middleware
+// Middleware - Order is important!
 app.use(cors({
   origin: process.env.CHROME_PLUGIN_ORIGIN || '*',
   credentials: true
 }));
 
 app.use(express.json({ limit: '10mb' }));
-app.use(pinoHttp({ logger }));
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'ok', 
-    service: 'client-api',
-    timestamp: new Date().toISOString()
-  });
-});
+// Add context middleware first to enable request tracing
+app.use(contextMiddleware());
+
+// Add request logging middleware
+app.use(requestLogger());
+
+// Enhanced health check endpoint with detailed system information
+app.get('/health', healthCheck);
 
 // Routes - THIS IS THE KEY LINE THAT WAS MISSING!
 app.use('/api/auth', authRoutes);
@@ -52,12 +52,18 @@ app.post('/api/trigger-assessment/:url', triggerAssessment);
 // Direct route for report unassessed to match original API structure
 app.post('/api/report-unassessed', reportUnassessed);
 
-// Basic error handling middleware
+// Enhanced error handling middleware with detailed logging
+app.use(errorLogger);
+
 app.use((err, req, res, next) => {
-  logger.error(err, 'Unhandled error');
-  res.status(500).json({ 
-    error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  // Send appropriate error response
+  const statusCode = err.statusCode || err.status || 500;
+  const message = process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong';
+  
+  res.status(statusCode).json({ 
+    error: statusCode >= 500 ? 'Internal server error' : 'Request error',
+    message,
+    requestId: res.getHeader('X-Request-ID')
   });
 });
 
@@ -66,10 +72,12 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
-// Start server
-app.listen(port, () => {
-  logger.info(`Client API server running on port ${port}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+// Only start server if this file is run directly (not imported)
+if (require.main === module) {
+  app.listen(port, () => {
+    logger.info(`Client API server running on port ${port}`);
+    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+}
 
 module.exports = app; 

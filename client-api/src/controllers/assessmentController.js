@@ -3,6 +3,10 @@ const { normalizeUrl } = require('../../../shared/assessment/domain.js');
 const { computeTextHash, createAssessmentPrompt } = require('../../../shared/assessment/llm.js');
 const { createAssessment, isValidAssessment } = require('../../../shared/assessment/core.js');
 
+// Import logging
+const { createLogger } = require('../middleware/logging.js');
+const logger = createLogger('AssessmentController');
+
 /**
  * Pure function to format assessment for API response
  * @param {Object} assessment - Raw assessment data from database
@@ -87,7 +91,10 @@ const getAssessment = async (req, res) => {
   try {
     const { url } = req.query;
 
+    logger.info('Assessment request received', { url });
+
     if (!url) {
+      logger.warn('Assessment request failed - missing URL parameter');
       return res.status(400).json({
         status: "error",
         message: "URL parameter is required",
@@ -108,13 +115,30 @@ const getAssessment = async (req, res) => {
     // Use pure function to process the result
     const result = getAssessmentPure(url, assessment, normalizeUrl, formatAssessmentForResponse);
 
+    if (result) {
+      logger.info('Assessment found and returned', { 
+        url, 
+        normalizedUrl: normalizeUrl(url),
+        riskLevel: result.riskLevel 
+      });
+    } else {
+      logger.info('No assessment found for URL', { 
+        url, 
+        normalizedUrl: normalizeUrl(url) 
+      });
+    }
+
     return res.status(200).json({
       status: "success",
       assessment: result,
     });
 
   } catch (error) {
-    console.error("Error getting assessment:", error);
+    logger.error('Error getting assessment', { 
+      url, 
+      error: error.message,
+      stack: error.stack 
+    });
     return res.status(500).json({
       status: "error",
       message: "Failed to get assessment",
@@ -133,10 +157,14 @@ const triggerAssessment = async (req, res) => {
     const { url } = req.params;
     const { manualText } = req.body;
 
-    console.log(`[AssessmentController] Triggering assessment for URL: ${url}`);
+    logger.info('Assessment trigger request received', { 
+      url, 
+      hasManualText: !!manualText,
+      textLength: manualText ? manualText.length : 0 
+    });
 
     if (!url) {
-      console.log(`[AssessmentController] Error: URL parameter is missing`);
+      logger.warn('Assessment trigger failed - missing URL parameter');
       return res.status(400).json({
         status: "error",
         message: "URL parameter is required",
@@ -146,13 +174,17 @@ const triggerAssessment = async (req, res) => {
     // For now, we only support manual text input in the client-api
     // Full automated assessment would require additional services
     if (!manualText) {
+      logger.warn('Assessment trigger failed - manual text required', { url });
       return res.status(400).json({
         status: "error",
         message: "Manual text is required for assessment in client API. Automated assessment not yet implemented.",
       });
     }
 
-    console.log(`[AssessmentController] Using manually provided text`);
+    logger.info('Using manually provided text for assessment', { 
+      url, 
+      textLength: manualText.length 
+    });
     
     // Normalize the URL
     const normalizedUrl = normalizeUrl(url);
@@ -165,15 +197,18 @@ const triggerAssessment = async (req, res) => {
     };
 
     // Create a mock assessment (in a real implementation, this would call an LLM service)
-    console.log(
-      `[AssessmentController] Creating assessment for ${normalizedUrl} (text length: ${agreementData.text.length} chars)`
-    );
+    logger.info('Creating assessment for URL', { 
+      normalizedUrl, 
+      textLength: agreementData.text.length,
+      textHash: agreementData.hash 
+    });
     
     const assessment = createMockAssessment(normalizedUrl, agreementData.text);
     
-    console.log(
-      `[AssessmentController] Assessment complete with risk level: ${assessment.riskLevel}`
-    );
+    logger.info('Assessment complete', { 
+      normalizedUrl, 
+      riskLevel: assessment.riskLevel 
+    });
 
     // Create the assessment object using shared core function
     const assessmentObject = createAssessment({
@@ -187,9 +222,7 @@ const triggerAssessment = async (req, res) => {
     });
 
     // Save assessment to database
-    console.log(
-      `[AssessmentController] Saving assessment to database for URL: ${normalizedUrl}`
-    );
+    logger.info('Saving assessment to database', { normalizedUrl });
     
     const { data: savedAssessment, error: saveError } = await supabaseServiceRole
       .from('websites')
@@ -208,7 +241,7 @@ const triggerAssessment = async (req, res) => {
       throw saveError;
     }
 
-    console.log(`[AssessmentController] Assessment saved successfully`);
+    logger.info('Assessment saved successfully', { normalizedUrl });
 
     // Return the assessment in the expected format
     return res.status(200).json({
@@ -224,7 +257,11 @@ const triggerAssessment = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("[AssessmentController] Error triggering assessment:", error);
+    logger.error('Error triggering assessment', { 
+      url: req.params.url, 
+      error: error.message,
+      stack: error.stack 
+    });
     return res.status(500).json({
       status: "error",
       message: "Failed to trigger assessment",
@@ -242,7 +279,10 @@ const reportUnassessed = async (req, res) => {
   try {
     const { url } = req.body;
 
+    logger.info('Unassessed URL report received', { url });
+
     if (!url) {
+      logger.warn('Report unassessed failed - missing URL');
       return res.status(400).json({
         status: "error",
         message: "URL is required",
@@ -265,6 +305,10 @@ const reportUnassessed = async (req, res) => {
 
     if (existingAssessment) {
       // URL already has an assessment, no need to add to queue
+      logger.info('URL already has assessment, skipping queue', { 
+        url, 
+        normalizedUrl 
+      });
       return res.status(200).json({
         status: "success",
         message: "URL already has an assessment",
@@ -284,13 +328,22 @@ const reportUnassessed = async (req, res) => {
       throw insertError;
     }
 
+    logger.info('URL added to unassessed queue', { 
+      url, 
+      normalizedUrl 
+    });
+
     return res.status(200).json({
       status: "success",
       message: "URL added to unassessed queue",
     });
 
   } catch (error) {
-    console.error("Error reporting unassessed URL:", error);
+    logger.error('Error reporting unassessed URL', { 
+      url: req.body.url, 
+      error: error.message,
+      stack: error.stack 
+    });
     return res.status(500).json({
       status: "error",
       message: "Failed to report unassessed URL",

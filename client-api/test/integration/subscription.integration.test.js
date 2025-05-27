@@ -16,25 +16,27 @@ jest.mock('../../src/database', () => ({
 }));
 
 // Mock Stripe
-const mockStripe = {
-  customers: {
-    create: jest.fn(),
-    retrieve: jest.fn()
-  },
-  subscriptions: {
-    create: jest.fn(),
-    update: jest.fn(),
-    cancel: jest.fn(),
-    retrieve: jest.fn()
-  },
-  webhooks: {
-    constructEvent: jest.fn()
-  }
-};
-
 jest.mock('stripe', () => {
-  return jest.fn(() => mockStripe);
+  return jest.fn(() => ({
+    customers: {
+      create: jest.fn(),
+      retrieve: jest.fn()
+    },
+    subscriptions: {
+      create: jest.fn(),
+      update: jest.fn(),
+      cancel: jest.fn(),
+      retrieve: jest.fn()
+    },
+    webhooks: {
+      constructEvent: jest.fn()
+    }
+  }));
 });
+
+// Get the mocked Stripe instance
+const Stripe = require('stripe');
+const mockStripe = new Stripe();
 
 const db = require('../../src/database');
 const jwt = require('jsonwebtoken');
