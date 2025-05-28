@@ -1,5 +1,5 @@
-import { validateToken, createTokenHash } from '@privacy-lens/shared/auth/jwt.js';
-import { supabaseServiceRole } from '../database.js';
+const { validateToken, createTokenHash } = require('@privacy-lens/shared/auth/jwt.js');
+const { supabaseServiceRole } = require('../database.js');
 
 /**
  * Pure function to extract token from Authorization header
@@ -42,7 +42,7 @@ async function lookupToken(tokenHash) {
  * Authentication middleware
  * Validates JWT tokens and adds user context to request
  */
-export function authenticateToken(req, res, next) {
+function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
   const token = extractTokenFromHeader(authHeader);
   
@@ -66,6 +66,8 @@ export function authenticateToken(req, res, next) {
       // Add user context to request
       req.user = {
         id: decoded.sub,
+        sub: decoded.sub, // Add sub for compatibility
+        device_id: decoded.device_id,
         deviceId: decoded.device_id,
         tier: decoded.tier,
         features: decoded.features,
@@ -87,7 +89,7 @@ export function authenticateToken(req, res, next) {
  * Optional authentication middleware
  * Validates token if present but doesn't require it
  */
-export function optionalAuth(req, res, next) {
+function optionalAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   const token = extractTokenFromHeader(authHeader);
   
@@ -103,6 +105,8 @@ export function optionalAuth(req, res, next) {
       if (decoded) {
         req.user = {
           id: decoded.sub,
+          sub: decoded.sub,
+          device_id: decoded.device_id,
           deviceId: decoded.device_id,
           tier: decoded.tier,
           features: decoded.features,
@@ -125,7 +129,7 @@ export function optionalAuth(req, res, next) {
  * Middleware to require specific features
  * @param {Array} requiredFeatures - Array of required feature strings
  */
-export function requireFeatures(requiredFeatures) {
+function requireFeatures(requiredFeatures) {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ 
@@ -150,4 +154,10 @@ export function requireFeatures(requiredFeatures) {
     
     next();
   };
-} 
+}
+
+module.exports = {
+  authenticateToken,
+  optionalAuth,
+  requireFeatures
+}; 

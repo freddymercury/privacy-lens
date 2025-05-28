@@ -6,7 +6,6 @@ const router = express.Router();
 // Note: Some controllers have been removed as their endpoints migrated to Client API
 import * as assessmentController from "../controllers/assessmentController.js";
 import * as unassessedController from "../controllers/unassessedController.js"; // Keep for admin functionality
-import * as updateController from "../controllers/updateController.js";
 import * as archiveCtrl from "../controllers/archiveController.js"; // Use new controller
 
 // Import middleware - keeping for remaining endpoints that may need it
@@ -25,11 +24,10 @@ import { validateToken } from "../middleware/apiAuth.js";
  */
 
 /**
- * Update Routes
+ * Update Routes - MIGRATED TO CLIENT API
+ * These endpoints have been moved to the Client API process.
+ * They are no longer available in the monolith backend.
  */
-router.post("/updates/check", validateToken, updateController.checkForUpdates);
-router.post("/updates/download", validateToken, updateController.downloadUpdate);
-router.post("/updates/changelog", validateToken, updateController.getUpdateHistory);
 
 /**
  * Assessment Routes - PARTIALLY MIGRATED TO CLIENT API
@@ -60,7 +58,6 @@ router.get("/health", (req, res) => {
   });
 });
 
-
 /**
  * Policy Archive Routes (V1)
  * Note: These are currently public as per the spec (using Anon key via supabaseClient).
@@ -87,6 +84,5 @@ router.get("/v1/policies/:domain/versions/:versionId/assets/:assetId", archiveCt
 // This is tricky. Let's use a query string approach or two distinct path params for clarity.
 // Path: /api/v1/policies/{domain}/diff/:olderVersionId/:newerVersionId
 router.get("/v1/policies/:domain/diff/:olderVersionId/:newerVersionId", archiveCtrl.getPolicyDiff);
-
 
 export default router;
