@@ -1,0 +1,697 @@
+{
+  "aggregate": {
+    "counters": {
+      "vusers.created_by_name.Report Unassessed URL Flow": 1476,
+      "vusers.created": 8100,
+      "http.requests": 8100,
+      "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNRESET": 3,
+      "errors.ECONNRESET": 6,
+      "vusers.failed": 8100,
+      "vusers.created_by_name.Get Assessment Flow": 3754,
+      "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 4452,
+      "errors.ECONNREFUSED": 8084,
+      "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 1472,
+      "vusers.created_by_name.Trigger Assessment Flow": 2168,
+      "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 2160,
+      "vusers.created_by_name.Mixed Assessment Operations": 702,
+      "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ETIMEDOUT": 6,
+      "errors.ETIMEDOUT": 10,
+      "plugins.metrics-by-endpoint./api/assessment.errors.ECONNRESET": 1,
+      "plugins.metrics-by-endpoint./api/report-unassessed.errors.ETIMEDOUT": 1,
+      "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNRESET": 2,
+      "plugins.metrics-by-endpoint./api/assessment.errors.ETIMEDOUT": 3
+    },
+    "rates": {
+      "http.request_rate": 33
+    },
+    "firstCounterAt": 1748227568615,
+    "lastCounterAt": 1748227808639,
+    "firstMetricAt": 1748227568615,
+    "lastMetricAt": 1748227808639,
+    "period": 1748227800000,
+    "summaries": {},
+    "histograms": {}
+  },
+  "intermediate": [
+    {
+      "counters": {
+        "vusers.created_by_name.Report Unassessed URL Flow": 6,
+        "vusers.created": 21,
+        "http.requests": 21,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNRESET": 3,
+        "errors.ECONNRESET": 6,
+        "vusers.failed": 21,
+        "vusers.created_by_name.Get Assessment Flow": 6,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 8,
+        "errors.ECONNREFUSED": 15,
+        "vusers.created_by_name.Mixed Assessment Operations": 3,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNRESET": 1,
+        "vusers.created_by_name.Trigger Assessment Flow": 6,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 4,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 3,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNRESET": 2
+      },
+      "rates": {
+        "http.request_rate": 21
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227568615,
+      "lastCounterAt": 1748227569881,
+      "firstMetricAt": 1748227568615,
+      "lastMetricAt": 1748227569881,
+      "period": "1748227560000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 67,
+        "vusers.created": 150,
+        "http.requests": 150,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 78,
+        "errors.ECONNREFUSED": 150,
+        "vusers.failed": 150,
+        "vusers.created_by_name.Report Unassessed URL Flow": 22,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 22,
+        "vusers.created_by_name.Trigger Assessment Flow": 50,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 50,
+        "vusers.created_by_name.Mixed Assessment Operations": 11
+      },
+      "rates": {
+        "http.request_rate": 15
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227570113,
+      "lastCounterAt": 1748227579877,
+      "firstMetricAt": 1748227570113,
+      "lastMetricAt": 1748227579877,
+      "period": "1748227570000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 73,
+        "vusers.created": 150,
+        "http.requests": 150,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 80,
+        "errors.ECONNREFUSED": 150,
+        "vusers.failed": 150,
+        "vusers.created_by_name.Report Unassessed URL Flow": 30,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 30,
+        "vusers.created_by_name.Trigger Assessment Flow": 40,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 40,
+        "vusers.created_by_name.Mixed Assessment Operations": 7
+      },
+      "rates": {
+        "http.request_rate": 15
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227580113,
+      "lastCounterAt": 1748227589877,
+      "firstMetricAt": 1748227580113,
+      "lastMetricAt": 1748227589877,
+      "period": "1748227580000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Trigger Assessment Flow": 40,
+        "vusers.created": 150,
+        "http.requests": 150,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 40,
+        "errors.ECONNREFUSED": 150,
+        "vusers.failed": 150,
+        "vusers.created_by_name.Get Assessment Flow": 72,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 87,
+        "vusers.created_by_name.Report Unassessed URL Flow": 23,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 23,
+        "vusers.created_by_name.Mixed Assessment Operations": 15
+      },
+      "rates": {
+        "http.request_rate": 15
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227590113,
+      "lastCounterAt": 1748227599877,
+      "firstMetricAt": 1748227590113,
+      "lastMetricAt": 1748227599877,
+      "period": "1748227590000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Trigger Assessment Flow": 46,
+        "vusers.created": 150,
+        "http.requests": 150,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 46,
+        "errors.ECONNREFUSED": 150,
+        "vusers.failed": 150,
+        "vusers.created_by_name.Mixed Assessment Operations": 8,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 78,
+        "vusers.created_by_name.Get Assessment Flow": 70,
+        "vusers.created_by_name.Report Unassessed URL Flow": 26,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 26
+      },
+      "rates": {
+        "http.request_rate": 15
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227600113,
+      "lastCounterAt": 1748227609877,
+      "firstMetricAt": 1748227600113,
+      "lastMetricAt": 1748227609877,
+      "period": "1748227600000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 72,
+        "vusers.created": 150,
+        "http.requests": 150,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 84,
+        "errors.ECONNREFUSED": 150,
+        "vusers.failed": 150,
+        "vusers.created_by_name.Trigger Assessment Flow": 43,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 43,
+        "vusers.created_by_name.Mixed Assessment Operations": 12,
+        "vusers.created_by_name.Report Unassessed URL Flow": 23,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 23
+      },
+      "rates": {
+        "http.request_rate": 15
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227610113,
+      "lastCounterAt": 1748227619879,
+      "firstMetricAt": 1748227610113,
+      "lastMetricAt": 1748227619879,
+      "period": "1748227610000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 87,
+        "vusers.created": 176,
+        "http.requests": 176,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 99,
+        "errors.ECONNREFUSED": 176,
+        "vusers.failed": 176,
+        "vusers.created_by_name.Trigger Assessment Flow": 43,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 43,
+        "vusers.created_by_name.Mixed Assessment Operations": 12,
+        "vusers.created_by_name.Report Unassessed URL Flow": 34,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 34
+      },
+      "rates": {
+        "http.request_rate": 15
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227620113,
+      "lastCounterAt": 1748227629993,
+      "firstMetricAt": 1748227620113,
+      "lastMetricAt": 1748227629993,
+      "period": "1748227620000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 144,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 173,
+        "errors.ECONNREFUSED": 300,
+        "vusers.failed": 300,
+        "vusers.created_by_name.Trigger Assessment Flow": 73,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 73,
+        "vusers.created_by_name.Report Unassessed URL Flow": 54,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 54,
+        "vusers.created_by_name.Mixed Assessment Operations": 29
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227630043,
+      "lastCounterAt": 1748227639993,
+      "firstMetricAt": 1748227630043,
+      "lastMetricAt": 1748227639993,
+      "period": "1748227630000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Trigger Assessment Flow": 91,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 91,
+        "errors.ECONNREFUSED": 300,
+        "vusers.failed": 300,
+        "vusers.created_by_name.Get Assessment Flow": 138,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 163,
+        "vusers.created_by_name.Report Unassessed URL Flow": 46,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 46,
+        "vusers.created_by_name.Mixed Assessment Operations": 25
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227640043,
+      "lastCounterAt": 1748227649993,
+      "firstMetricAt": 1748227640043,
+      "lastMetricAt": 1748227649993,
+      "period": "1748227640000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 121,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 147,
+        "errors.ECONNREFUSED": 300,
+        "vusers.failed": 300,
+        "vusers.created_by_name.Trigger Assessment Flow": 81,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 81,
+        "vusers.created_by_name.Mixed Assessment Operations": 26,
+        "vusers.created_by_name.Report Unassessed URL Flow": 72,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 72
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227650043,
+      "lastCounterAt": 1748227659994,
+      "firstMetricAt": 1748227650043,
+      "lastMetricAt": 1748227659994,
+      "period": "1748227650000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 136,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 168,
+        "errors.ECONNREFUSED": 300,
+        "vusers.failed": 300,
+        "vusers.created_by_name.Trigger Assessment Flow": 83,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 83,
+        "vusers.created_by_name.Mixed Assessment Operations": 32,
+        "vusers.created_by_name.Report Unassessed URL Flow": 49,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 49
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227660043,
+      "lastCounterAt": 1748227669994,
+      "firstMetricAt": 1748227660043,
+      "lastMetricAt": 1748227669994,
+      "period": "1748227660000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Mixed Assessment Operations": 30,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 165,
+        "errors.ECONNREFUSED": 300,
+        "vusers.failed": 300,
+        "vusers.created_by_name.Get Assessment Flow": 135,
+        "vusers.created_by_name.Trigger Assessment Flow": 76,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 76,
+        "vusers.created_by_name.Report Unassessed URL Flow": 59,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 59
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227670043,
+      "lastCounterAt": 1748227679992,
+      "firstMetricAt": 1748227670043,
+      "lastMetricAt": 1748227679992,
+      "period": "1748227670000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Mixed Assessment Operations": 24,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 153,
+        "errors.ECONNREFUSED": 299,
+        "vusers.failed": 299,
+        "vusers.created_by_name.Trigger Assessment Flow": 89,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 89,
+        "vusers.created_by_name.Report Unassessed URL Flow": 57,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 57,
+        "vusers.created_by_name.Get Assessment Flow": 130
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227680043,
+      "lastCounterAt": 1748227689995,
+      "firstMetricAt": 1748227680043,
+      "lastMetricAt": 1748227689995,
+      "period": "1748227680000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Trigger Assessment Flow": 71,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 71,
+        "errors.ECONNREFUSED": 301,
+        "vusers.failed": 301,
+        "vusers.created_by_name.Get Assessment Flow": 145,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 175,
+        "vusers.created_by_name.Report Unassessed URL Flow": 55,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 55,
+        "vusers.created_by_name.Mixed Assessment Operations": 29
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227690000,
+      "lastCounterAt": 1748227699992,
+      "firstMetricAt": 1748227690000,
+      "lastMetricAt": 1748227699992,
+      "period": "1748227690000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Report Unassessed URL Flow": 51,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 51,
+        "errors.ECONNREFUSED": 300,
+        "vusers.failed": 300,
+        "vusers.created_by_name.Mixed Assessment Operations": 24,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 166,
+        "vusers.created_by_name.Get Assessment Flow": 142,
+        "vusers.created_by_name.Trigger Assessment Flow": 83,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 83
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227700043,
+      "lastCounterAt": 1748227709993,
+      "firstMetricAt": 1748227700043,
+      "lastMetricAt": 1748227709993,
+      "period": "1748227700000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 140,
+        "vusers.created": 297,
+        "http.requests": 297,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 169,
+        "errors.ECONNREFUSED": 297,
+        "vusers.failed": 297,
+        "vusers.created_by_name.Mixed Assessment Operations": 29,
+        "vusers.created_by_name.Trigger Assessment Flow": 80,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 80,
+        "vusers.created_by_name.Report Unassessed URL Flow": 48,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 48
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227710043,
+      "lastCounterAt": 1748227719981,
+      "firstMetricAt": 1748227710043,
+      "lastMetricAt": 1748227719981,
+      "period": "1748227710000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 144,
+        "vusers.created": 303,
+        "http.requests": 303,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 162,
+        "errors.ECONNREFUSED": 301,
+        "vusers.failed": 301,
+        "vusers.created_by_name.Mixed Assessment Operations": 18,
+        "vusers.created_by_name.Report Unassessed URL Flow": 60,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 59,
+        "vusers.created_by_name.Trigger Assessment Flow": 81,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 80
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227720128,
+      "lastCounterAt": 1748227729998,
+      "firstMetricAt": 1748227720128,
+      "lastMetricAt": 1748227729998,
+      "period": "1748227720000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Trigger Assessment Flow": 83,
+        "vusers.created": 300,
+        "http.requests": 300,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 84,
+        "errors.ECONNREFUSED": 302,
+        "vusers.failed": 302,
+        "vusers.created_by_name.Mixed Assessment Operations": 28,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 167,
+        "vusers.created_by_name.Get Assessment Flow": 139,
+        "vusers.created_by_name.Report Unassessed URL Flow": 50,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 51
+      },
+      "rates": {
+        "http.request_rate": 30
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227730012,
+      "lastCounterAt": 1748227739992,
+      "firstMetricAt": 1748227730012,
+      "lastMetricAt": 1748227739992,
+      "period": "1748227730000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 163,
+        "vusers.created": 336,
+        "http.requests": 336,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 199,
+        "errors.ECONNREFUSED": 336,
+        "vusers.failed": 336,
+        "vusers.created_by_name.Trigger Assessment Flow": 90,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 90,
+        "vusers.created_by_name.Mixed Assessment Operations": 36,
+        "vusers.created_by_name.Report Unassessed URL Flow": 47,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 47
+      },
+      "rates": {
+        "http.request_rate": 36
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227740043,
+      "lastCounterAt": 1748227749962,
+      "firstMetricAt": 1748227740043,
+      "lastMetricAt": 1748227749962,
+      "period": "1748227740000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Trigger Assessment Flow": 155,
+        "vusers.created": 602,
+        "http.requests": 602,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 155,
+        "errors.ECONNREFUSED": 602,
+        "vusers.failed": 602,
+        "vusers.created_by_name.Report Unassessed URL Flow": 108,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 108,
+        "vusers.created_by_name.Get Assessment Flow": 283,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 339,
+        "vusers.created_by_name.Mixed Assessment Operations": 56
+      },
+      "rates": {
+        "http.request_rate": 60
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227750015,
+      "lastCounterAt": 1748227759967,
+      "firstMetricAt": 1748227750015,
+      "lastMetricAt": 1748227759967,
+      "period": "1748227750000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Get Assessment Flow": 260,
+        "vusers.created": 600,
+        "http.requests": 600,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 307,
+        "errors.ECONNREFUSED": 600,
+        "vusers.failed": 600,
+        "vusers.created_by_name.Trigger Assessment Flow": 169,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 169,
+        "vusers.created_by_name.Report Unassessed URL Flow": 124,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 124,
+        "vusers.created_by_name.Mixed Assessment Operations": 47
+      },
+      "rates": {
+        "http.request_rate": 60
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227760026,
+      "lastCounterAt": 1748227769968,
+      "firstMetricAt": 1748227760026,
+      "lastMetricAt": 1748227769968,
+      "period": "1748227760000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Trigger Assessment Flow": 157,
+        "vusers.created": 600,
+        "http.requests": 600,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 151,
+        "errors.ECONNREFUSED": 591,
+        "vusers.failed": 600,
+        "vusers.created_by_name.Report Unassessed URL Flow": 124,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 123,
+        "vusers.created_by_name.Get Assessment Flow": 267,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 317,
+        "vusers.created_by_name.Mixed Assessment Operations": 52,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ETIMEDOUT": 6,
+        "errors.ETIMEDOUT": 9,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ETIMEDOUT": 1,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ETIMEDOUT": 2
+      },
+      "rates": {
+        "http.request_rate": 60
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227770026,
+      "lastCounterAt": 1748227779968,
+      "firstMetricAt": 1748227770026,
+      "lastMetricAt": 1748227779968,
+      "period": "1748227770000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Report Unassessed URL Flow": 105,
+        "vusers.created": 600,
+        "http.requests": 600,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 105,
+        "errors.ECONNREFUSED": 600,
+        "vusers.failed": 600,
+        "vusers.created_by_name.Trigger Assessment Flow": 164,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 164,
+        "vusers.created_by_name.Get Assessment Flow": 271,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 331,
+        "vusers.created_by_name.Mixed Assessment Operations": 60
+      },
+      "rates": {
+        "http.request_rate": 60
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227780026,
+      "lastCounterAt": 1748227789968,
+      "firstMetricAt": 1748227780026,
+      "lastMetricAt": 1748227789968,
+      "period": "1748227780000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "vusers.created_by_name.Report Unassessed URL Flow": 107,
+        "vusers.created": 572,
+        "http.requests": 566,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 97,
+        "errors.ECONNREFUSED": 509,
+        "vusers.failed": 509,
+        "vusers.created_by_name.Trigger Assessment Flow": 127,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 117,
+        "vusers.created_by_name.Get Assessment Flow": 295,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 295,
+        "vusers.created_by_name.Mixed Assessment Operations": 43
+      },
+      "rates": {
+        "http.request_rate": 58
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227790026,
+      "lastCounterAt": 1748227799994,
+      "firstMetricAt": 1748227790026,
+      "lastMetricAt": 1748227799994,
+      "period": "1748227790000",
+      "summaries": {},
+      "histograms": {}
+    },
+    {
+      "counters": {
+        "http.requests": 549,
+        "vusers.created_by_name.Get Assessment Flow": 254,
+        "vusers.created": 543,
+        "vusers.created_by_name.Trigger Assessment Flow": 147,
+        "vusers.created_by_name.Report Unassessed URL Flow": 96,
+        "plugins.metrics-by-endpoint./api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}.errors.ECONNREFUSED": 157,
+        "errors.ECONNREFUSED": 605,
+        "vusers.failed": 606,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ECONNREFUSED": 342,
+        "plugins.metrics-by-endpoint./api/report-unassessed.errors.ECONNREFUSED": 106,
+        "vusers.created_by_name.Mixed Assessment Operations": 46,
+        "plugins.metrics-by-endpoint./api/assessment.errors.ETIMEDOUT": 1,
+        "errors.ETIMEDOUT": 1
+      },
+      "rates": {
+        "http.request_rate": 66
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1748227800009,
+      "lastCounterAt": 1748227808639,
+      "firstMetricAt": 1748227800009,
+      "lastMetricAt": 1748227808639,
+      "period": "1748227800000",
+      "summaries": {},
+      "histograms": {}
+    }
+  ]
+}

@@ -42,10 +42,33 @@ The built extension will be available in the `dist` directory.
 
 ## Configuration
 
-The extension connects to a backend service for privacy assessments. By default, it connects to `http://localhost:3000/api`. To change this:
+The extension connects to a backend service for privacy assessments through an NGINX proxy. The API endpoints are:
 
-1. Edit the `API_BASE_URL` variable in `background.js` and `popup.js`
+- **Development**: `http://localhost/api` (NGINX proxy routing to Client API on port 3001)
+- **Production**: `https://api.privacy-lens.example.com/api`
+
+### API Architecture
+
+The plugin communicates with the PrivacyLens backend through the following architecture:
+
+```
+Chrome Plugin → NGINX Proxy (port 80/443) → Client API Process (port 3001)
+```
+
+**Routed Endpoints:**
+- `/api/auth/*` - Authentication endpoints → Client API
+- `/api/assessment` - Assessment queries → Client API  
+- `/api/trigger-assessment/*` - Immediate assessments → Client API
+- `/api/report-unassessed` - Report unassessed URLs → Client API
+
+### Changing API Configuration
+
+The API base URL is automatically determined based on the environment. To override:
+
+1. Edit the `API_BASE_URL` variables in `config.js`
 2. Reload the extension
+
+For development, you can force the plugin to use local endpoints by setting `window.PRIVACY_LENS_DEV = true` in the browser console.
 
 ## Development
 
@@ -54,7 +77,27 @@ The extension connects to a backend service for privacy assessments. By default,
 - `manifest.json`: Chrome extension configuration
 - `background.js`: Background script for URL detection and API communication
 - `popup.html/css/js`: UI for the extension popup
+- `config.js`: API endpoint configuration
 - `icons/`: Extension icons and indicators
+
+### Local Development Setup
+
+1. Start the PrivacyLens backend services:
+   ```bash
+   npm start  # Starts both Client API (3001) and Backend (3000)
+   ```
+
+2. Start NGINX with the development configuration:
+   ```bash
+   npm run nginx:start
+   ```
+
+3. Load the extension in Chrome as an unpacked extension
+
+4. Test the routing:
+   ```bash
+   npm run nginx:test
+   ```
 
 ### Testing
 
