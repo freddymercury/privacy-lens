@@ -1,9 +1,10 @@
 // Load environment variables first
-import dotenv from 'dotenv';
+const dotenv = require('dotenv');
 dotenv.config();
 
 // Now import shared database utilities
-import { createServiceRoleClient, createAuthedClient } from '@privacy-lens/shared/db/connection.js';
+const { createServiceRoleClient, createAuthedClient } = require('@privacy-lens/shared/db/connection.js');
+const queries = require('@privacy-lens/shared/db/queries.js');
 
 // Get configuration from environment
 const config = {
@@ -15,9 +16,9 @@ const config = {
 const isTestEnvironment = process.env.NODE_ENV === 'test' || process.env.JEST_WORKER_ID !== undefined;
 
 // Log configuration status
-console.log('[Client API] Supabase URL:', config.supabaseUrl ? 'Set' : 'Not set');
-console.log('[Client API] Supabase Anon Key:', config.supabaseAnonKey ? 'Set' : 'Not set');
-console.log('[Client API] Supabase Service Key:', config.supabaseServiceKey ? 'Set' : 'Not set');
+console.log('Supabase URL:', config.supabaseUrl ? 'Set' : 'Not set');
+console.log('Supabase Anon Key:', config.supabaseAnonKey ? 'Set' : 'Not set');
+console.log('Supabase Service Key:', config.supabaseServiceKey ? 'Set' : 'Not set');
 
 // Create the service role client
 const supabaseServiceRole = createServiceRoleClient(config, isTestEnvironment);
@@ -32,7 +33,8 @@ function createClientApiAuthedClient(userAuthToken) {
   return createAuthedClient(config, userAuthToken, isTestEnvironment);
 }
 
-export {
+module.exports = {
   supabaseServiceRole,
-  createClientApiAuthedClient as createAuthedClient
+  createAuthedClient: createClientApiAuthedClient,
+  queries
 }; 
