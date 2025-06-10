@@ -3,5 +3,6 @@ module.exports = {
   db: require('./db'),
   auth: require('./auth'),
   assessment: require('./assessment'),
-  config: require('./config')
+  config: require('./config'),
+  subscription: require('./subscription/index.cjs')
 }; 

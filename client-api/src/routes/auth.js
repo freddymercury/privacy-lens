@@ -1,5 +1,5 @@
-import express from 'express';
-import { register, login, validate, refresh, revoke } from '../controllers/authController.js';
+const express = require('express');
+const { register, login, validate, refresh, revoke } = require('../controllers/authController.js');
 
 const router = express.Router();
 
@@ -18,4 +18,4 @@ router.post('/refresh', refresh);
 // POST /api/auth/revoke (logout)
 router.post('/revoke', revoke);
 
-export default router; 
+module.exports = router; 

@@ -179,17 +179,149 @@ async function getUserSubscription(userId, token) {
     .from('subscriptions')
     .select('*')
     .eq('user_id', userId)
-    .eq('status', 'active')
+    .in('status', ['active', 'trialing'])
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (error) {
+    throw error;
+  }
+
+  return data && data.length > 0 ? data[0] : null;
+}
+
+/**
+ * Update user
+ * @param {string} userId - User ID
+ * @param {Object} updateData - Data to update
+ * @param {string} token - User token for RLS
+ * @returns {Promise<Object>} - Updated user
+ */
+async function updateUser(userId, updateData, token) {
+  const { data, error } = await supabaseServiceRole
+    .from('users')
+    .update({
+      ...updateData,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', userId)
+    .select()
     .single();
 
   if (error) {
-    if (error.code === 'PGRST116') {
-      return null;
-    }
     throw error;
   }
 
   return data;
+}
+
+/**
+ * Get subscription by Stripe ID
+ * @param {string} stripeSubscriptionId - Stripe subscription ID
+ * @returns {Promise<Object|null>} - Subscription data or null if not found
+ */
+async function getSubscriptionByStripeId(stripeSubscriptionId) {
+  const { data, error } = await supabaseServiceRole
+    .from('subscriptions')
+    .select('*')
+    .eq('stripe_subscription_id', stripeSubscriptionId)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Create subscription
+ * @param {Object} subscriptionData - Subscription data
+ * @returns {Promise<Object>} - Created subscription
+ */
+async function createSubscription(subscriptionData) {
+  const { data, error } = await supabaseServiceRole
+    .from('subscriptions')
+    .insert(subscriptionData)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Update subscription
+ * @param {string} subscriptionId - Subscription ID
+ * @param {Object} updateData - Data to update
+ * @returns {Promise<Object>} - Updated subscription
+ */
+async function updateSubscription(subscriptionId, updateData) {
+  const { data, error } = await supabaseServiceRole
+    .from('subscriptions')
+    .update({
+      ...updateData,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', subscriptionId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Record update application
+ * @param {Object} applicationData - Application data
+ * @returns {Promise<Object>} - Created application record
+ */
+async function recordUpdateApplication(applicationData) {
+  const { data, error } = await supabaseServiceRole
+    .from('update_applications')
+    .insert({
+      ...applicationData,
+      applied_at: applicationData.applied_at || new Date().toISOString()
+    })
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Get user update history
+ * @param {string} userId - User ID
+ * @param {string} deviceId - Device ID
+ * @returns {Promise<Array>} - Update history
+ */
+async function getUserUpdateHistory(userId, deviceId) {
+  const { data, error } = await supabaseServiceRole
+    .from('update_applications')
+    .select(`
+      *,
+      update:update_id (*)
+    `)
+    .eq('user_id', userId)
+    .eq('device_id', deviceId)
+    .order('applied_at', { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
 }
 
 module.exports = {
@@ -201,5 +333,11 @@ module.exports = {
   getTokenByHash,
   revokeToken,
   updateTokenLastUsed,
-  getUserSubscription
+  getUserSubscription,
+  updateUser,
+  getSubscriptionByStripeId,
+  createSubscription,
+  updateSubscription,
+  recordUpdateApplication,
+  getUserUpdateHistory
 }; 

@@ -2,49 +2,7 @@
 
 import * as db from "../utils/db.cjs";
 
-/**
- * Report an unassessed URL
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-const reportUnassessed = async (req, res) => {
-  try {
-    const { url } = req.body;
-
-    if (!url) {
-      return res.status(400).json({
-        status: "error",
-        message: "URL is required",
-      });
-    }
-
-    // Check if URL already has an assessment
-    const existingAssessment = await db.getAssessment(url);
-
-    if (existingAssessment) {
-      // URL already has an assessment, no need to add to queue
-      return res.status(200).json({
-        status: "success",
-        message: "URL already has an assessment",
-      });
-    }
-
-    // Add URL to unassessed queue
-    await db.addToUnassessedQueue(url);
-
-    return res.status(200).json({
-      status: "success",
-      message: "URL added to unassessed queue",
-    });
-  } catch (error) {
-    console.error("Error reporting unassessed URL:", error);
-    return res.status(500).json({
-      status: "error",
-      message: "Failed to report unassessed URL",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
-  }
-};
+// reportUnassessed function has been migrated to Client API
 
 /**
  * Get unassessed URLs
@@ -272,7 +230,6 @@ const updateSuggestedPolicyUrls = async (req, res) => {
 };
 
 export {
-  reportUnassessed,
   getUnassessedUrls,
   updateUnassessedStatus,
   deleteUnassessedUrl,

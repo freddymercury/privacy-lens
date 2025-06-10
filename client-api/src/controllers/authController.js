@@ -1,13 +1,15 @@
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
-import { createRequire } from 'module';
+const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
 
 // Import shared modules (using require since shared is CommonJS)
-const require = createRequire(import.meta.url);
 const { db, auth } = require('@privacy-lens/shared');
+
+// Import logging
+const { createLogger } = require('../middleware/logging.js');
+const logger = createLogger('AuthController');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
 
@@ -16,11 +18,23 @@ const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const register = async (req, res) => {
+const register = async (req, res) => {
   try {
     const { email, password, name, deviceId } = req.body;
 
+    logger.info('User registration attempt', { 
+      email, 
+      hasPassword: !!password, 
+      deviceId,
+      name: name || 'not provided'
+    });
+
     if (!email || !password || !deviceId) {
+      logger.warn('Registration failed - missing required fields', { 
+        email: !!email, 
+        password: !!password, 
+        deviceId: !!deviceId 
+      });
       return res.status(400).json({
         status: 'error',
         message: 'Email, password, and deviceId are required'
@@ -30,6 +44,7 @@ export const register = async (req, res) => {
     // Check if email already exists
     const existingUser = await db.queries.getUserByEmail(email);
     if (existingUser) {
+      logger.warn('Registration failed - email already exists', { email });
       return res.status(400).json({
         status: 'error',
         message: 'Email already registered'
@@ -63,8 +78,18 @@ export const register = async (req, res) => {
         }
       });
     } catch (auditError) {
-      console.error('Failed to create audit log:', auditError);
+      logger.error('Failed to create audit log for registration', { 
+        userId: user.id, 
+        email, 
+        error: auditError.message 
+      });
     }
+
+    logger.info('User registration successful', { 
+      userId: user.id, 
+      email, 
+      deviceId 
+    });
 
     return res.status(201).json({
       status: 'success',
@@ -76,7 +101,12 @@ export const register = async (req, res) => {
       token
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    logger.error('Registration error', { 
+      email, 
+      deviceId, 
+      error: error.message,
+      stack: error.stack 
+    });
     return res.status(500).json({
       status: 'error',
       message: 'Failed to register user',
@@ -90,11 +120,22 @@ export const register = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password, deviceId } = req.body;
 
+    logger.info('User login attempt', { 
+      email, 
+      hasPassword: !!password, 
+      deviceId 
+    });
+
     if (!email || !password || !deviceId) {
+      logger.warn('Login failed - missing required fields', { 
+        email: !!email, 
+        password: !!password, 
+        deviceId: !!deviceId 
+      });
       return res.status(400).json({
         status: 'error',
         message: 'Email, password, and deviceId are required'
@@ -105,6 +146,8 @@ export const login = async (req, res) => {
     const user = await db.queries.getUserByEmail(email);
 
     if (!user) {
+      logger.warn('Login failed - user not found', { email, deviceId });
+      
       // Create audit log entry for failed login (gracefully handle errors)
       try {
         await db.queries.createAuditLog({
@@ -116,7 +159,11 @@ export const login = async (req, res) => {
           }
         });
       } catch (auditError) {
-        console.error('Failed to create audit log:', auditError);
+        logger.error('Failed to create audit log for failed login', { 
+          email, 
+          reason: 'User not found',
+          error: auditError.message 
+        });
       }
 
       return res.status(401).json({
@@ -129,6 +176,8 @@ export const login = async (req, res) => {
     const passwordMatch = await auth.password.comparePassword(password, user.password_hash);
 
     if (!passwordMatch) {
+      logger.warn('Login failed - invalid password', { email, deviceId });
+      
       // Create audit log entry for failed login (gracefully handle errors)
       try {
         await db.queries.createAuditLog({
@@ -140,7 +189,11 @@ export const login = async (req, res) => {
           }
         });
       } catch (auditError) {
-        console.error('Failed to create audit log:', auditError);
+        logger.error('Failed to create audit log for failed login', { 
+          email, 
+          reason: 'Invalid password',
+          error: auditError.message 
+        });
       }
 
       return res.status(401).json({
@@ -159,7 +212,11 @@ export const login = async (req, res) => {
         tier = subscription.plan_type;
       }
     } catch (subError) {
-      console.error(`[Login] Error fetching subscription status during login for user ${user.id}:`, subError);
+      logger.warn('Error fetching subscription status during login', { 
+        userId: user.id, 
+        email, 
+        error: subError.message 
+      });
       // Proceed with 'free' tier if subscription check fails
     }
 
@@ -177,8 +234,19 @@ export const login = async (req, res) => {
         }
       });
     } catch (auditError) {
-      console.error('Failed to create audit log:', auditError);
+      logger.error('Failed to create audit log for successful login', { 
+        userId: user.id, 
+        email, 
+        error: auditError.message 
+      });
     }
+
+    logger.info('User login successful', { 
+      userId: user.id, 
+      email, 
+      deviceId, 
+      tier 
+    });
 
     return res.status(200).json({
       status: 'success',
@@ -190,7 +258,12 @@ export const login = async (req, res) => {
       token
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error', { 
+      email, 
+      deviceId, 
+      error: error.message,
+      stack: error.stack 
+    });
     return res.status(500).json({
       status: 'error',
       message: 'Failed to login',
@@ -204,7 +277,7 @@ export const login = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const validate = async (req, res) => {
+const validate = async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -249,7 +322,7 @@ export const validate = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const refresh = async (req, res) => {
+const refresh = async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -288,7 +361,7 @@ export const refresh = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-export const revoke = async (req, res) => {
+const revoke = async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -320,4 +393,12 @@ export const revoke = async (req, res) => {
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
-}; 
+};
+
+module.exports = {
+  register,
+  login,
+  validate,
+  refresh,
+  revoke
+};
