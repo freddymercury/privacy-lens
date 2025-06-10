@@ -121,6 +121,114 @@ The backend exposes the following public endpoints for accessing historical poli
 - **`GET /api/v1/policies/:domain/diff/:olderVersionId/:newerVersionId`**: Returns a unified diff of the concatenated texts between two specified versions and a list of asset IDs that changed in the newer version relative to its immediate predecessor.
   - Example: `/api/v1/policies/example.com/diff/120/123`
 
+## Running NGINX with the Dev Config on macOS
+
+These steps will set up and run NGINX using the provided `nginx/privacy-lens.dev.conf` for local development:
+
+1. **Install NGINX (if not already installed):**
+   ```sh
+   brew install nginx
+   ```
+
+2. **Find your NGINX config directory:**
+   - Homebrew usually installs NGINX config at `/usr/local/etc/nginx/` (Intel) or `/opt/homebrew/etc/nginx/` (Apple Silicon).
+   - Check with:
+     ```sh
+     nginx -t
+     ```
+     The output will show the config path (look for `nginx.conf`).
+
+3. **Copy the dev config to the NGINX config directory:**
+   ```sh
+   cp nginx/privacy-lens.dev.conf /usr/local/etc/nginx/servers/
+   ```
+   - If the `servers` directory does not exist, create it or use `conf.d` or include directly in `nginx.conf`.
+   - You can also symlink instead of copying.
+   - **Important:** Make sure you do not have duplicate `server_name` entries for `privacy-lens.dev` or `localhost` in any other config files in `/usr/local/etc/nginx/servers/`, `/conf.d/`, or your main `nginx.conf`.
+
+4. **Include the config in your main `nginx.conf`:**
+   - Open `/usr/local/etc/nginx/nginx.conf` in a text editor.
+   - Add this line inside the `http { ... }` block (if not already present):
+     ```
+     include servers/*;
+     ```
+     or, if using `conf.d`:
+     ```
+     include conf.d/*;
+     ```
+
+5. **Test the NGINX config:**
+   ```sh
+   sudo nginx -t
+   ```
+   - Fix any errors if reported.
+
+6. **Start or reload NGINX:**
+   ```sh
+   sudo nginx
+   # or, if already running:
+   sudo nginx -s reload
+   ```
+
+7. **Access your API via NGINX:**
+   - Open `http://privacy-lens.dev` or `http://localhost` in your browser or plugin config.
+   - NGINX will proxy requests to your backend on port 3000.
+
+8. **Stop NGINX (when done):**
+   ```sh
+   sudo nginx -s stop
+   ```
+
+**Note:**
+- You may need to add `127.0.0.1 privacy-lens.dev` to your `/etc/hosts` file for the custom domain to work locally.
+- If you change the config, always reload NGINX with `sudo nginx -s reload`.
+- If you see warnings about conflicting `server_name`, check for and remove duplicate server blocks as described above.
+
+## Chrome Plugin API Base URL: Development vs. Production
+
+The Chrome plugin and its build scripts automatically select the correct API base URL for development or production:
+
+- **Production:**
+  - The plugin uses `https://api.privacy-lens.example.com/api` for all API calls when running as a published extension or in production environments.
+
+- **Development (local):**
+  - The plugin uses `http://localhost:3000/api` when running locally (e.g., loaded as an unpacked extension from your dev machine).
+  - Node.js scripts (such as the build script for prepackaged data) will use the local API endpoint if you set the environment variable `PRIVACY_LENS_DEV=1`.
+
+### Example: Running the Build Script for Local Development
+
+To generate the prepackaged database using your local backend API, run:
+
+```sh
+PRIVACY_LENS_DEV=1 npm run build
+```
+
+This ensures the build script fetches data from your local backend instead of the production API.
+
+**Note:**
+- You do not need to change any code or config to switch between dev and prod. The correct API base URL is selected automatically based on environment.
+- For browser code, the plugin will use the correct URL based on where it is loaded (localhost or production domain).
+- For Node.js scripts, use the `PRIVACY_LENS_DEV=1` environment variable for local development.
+
+## Chrome Plugin: Forcing Use of the Local Dev API
+
+When developing the Chrome plugin, you may want to force it to use your local backend (http://localhost:3000/api) even when browsing non-localhost sites. You can do this without changing any code by setting a flag in the plugin popup's DevTools console:
+
+**How to force the plugin to use the dev API:**
+
+1. Load the plugin as an unpacked extension in Chrome (`chrome://extensions/` > "Load unpacked").
+2. Open the plugin popup.
+3. Right-click inside the popup and choose "Inspect" to open the DevTools for the popup.
+4. In the DevTools console, enter:
+   ```js
+   window.PRIVACY_LENS_DEV = true;
+   ```
+5. Reload the popup. The plugin will now use `http://localhost:3000/api` for all API calls.
+
+**Note:**
+- This does not persist between popup reloads. You may need to set it again if you close and reopen the popup.
+- This is the recommended way to test the plugin with your local backend during development, without modifying source code or risking accidental production builds with the dev API.
+
 ## License
 
-MIT
+All Rights Reserved - Dennis Park dennis.park@gmail.com

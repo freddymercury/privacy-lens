@@ -4,9 +4,9 @@
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
+const { API_BASE_URL } = require('./config.node.js');
 
 // Configuration
-const API_BASE_URL = 'http://localhost:3000/api';
 const OUTPUT_FILE = path.join(__dirname, 'assessments.json');
 
 /**

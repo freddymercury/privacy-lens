@@ -2,9 +2,7 @@
 
 import { getObjectStore } from './db.js';
 import { getAuthToken, getUserTier, hasFeature, getDeviceId } from './auth.js';
-
-// API URL
-const API_URL = 'http://localhost:3000/api';
+import { API_BASE_URL } from './config.js';
 
 /**
  * Store update information
@@ -143,7 +141,7 @@ async function getUpdateHistory() {
     
     if (token) {
       try {
-        const response = await fetch(`${API_URL}/updates/changelog`, {
+        const response = await fetch(`${API_BASE_URL}/updates/changelog`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -206,7 +204,7 @@ async function checkForUpdates(currentVersion, deviceId) {
       };
     }
     
-    const response = await fetch(`${API_URL}/updates/check`, {
+    const response = await fetch(`${API_BASE_URL}/updates/check`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -275,7 +273,7 @@ async function applyUpdate(updateId, deviceId, storage = null) {
       };
     }
     
-    const response = await fetch(`${API_URL}/updates/download`, {
+    const response = await fetch(`${API_BASE_URL}/updates/download`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

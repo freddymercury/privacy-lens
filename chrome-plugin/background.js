@@ -23,9 +23,9 @@ import {
   checkForUpdates,
   scheduleUpdateChecks
 } from "./updater.js";
+import { API_BASE_URL } from './config.js';
 
 // Configuration
-const API_BASE_URL = "http://localhost:3000/api";
 const CURRENT_VERSION = "2.0.0";
 
 // Initialize extension on install or update

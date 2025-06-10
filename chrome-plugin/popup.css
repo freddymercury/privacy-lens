@@ -261,6 +261,80 @@ input:checked + .slider:before {
 
 /* Loading state for buttons */
 button.loading {
-  opacity: 0.7;
-  cursor: wait;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Subscription and Tier Styles */
+.tier-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+.tier-badge.free {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.tier-badge.paid {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.tier-badge.expiring {
+  background-color: #f39c12;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* User tier indicator */
+#user-tier-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  padding: 8px;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+/* Subscription upgrade message */
+.upgrade-message {
+  background-color: #e8f4fd;
+  border: 1px solid #3498db;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 10px 0;
+  font-size: 12px;
+  text-align: center;
+  color: #2980b9;
+}
+
+.upgrade-message a {
+  color: #2980b9;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.upgrade-message a:hover {
+  color: #1f5f8b;
 }

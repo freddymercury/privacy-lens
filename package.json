@@ -1,0 +1,52 @@
+{
+  "name": "privacy-lens",
+  "version": "1.0.0",
+  "description": "PrivacyLens - Privacy Policy Assessment Platform",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "client-api",
+    "backend"
+  ],
+  "scripts": {
+    "install:all": "npm install && npm install --prefix shared && npm install --prefix client-api && npm install --prefix backend",
+    "start": "node scripts/process-manager.js start",
+    "stop": "node scripts/process-manager.js stop",
+    "restart": "node scripts/process-manager.js restart",
+    "status": "node scripts/process-manager.js status",
+    "health": "node scripts/process-manager.js health",
+    "start:all": "concurrently \"npm run start:backend\" \"npm run start:client-api\"",
+    "start:backend": "cd backend && npm start",
+    "start:client-api": "cd client-api && npm start",
+    "dev": "npm run dev:all",
+    "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev:client-api\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:client-api": "cd client-api && npm run dev",
+    "test": "npm run test:backend",
+    "test:backend": "cd backend && npm test",
+    "test:client-api": "cd client-api && npm test",
+    "nginx:start": "sudo nginx -c $(pwd)/nginx/privacy-lens.dev.conf",
+    "nginx:stop": "sudo nginx -s stop",
+    "nginx:reload": "sudo nginx -s reload",
+    "nginx:test": "./nginx/test-routing.sh",
+    "logs:backend": "tail -f backend/logs/*.log",
+    "logs:client-api": "tail -f client-api/logs/*.log"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "privacy",
+    "policy",
+    "assessment",
+    "chrome-extension",
+    "llm"
+  ],
+  "author": "",
+  "license": "MIT"
+} 
