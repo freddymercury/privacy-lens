@@ -278,6 +278,52 @@ async function updateSubscription(subscriptionId, updateData) {
   return data;
 }
 
+/**
+ * Record update application
+ * @param {Object} applicationData - Application data
+ * @returns {Promise<Object>} - Created application record
+ */
+async function recordUpdateApplication(applicationData) {
+  const { data, error } = await supabaseServiceRole
+    .from('update_applications')
+    .insert({
+      ...applicationData,
+      applied_at: applicationData.applied_at || new Date().toISOString()
+    })
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Get user update history
+ * @param {string} userId - User ID
+ * @param {string} deviceId - Device ID
+ * @returns {Promise<Array>} - Update history
+ */
+async function getUserUpdateHistory(userId, deviceId) {
+  const { data, error } = await supabaseServiceRole
+    .from('update_applications')
+    .select(`
+      *,
+      update:update_id (*)
+    `)
+    .eq('user_id', userId)
+    .eq('device_id', deviceId)
+    .order('applied_at', { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+}
+
 module.exports = {
   getUserByEmail,
   getUserById,
@@ -291,5 +337,7 @@ module.exports = {
   updateUser,
   getSubscriptionByStripeId,
   createSubscription,
-  updateSubscription
+  updateSubscription,
+  recordUpdateApplication,
+  getUserUpdateHistory
 }; 

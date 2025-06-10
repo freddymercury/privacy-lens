@@ -9,6 +9,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth.js');
 const assessmentRoutes = require('./routes/assessment.js');
 const subscriptionRoutes = require('./routes/subscription.js');
+const updateRoutes = require('./routes/update.js');
 const { triggerAssessment, reportUnassessed } = require('./controllers/assessmentController.js');
 
 // Import comprehensive logging middleware
@@ -45,6 +46,7 @@ app.get('/health', healthCheck);
 app.use('/api/auth', authRoutes);
 app.use('/api/assessment', assessmentRoutes);
 app.use('/api/subscription', subscriptionRoutes);
+app.use('/api/updates', updateRoutes);
 
 // Direct route for trigger assessment to match original API structure
 app.post('/api/trigger-assessment/:url', triggerAssessment);
