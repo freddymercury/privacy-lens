@@ -1,0 +1,79 @@
+config:
+  target: 'http://localhost:3001'
+  phases:
+    - duration: 60
+      arrivalRate: 15
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 30
+      name: "Ramp up load"
+    - duration: 60
+      arrivalRate: 60
+      name: "Sustained high load"
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+  processor: "./assessment-processor.js"
+
+scenarios:
+  - name: "Get Assessment Flow"
+    weight: 50
+    flow:
+      - get:
+          url: "/api/assessment"
+          qs:
+            url: "{{ generateTestUrl() }}"
+          expect:
+            - statusCode: [200, 404]
+          capture:
+            - json: "$.assessment"
+              as: "assessment"
+              ifExists: true
+
+  - name: "Trigger Assessment Flow"
+    weight: 30
+    flow:
+      - post:
+          url: "/api/trigger-assessment/{{ encodeURIComponent(generateTestUrl()) }}"
+          json:
+            manualText: "{{ generatePolicyText() }}"
+          expect:
+            - statusCode: [200, 400, 500]
+          capture:
+            - json: "$.assessment"
+              as: "newAssessment"
+              ifExists: true
+
+  - name: "Report Unassessed URL Flow"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/report-unassessed"
+          json:
+            url: "{{ generateTestUrl() }}"
+          expect:
+            - statusCode: [200, 400]
+
+  - name: "Mixed Assessment Operations"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/assessment"
+          qs:
+            url: "example.com"
+          expect:
+            - statusCode: [200, 404]
+      - think: 1
+      - post:
+          url: "/api/trigger-assessment/newsite{{ $randomInt(1, 1000) }}.com"
+          json:
+            manualText: "We collect your personal information including email, name, and usage data. We may share this with third parties for marketing purposes."
+          expect:
+            - statusCode: [200, 400, 500]
+      - think: 1
+      - post:
+          url: "/api/report-unassessed"
+          json:
+            url: "unassessed{{ $randomInt(1, 1000) }}.com"
+          expect:
+            - statusCode: [200, 400] 

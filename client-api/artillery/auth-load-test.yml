@@ -1,0 +1,75 @@
+config:
+  target: 'http://localhost:3001'
+  phases:
+    - duration: 60
+      arrivalRate: 10
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 20
+      name: "Ramp up load"
+    - duration: 60
+      arrivalRate: 50
+      name: "Sustained high load"
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+  processor: "./auth-processor.js"
+
+scenarios:
+  - name: "User Registration Flow"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            email: "{{ $randomString() }}@example.com"
+            password: "testPassword123"
+            name: "Test User {{ $randomInt(1, 1000) }}"
+            deviceId: "device_{{ $randomString() }}"
+          expect:
+            - statusCode: 201
+          capture:
+            - json: "$.token"
+              as: "authToken"
+            - json: "$.user.id"
+              as: "userId"
+
+  - name: "User Login Flow"
+    weight: 40
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test@example.com"
+            password: "testPassword123"
+            deviceId: "device_{{ $randomString() }}"
+          expect:
+            - statusCode: [200, 401]
+          capture:
+            - json: "$.token"
+              as: "authToken"
+              ifExists: true
+
+  - name: "Token Validation Flow"
+    weight: 30
+    flow:
+      - post:
+          url: "/api/auth/validate"
+          json:
+            token: "{{ generateTestToken() }}"
+          expect:
+            - statusCode: [200, 401]
+
+  - name: "Token Refresh Flow"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/auth/refresh"
+          json:
+            token: "{{ generateTestToken() }}"
+          expect:
+            - statusCode: [200, 401]
+          capture:
+            - json: "$.token"
+              as: "newToken"
+              ifExists: true 
