@@ -13,7 +13,9 @@ import {
   hasFeature,
   getCurrentUser,
   logout,
-  getAuthToken
+  getAuthToken,
+  getSubscriptionStatus,
+  getDeviceId
 } from "./auth.js";
 import {
   transformServerResponse,
@@ -21,8 +23,7 @@ import {
   addSourceInfoToAssessment
 } from "./transform.js";
 import {
-  checkForUpdates,
-  getDeviceId
+  checkForUpdates
 } from "./updater.js";
 import { API_BASE_URL } from './config.js';
 
@@ -191,19 +192,41 @@ function displayAssessment(assessmentData) {
 // Update the user tier display
 async function updateUserTierDisplay() {
   try {
-    const isPaid = await isPremium();
+    const subscriptionStatus = await getSubscriptionStatus();
     const tierIndicator = document.getElementById("user-tier-indicator");
     const tierBadge = tierIndicator.querySelector(".tier-badge");
     
-    if (isPaid) {
-      tierBadge.textContent = "Premium Tier";
+    if (subscriptionStatus.success && subscriptionStatus.active) {
+      tierBadge.textContent = `Premium Tier (${subscriptionStatus.tier})`;
       tierBadge.className = "tier-badge paid";
+      
+      // Add expiration info if available
+      if (subscriptionStatus.currentPeriodEnd) {
+        const expirationDate = new Date(subscriptionStatus.currentPeriodEnd);
+        const now = new Date();
+        const daysUntilExpiration = Math.ceil((expirationDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (daysUntilExpiration <= 7) {
+          tierBadge.textContent += ` (expires in ${daysUntilExpiration} days)`;
+          tierBadge.className = "tier-badge paid expiring";
+        }
+      }
     } else {
       tierBadge.textContent = "Free Tier";
       tierBadge.className = "tier-badge free";
+      
+      // Show error if subscription check failed
+      if (!subscriptionStatus.success && subscriptionStatus.error) {
+        console.warn("[PrivacyLens] Subscription status check failed:", subscriptionStatus.error);
+      }
     }
   } catch (error) {
     console.error("[PrivacyLens] Error updating user tier display:", error);
+    // Fallback to free tier display on error
+    const tierIndicator = document.getElementById("user-tier-indicator");
+    const tierBadge = tierIndicator.querySelector(".tier-badge");
+    tierBadge.textContent = "Free Tier";
+    tierBadge.className = "tier-badge free";
   }
 }
 
@@ -277,10 +300,10 @@ async function checkForAvailableUpdates() {
 // Fetch assessment from server and update local database
 async function fetchFromServer(domain, tabId) {
   try {
-    // Verify user has server fetch feature
-    const canFetchFromServer = await hasFeature("serverFetch");
-    if (!canFetchFromServer) {
-      throw new Error("Server fetch feature not available in your tier");
+    // Verify user has active subscription
+    const subscriptionStatus = await getSubscriptionStatus();
+    if (!subscriptionStatus.success || !subscriptionStatus.active) {
+      throw new Error("Server fetch feature not available - active subscription required");
     }
     
     // Query the backend service
@@ -448,11 +471,11 @@ if (typeof document !== "undefined") {
             displayAssessment(localData);
             console.log("[PrivacyLens] Using assessment from local database");
           } else {
-            // If no local data, check if user is in premium tier before trying server
-            const isPaidTier = await isPremium();
+            // If no local data, check if user has active subscription before trying server
+            const subscriptionStatus = await getSubscriptionStatus();
             
-            if (isPaidTier) {
-              // Only paid users can fetch from server
+            if (subscriptionStatus.success && subscriptionStatus.active) {
+              // Only users with active subscriptions can fetch from server
               try {
                 // Force a new assessment check from server
                 const serverData = await checkPrivacyAssessment(currentUrl, currentTab.id);
@@ -472,7 +495,7 @@ if (typeof document !== "undefined") {
             } else {
               // Free tier users just get "No assessment available"
               console.log("[PrivacyLens] Free tier user - no server fetch attempted");
-              updateAssessmentDisplay("unknown", "No assessment available");
+              updateAssessmentDisplay("unknown", "No assessment available - upgrade to premium for server assessments");
             }
           }
         } catch (error) {
@@ -502,11 +525,11 @@ if (typeof document !== "undefined") {
               displayAssessment(localData);
               console.log("[PrivacyLens] Using assessment from local database");
             } else {
-              // If no local data, check if user is in premium tier before trying server
-              const isPaidTier = await isPremium();
+              // If no local data, check if user has active subscription before trying server
+              const subscriptionStatus = await getSubscriptionStatus();
               
-              if (isPaidTier) {
-                // Only paid users can fetch from server
+              if (subscriptionStatus.success && subscriptionStatus.active) {
+                // Only users with active subscriptions can fetch from server
                 try {
                   // If turning on, check for assessment
                   const assessment = await checkPrivacyAssessment(
@@ -531,7 +554,7 @@ if (typeof document !== "undefined") {
               } else {
                 // Free tier users just get "No assessment available"
                 console.log("[PrivacyLens] Free tier user - no server fetch attempted");
-                updateAssessmentDisplay("unknown", "No assessment available");
+                updateAssessmentDisplay("unknown", "No assessment available - upgrade to premium for server assessments");
               }
             }
           } catch (error) {
@@ -672,12 +695,13 @@ function setupUserMenuButtons() {
 // This should ONLY be called for premium tier users
 async function checkPrivacyAssessment(url, tabId) {
   try {
-    // First check if user is in premium tier
-    const isPaidTier = await isPremium();
-    if (!isPaidTier) {
+    // First check if user has active subscription
+    const subscriptionStatus = await getSubscriptionStatus();
+    if (!subscriptionStatus.success || !subscriptionStatus.active) {
       console.log("[PrivacyLens] Server fetch attempted by free tier user - not allowed");
-      throw new Error("Server fetch is only available for paid tier users");
+      throw new Error("Server fetch is only available for users with active subscriptions");
     }
+    
     // Extract domain from URL for assessment lookup and remove 'www.' prefix
     const fullHostname = new URL(url).hostname;
     const domain = normalizeUrl(url); // Use normalizeUrl to ensure 'www.' is removed

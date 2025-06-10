@@ -3,54 +3,44 @@ import express from "express";
 const router = express.Router();
 
 // Import controllers
-// Assuming other controllers will also be converted to ES modules or handled appropriately
+// Note: Some controllers have been removed as their endpoints migrated to Client API
 import * as assessmentController from "../controllers/assessmentController.js";
-import * as unassessedController from "../controllers/unassessedController.js";
-import * as apiAuthController from "../controllers/apiAuthController.js";
-import * as subscriptionController from "../controllers/subscriptionController.js";
-import * as updateController from "../controllers/updateController.js";
+import * as unassessedController from "../controllers/unassessedController.js"; // Keep for admin functionality
 import * as archiveCtrl from "../controllers/archiveController.js"; // Use new controller
 
-// Import middleware
-// Assuming apiAuth.js will also be converted to ES modules
+// Import middleware - keeping for remaining endpoints that may need it
 import { validateToken } from "../middleware/apiAuth.js";
 
 /**
- * Authentication Routes
+ * Authentication Routes - MIGRATED TO CLIENT API
+ * These endpoints have been moved to the Client API process.
+ * They are no longer available in the monolith backend.
  */
-router.post("/auth/register", apiAuthController.register);
-router.post("/auth/login", apiAuthController.login);
-router.post("/auth/refresh", apiAuthController.refresh);
-router.post("/auth/validate", apiAuthController.validate);
-router.post("/auth/revoke", apiAuthController.revoke);
 
 /**
- * Subscription Routes
+ * Subscription Routes - MIGRATED TO CLIENT API
+ * These endpoints have been moved to the Client API process.
+ * They are no longer available in the monolith backend.
  */
-router.post("/subscription/create", validateToken, subscriptionController.createSubscription);
-router.post("/subscription/update", validateToken, subscriptionController.updateSubscription);
-router.post("/subscription/cancel", validateToken, subscriptionController.cancelSubscription);
-router.post("/subscription/status", validateToken, subscriptionController.getSubscriptionStatus);
-router.post("/subscription/webhook", subscriptionController.handleWebhook);
 
 /**
- * Update Routes
+ * Update Routes - MIGRATED TO CLIENT API
+ * These endpoints have been moved to the Client API process.
+ * They are no longer available in the monolith backend.
  */
-router.post("/updates/check", validateToken, updateController.checkForUpdates);
-router.post("/updates/download", validateToken, updateController.downloadUpdate);
-router.post("/updates/changelog", validateToken, updateController.getUpdateHistory);
 
 /**
- * Assessment Routes
+ * Assessment Routes - PARTIALLY MIGRATED TO CLIENT API
+ * - GET /assessment - MIGRATED to Client API
+ * - POST /trigger-assessment/:url - MIGRATED to Client API
+ * - GET /all-assessments - REMAINS in monolith (admin functionality)
  */
-router.get("/assessment", assessmentController.getAssessment);
 router.get("/all-assessments", assessmentController.getAllAssessments);
-router.post("/trigger-assessment/:url", assessmentController.triggerAssessment);
 
 /**
- * Unassessed Routes
+ * Unassessed Routes - MIGRATED TO CLIENT API
+ * - POST /report-unassessed - MIGRATED to Client API
  */
-router.post("/report-unassessed", unassessedController.reportUnassessed);
 router.put(
   "/unassessed/:url/policy-urls",
   unassessedController.updateSuggestedPolicyUrls
@@ -67,7 +57,6 @@ router.get("/health", (req, res) => {
     message: "PrivacyLens API is running",
   });
 });
-
 
 /**
  * Policy Archive Routes (V1)
@@ -95,6 +84,5 @@ router.get("/v1/policies/:domain/versions/:versionId/assets/:assetId", archiveCt
 // This is tricky. Let's use a query string approach or two distinct path params for clarity.
 // Path: /api/v1/policies/{domain}/diff/:olderVersionId/:newerVersionId
 router.get("/v1/policies/:domain/diff/:olderVersionId/:newerVersionId", archiveCtrl.getPolicyDiff);
-
 
 export default router;

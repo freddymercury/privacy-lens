@@ -6,6 +6,7 @@ import {
   createSubscription, 
   updateSubscription, 
   cancelSubscription, 
+  getSubscriptionStatus,
   logout, 
   getCurrentUser 
 } from './auth.js';
@@ -32,23 +33,22 @@ let selectedPlanType = 'monthly';
 // Initialize subscription page
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    // Check if user is premium
-    const premium = await isPremium();
+    showLoading(true);
     
-    if (premium) {
+    // Get current subscription status from the API
+    const subscriptionStatus = await getSubscriptionStatus();
+    
+    if (subscriptionStatus.success && subscriptionStatus.active) {
       // Show premium tier view
       freeTierView.style.display = 'none';
       premiumTierView.style.display = 'block';
       
-      // Get user tier information
-      const tierInfo = await getUserTier();
-      
       // Update subscription details
-      currentPlanElement.textContent = tierInfo.tier === 'premium_annual' ? 'Annual' : 'Monthly';
+      currentPlanElement.textContent = subscriptionStatus.tier === 'annual' ? 'Annual' : 'Monthly';
       
       // Format expiration date
-      if (tierInfo.expiresAt) {
-        const expirationDate = new Date(tierInfo.expiresAt);
+      if (subscriptionStatus.currentPeriodEnd) {
+        const expirationDate = new Date(subscriptionStatus.currentPeriodEnd);
         nextBillingDateElement.textContent = expirationDate.toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
@@ -61,10 +61,21 @@ document.addEventListener('DOMContentLoaded', async () => {
       // Show free tier view
       freeTierView.style.display = 'block';
       premiumTierView.style.display = 'none';
+      
+      // If there was an error getting subscription status, show it
+      if (!subscriptionStatus.success && subscriptionStatus.error) {
+        showError(`Failed to load subscription status: ${subscriptionStatus.error}`);
+      }
     }
   } catch (error) {
     console.error('[PrivacyLens Subscription] Error initializing subscription page:', error);
     showError('Failed to load subscription information. Please try again later.');
+    
+    // Default to showing free tier view on error
+    freeTierView.style.display = 'block';
+    premiumTierView.style.display = 'none';
+  } finally {
+    showLoading(false);
   }
 });
 
@@ -99,7 +110,8 @@ subscribeButton.addEventListener('click', async () => {
     // Show payment processing section
     paymentProcessingSection.style.display = 'block';
     
-    // Simulate payment method selection (in a real implementation, this would use Stripe or another payment processor)
+    // Simulate payment method selection (in a real implementation, this would use Stripe Elements)
+    // For development/testing, we'll use a mock payment method ID
     const paymentMethodId = 'pm_' + Math.random().toString(36).substring(2, 15);
     
     // Create subscription
@@ -109,29 +121,34 @@ subscribeButton.addEventListener('click', async () => {
       // Show success message
       showSuccess('Subscription successful! You now have access to premium features.');
       
-      // Update UI to show premium tier
-      setTimeout(() => {
-        freeTierView.style.display = 'none';
-        premiumTierView.style.display = 'block';
-        
-        // Update subscription details
-        currentPlanElement.textContent = selectedPlanType === 'annual' ? 'Annual' : 'Monthly';
-        
-        // Format expiration date
-        if (result.subscription && result.subscription.currentPeriodEnd) {
-          const expirationDate = new Date(result.subscription.currentPeriodEnd);
-          nextBillingDateElement.textContent = expirationDate.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          });
-        } else {
-          nextBillingDateElement.textContent = 'N/A';
-        }
-        
-        // Hide payment processing section
-        paymentProcessingSection.style.display = 'none';
-      }, 2000);
+      // Refresh subscription status
+      const subscriptionStatus = await getSubscriptionStatus();
+      
+      if (subscriptionStatus.success && subscriptionStatus.active) {
+        // Update UI to show premium tier
+        setTimeout(() => {
+          freeTierView.style.display = 'none';
+          premiumTierView.style.display = 'block';
+          
+          // Update subscription details
+          currentPlanElement.textContent = subscriptionStatus.tier === 'annual' ? 'Annual' : 'Monthly';
+          
+          // Format expiration date
+          if (subscriptionStatus.currentPeriodEnd) {
+            const expirationDate = new Date(subscriptionStatus.currentPeriodEnd);
+            nextBillingDateElement.textContent = expirationDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
+          } else {
+            nextBillingDateElement.textContent = 'N/A';
+          }
+          
+          // Hide payment processing section
+          paymentProcessingSection.style.display = 'none';
+        }, 2000);
+      }
     } else {
       showError(result.error || 'Subscription failed. Please try again.');
       // Hide payment processing section
@@ -163,10 +180,21 @@ cancelSubscriptionButton.addEventListener('click', async () => {
       // Show success message
       showSuccess('Your subscription has been canceled. You will have access to premium features until the end of your billing period.');
       
-      // Update UI to show cancellation status
-      if (result.subscription && result.subscription.cancelAtPeriodEnd) {
-        cancelSubscriptionButton.textContent = 'Subscription will end at billing period';
-        cancelSubscriptionButton.disabled = true;
+      // Refresh subscription status to get updated information
+      const subscriptionStatus = await getSubscriptionStatus();
+      
+      if (subscriptionStatus.success) {
+        if (!subscriptionStatus.active) {
+          // Subscription is immediately inactive, switch to free tier view
+          setTimeout(() => {
+            freeTierView.style.display = 'block';
+            premiumTierView.style.display = 'none';
+          }, 2000);
+        } else {
+          // Subscription is still active until period end, update UI to show cancellation status
+          cancelSubscriptionButton.textContent = 'Subscription will end at billing period';
+          cancelSubscriptionButton.disabled = true;
+        }
       }
     } else {
       showError(result.error || 'Failed to cancel subscription. Please try again.');
@@ -199,11 +227,13 @@ logoutButton.addEventListener('click', async () => {
 function showError(message) {
   subscriptionError.textContent = message;
   subscriptionError.style.display = 'block';
+  subscriptionSuccess.style.display = 'none';
 }
 
 function showSuccess(message) {
   subscriptionSuccess.textContent = message;
   subscriptionSuccess.style.display = 'block';
+  subscriptionError.style.display = 'none';
 }
 
 function clearMessages() {
@@ -212,13 +242,7 @@ function clearMessages() {
 }
 
 function showLoading(show) {
-  if (show) {
-    loadingIndicator.style.display = 'block';
-    subscribeButton.disabled = true;
-    cancelSubscriptionButton.disabled = true;
-  } else {
-    loadingIndicator.style.display = 'none';
-    subscribeButton.disabled = false;
-    cancelSubscriptionButton.disabled = false;
+  if (loadingIndicator) {
+    loadingIndicator.style.display = show ? 'block' : 'none';
   }
 }

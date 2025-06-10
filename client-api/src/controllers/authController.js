@@ -1,8 +1,17 @@
-// API Authentication Controller for PrivacyLens
+const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
 
-import bcrypt from 'bcrypt';
-import * as db from '../utils/db.cjs';
-import * as authService from '../services/authService.js';
+// Load environment variables
+dotenv.config();
+
+// Import shared modules (using require since shared is CommonJS)
+const { db, auth } = require('@privacy-lens/shared');
+
+// Import logging
+const { createLogger } = require('../middleware/logging.js');
+const logger = createLogger('AuthController');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
 
 /**
  * Register a new user
@@ -13,7 +22,19 @@ const register = async (req, res) => {
   try {
     const { email, password, name, deviceId } = req.body;
 
+    logger.info('User registration attempt', { 
+      email, 
+      hasPassword: !!password, 
+      deviceId,
+      name: name || 'not provided'
+    });
+
     if (!email || !password || !deviceId) {
+      logger.warn('Registration failed - missing required fields', { 
+        email: !!email, 
+        password: !!password, 
+        deviceId: !!deviceId 
+      });
       return res.status(400).json({
         status: 'error',
         message: 'Email, password, and deviceId are required'
@@ -21,8 +42,9 @@ const register = async (req, res) => {
     }
 
     // Check if email already exists
-    const existingUser = await db.getUserByEmail(email);
+    const existingUser = await db.queries.getUserByEmail(email);
     if (existingUser) {
+      logger.warn('Registration failed - email already exists', { email });
       return res.status(400).json({
         status: 'error',
         message: 'Email already registered'
@@ -30,11 +52,10 @@ const register = async (req, res) => {
     }
 
     // Hash password
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const passwordHash = await auth.password.hashPasswordForRegistration(password);
 
     // Create user in database
-    const user = await db.createUser({
+    const user = await db.queries.createUser({
       email,
       username: email.split('@')[0], // Set username to the part before @ in email
       password_hash: passwordHash,
@@ -44,16 +65,30 @@ const register = async (req, res) => {
     });
 
     // Generate JWT token
-    const token = await authService.generateToken(user, deviceId, 'free');
+    const token = await auth.service.generateToken(user, deviceId, 'free', JWT_SECRET);
 
-    // Create audit log entry
-    await db.createAuditLog({
-      action: 'user_registered',
-      user_id: user.id,
-      details: {
-        email,
-        device_id: deviceId
-      }
+    // Create audit log entry (gracefully handle errors)
+    try {
+      await db.queries.createAuditLog({
+        action: 'user_registered',
+        user_id: user.id,
+        details: {
+          email,
+          device_id: deviceId
+        }
+      });
+    } catch (auditError) {
+      logger.error('Failed to create audit log for registration', { 
+        userId: user.id, 
+        email, 
+        error: auditError.message 
+      });
+    }
+
+    logger.info('User registration successful', { 
+      userId: user.id, 
+      email, 
+      deviceId 
     });
 
     return res.status(201).json({
@@ -66,7 +101,12 @@ const register = async (req, res) => {
       token
     });
   } catch (error) {
-    console.error('Registration error:', error);
+    logger.error('Registration error', { 
+      email, 
+      deviceId, 
+      error: error.message,
+      stack: error.stack 
+    });
     return res.status(500).json({
       status: 'error',
       message: 'Failed to register user',
@@ -84,7 +124,18 @@ const login = async (req, res) => {
   try {
     const { email, password, deviceId } = req.body;
 
+    logger.info('User login attempt', { 
+      email, 
+      hasPassword: !!password, 
+      deviceId 
+    });
+
     if (!email || !password || !deviceId) {
+      logger.warn('Login failed - missing required fields', { 
+        email: !!email, 
+        password: !!password, 
+        deviceId: !!deviceId 
+      });
       return res.status(400).json({
         status: 'error',
         message: 'Email, password, and deviceId are required'
@@ -92,18 +143,28 @@ const login = async (req, res) => {
     }
 
     // Get user from database
-    const user = await db.getUserByEmail(email);
+    const user = await db.queries.getUserByEmail(email);
 
     if (!user) {
-      // Create audit log entry for failed login
-      await db.createAuditLog({
-        action: 'login_failed',
-        details: {
-          email,
+      logger.warn('Login failed - user not found', { email, deviceId });
+      
+      // Create audit log entry for failed login (gracefully handle errors)
+      try {
+        await db.queries.createAuditLog({
+          action: 'login_failed',
+          details: {
+            email,
+            reason: 'User not found',
+            device_id: deviceId
+          }
+        });
+      } catch (auditError) {
+        logger.error('Failed to create audit log for failed login', { 
+          email, 
           reason: 'User not found',
-          device_id: deviceId
-        }
-      });
+          error: auditError.message 
+        });
+      }
 
       return res.status(401).json({
         status: 'error',
@@ -112,18 +173,28 @@ const login = async (req, res) => {
     }
 
     // Check password
-    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    const passwordMatch = await auth.password.comparePassword(password, user.password_hash);
 
     if (!passwordMatch) {
-      // Create audit log entry for failed login
-      await db.createAuditLog({
-        action: 'login_failed',
-        details: {
-          email,
+      logger.warn('Login failed - invalid password', { email, deviceId });
+      
+      // Create audit log entry for failed login (gracefully handle errors)
+      try {
+        await db.queries.createAuditLog({
+          action: 'login_failed',
+          details: {
+            email,
+            reason: 'Invalid password',
+            device_id: deviceId
+          }
+        });
+      } catch (auditError) {
+        logger.error('Failed to create audit log for failed login', { 
+          email, 
           reason: 'Invalid password',
-          device_id: deviceId
-        }
-      });
+          error: auditError.message 
+        });
+      }
 
       return res.status(401).json({
         status: 'error',
@@ -131,37 +202,50 @@ const login = async (req, res) => {
       });
     }
 
-    // Determine the user's current tier *before* generating the final token.
-    // We need a temporary token to potentially query RLS-protected subscription data.
-    // Note: This assumes db.getUserSubscription requires an RLS token.
-    let tier = 'free'; // Default tier
+    // Determine the user's current tier
+    let tier = 'free';
     try {
-      // Generate a temporary token (doesn't matter if it's 'free' tier for this check)
-      const tempTokenForCheck = await authService.generateToken(user, deviceId, 'free');
-      // Fetch subscription using the temporary token
-      const subscription = await db.getUserSubscription(user.id, tempTokenForCheck);
+      // Generate a temporary token to check subscription
+      const tempToken = await auth.service.generateToken(user, deviceId, 'free', JWT_SECRET);
+      const subscription = await db.queries.getUserSubscription(user.id, tempToken);
       if (subscription) {
-        tier = subscription.plan_type; // Get the actual tier
+        tier = subscription.plan_type;
       }
-      // Note: We don't necessarily need to revoke tempTokenForCheck if it wasn't stored
-      // or if generateToken handles replacing tokens for the same device.
-      // Let's assume generateToken handles cleanup/replacement.
     } catch (subError) {
-      console.error(`[Login] Error fetching subscription status during login for user ${user.id}:`, subError);
+      logger.warn('Error fetching subscription status during login', { 
+        userId: user.id, 
+        email, 
+        error: subError.message 
+      });
       // Proceed with 'free' tier if subscription check fails
     }
 
     // Generate the final token with the determined tier
-    const finalToken = await authService.generateToken(user, deviceId, tier);
+    const token = await auth.service.generateToken(user, deviceId, tier, JWT_SECRET);
 
-    // Create audit log entry for successful login
-    await db.createAuditLog({
-      action: 'login_success',
-      user_id: user.id,
-      details: {
-        email,
-        device_id: deviceId
-      }
+    // Create audit log entry for successful login (gracefully handle errors)
+    try {
+      await db.queries.createAuditLog({
+        action: 'login_success',
+        user_id: user.id,
+        details: {
+          email,
+          device_id: deviceId
+        }
+      });
+    } catch (auditError) {
+      logger.error('Failed to create audit log for successful login', { 
+        userId: user.id, 
+        email, 
+        error: auditError.message 
+      });
+    }
+
+    logger.info('User login successful', { 
+      userId: user.id, 
+      email, 
+      deviceId, 
+      tier 
     });
 
     return res.status(200).json({
@@ -171,11 +255,15 @@ const login = async (req, res) => {
         email: user.email,
         name: user.name
       },
-      token: finalToken // Return only user info and token
-      // Do NOT return subscription status here; plugin should fetch it separately.
+      token
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error', { 
+      email, 
+      deviceId, 
+      error: error.message,
+      stack: error.stack 
+    });
     return res.status(500).json({
       status: 'error',
       message: 'Failed to login',
@@ -200,7 +288,7 @@ const validate = async (req, res) => {
       });
     }
 
-    const decoded = await authService.validateToken(token);
+    const decoded = await auth.service.validateToken(token, JWT_SECRET);
 
     if (!decoded) {
       return res.status(401).json({
@@ -245,7 +333,7 @@ const refresh = async (req, res) => {
       });
     }
 
-    const newToken = await authService.refreshToken(token);
+    const newToken = await auth.service.refreshToken(token, JWT_SECRET);
 
     if (!newToken) {
       return res.status(401).json({
@@ -269,7 +357,7 @@ const refresh = async (req, res) => {
 };
 
 /**
- * Revoke token
+ * Revoke token (logout)
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
@@ -284,7 +372,7 @@ const revoke = async (req, res) => {
       });
     }
 
-    const success = await authService.revokeToken(token);
+    const success = await auth.service.revokeToken(token);
 
     if (!success) {
       return res.status(400).json({
@@ -307,7 +395,7 @@ const revoke = async (req, res) => {
   }
 };
 
-export {
+module.exports = {
   register,
   login,
   validate,
