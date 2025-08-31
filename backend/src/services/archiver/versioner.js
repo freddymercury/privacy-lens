@@ -297,12 +297,44 @@ export async function upsertDeepVersion({
     if (latestPolicyVersionData && latestPolicyVersionData.normalized_text_snapshot) {
       console.log(`[VersionerDeep] Generating diff for concatenated text against previous version (ID: ${latestPolicyVersionData.id})`);
       try {
-        const changes = diff.diffWords(latestPolicyVersionData.normalized_text_snapshot, snapshotData.concatText);
+        // Calculate combined text size
+        const textSize = latestPolicyVersionData.normalized_text_snapshot.length + snapshotData.concatText.length;
+        const SIZE_THRESHOLD = 1024 * 1024; // 1MB combined
+        
+        let changes;
+        if (textSize > SIZE_THRESHOLD) {
+          console.log(`[VersionerDeep] Using line-based diff for large texts (${(textSize / 1024).toFixed(2)} KB)`);
+          changes = diff.diffLines(latestPolicyVersionData.normalized_text_snapshot, snapshotData.concatText);
+        } else {
+          console.log(`[VersionerDeep] Using word-based diff for normal texts (${(textSize / 1024).toFixed(2)} KB)`);
+          changes = diff.diffWords(latestPolicyVersionData.normalized_text_snapshot, snapshotData.concatText);
+        }
+        
+        // Build diff summary with truncation for very large parts
+        const MAX_PART_LENGTH = 1000; // Max length per diff part
+        const MAX_DIFF_LENGTH = 500000; // 500KB max total diff
+        
         diffSummary = changes.map(part => {
-            if (part.added) return `[+${part.value}]`;
-            if (part.removed) return `[-${part.value}]`;
+            if (part.added) {
+              const truncated = part.value.length > MAX_PART_LENGTH 
+                ? `${part.value.substring(0, MAX_PART_LENGTH)}... [${part.value.length} chars]`
+                : part.value;
+              return `[+${truncated}]`;
+            }
+            if (part.removed) {
+              const truncated = part.value.length > MAX_PART_LENGTH
+                ? `${part.value.substring(0, MAX_PART_LENGTH)}... [${part.value.length} chars]`
+                : part.value;
+              return `[-${truncated}]`;
+            }
             return '';
         }).join(' ').replace(/\s+/g, ' ').trim();
+        
+        // Truncate total diff if too large
+        if (diffSummary.length > MAX_DIFF_LENGTH) {
+          diffSummary = diffSummary.substring(0, MAX_DIFF_LENGTH) + '... [diff truncated due to size]';
+          console.log(`[VersionerDeep] Diff summary truncated from ${diffSummary.length} to ${MAX_DIFF_LENGTH} characters`);
+        }
 
         const { error: insertDiffError } = await supabase
           .from("policy_diffs")
@@ -316,6 +348,18 @@ export async function upsertDeepVersion({
 
       } catch (e) {
         console.error(`[VersionerDeep] Error generating concatenated text diff:`, e);
+        // Store a placeholder diff message instead of crashing
+        diffSummary = '[Diff generation failed due to size constraints]';
+        
+        // Still try to insert a record indicating diff failure
+        const { error: insertDiffError } = await supabase
+          .from("policy_diffs")
+          .insert({
+            policy_version_id_old: latestPolicyVersionData.id,
+            policy_version_id_new: newPolicyVersion.id,
+            diff_summary_text: diffSummary,
+          });
+        if (insertDiffError) console.error(`[VersionerDeep] Error inserting placeholder diff:`, insertDiffError);
       }
     }
 

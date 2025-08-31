@@ -5,8 +5,8 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node --max-old-space-size=3072 src/index.js",
+    "dev": "nodemon --max-old-space-size=3072 src/index.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:coverage:watch": "jest --coverage --watchAll",
