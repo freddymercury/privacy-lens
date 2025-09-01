@@ -23,7 +23,7 @@ if (fs.existsSync(envPath)) {
 
 // Import required modules
 import { supabase } from '../src/utils/supabaseClient.js';
-import { processDeepCrawl } from '../src/services/archiver/deepCrawler.js';
+import { performDeepCrawl } from '../src/services/archiver/deepCrawler.js';
 import { upsertDeepVersion } from '../src/services/archiver/versioner.js';
 
 // Configuration
@@ -117,10 +117,10 @@ async function archivePolicy(policy, retryCount = 0) {
     }
     
     // Run the deep crawler
-    const crawlResult = await processDeepCrawl(
-      domain,
-      policy_url,
-      policy_type
+    const crawlResult = await performDeepCrawl(
+      policy_url,  // performDeepCrawl takes URL first
+      policy_type,
+      { domain }   // Pass domain in options
     );
     
     if (!crawlResult || crawlResult.error) {
@@ -133,7 +133,7 @@ async function archivePolicy(policy, retryCount = 0) {
       policyType: policy_type,
       fetchedAt: new Date().toISOString(),
       snapshotData: crawlResult.snapshotData,
-      rawHtmlAssets: crawlResult.rawAssets,
+      rawHtmlAssets: crawlResult.allFetchedAssets,  // Use allFetchedAssets not rawAssets
       suppressAlert: false
     });
     
