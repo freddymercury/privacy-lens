@@ -20,12 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30  # Prevent runaway jobs
     
-    # Use environment for secrets organization
-    environment: production
+    # Remove environment requirement - use repository secrets directly
+    # environment: production
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 1
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -37,6 +40,14 @@ jobs:
       - name: Install dependencies
         working-directory: ./backend
         run: npm ci --production
+      
+      - name: Debug - Check file content
+        working-directory: ./backend
+        run: |
+          echo "Checking which version of the script we have:"
+          head -30 scripts/run-archiver-once.js | grep -n "import.*Crawl"
+          echo "Git commit info:"
+          git log --oneline -1
       
       - name: Run archiver job
         working-directory: ./backend
