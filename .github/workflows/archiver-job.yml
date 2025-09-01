@@ -41,6 +41,15 @@ jobs:
         working-directory: ./backend
         run: npm ci --production
       
+      - name: Debug - Check secrets availability
+        run: |
+          echo "Checking if secrets are available:"
+          echo "SUPABASE_URL is: ${{ secrets.SUPABASE_URL != '' && 'SET' || 'NOT SET' }}"
+          echo "SUPABASE_KEY is: ${{ secrets.SUPABASE_KEY != '' && 'SET' || 'NOT SET' }}"
+          echo "SUPABASE_SERVICE_KEY is: ${{ secrets.SUPABASE_SERVICE_KEY != '' && 'SET' || 'NOT SET' }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Workflow: ${{ github.workflow }}"
+          
       - name: Debug - Check file content
         working-directory: ./backend
         run: |
