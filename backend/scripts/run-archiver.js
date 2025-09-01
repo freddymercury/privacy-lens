@@ -22,7 +22,7 @@ if (fs.existsSync(envPath)) {
 }
 
 // Import required modules
-import { supabase } from '../src/utils/supabaseClient.js';
+import { supabaseServiceRole as supabase } from '../src/utils/supabaseClient.js';
 import { performDeepCrawl } from '../src/services/archiver/deepCrawler.js';
 import { upsertDeepVersion } from '../src/services/archiver/versioner.js';
 
