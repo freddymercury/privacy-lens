@@ -173,7 +173,7 @@ async function main() {
   const startTime = Date.now();
   
   try {
-    log('🚀 Starting Privacy Lens Archiver Job');
+    log('🚀 Starting Privacy Lens Archiver Job (v2)');
     log('Configuration:', {
       supabaseUrl: process.env.SUPABASE_URL ? '✓ Set' : '✗ Missing',
       supabaseKey: process.env.SUPABASE_SERVICE_KEY ? '✓ Set' : '✗ Missing',
