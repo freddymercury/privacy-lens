@@ -13,8 +13,13 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+// Load environment variables from .env file if it exists (for local development)
+// In GitHub Actions, these will be provided as environment variables
+const envPath = path.resolve(__dirname, '../../.env');
+import fs from 'fs';
+if (fs.existsSync(envPath)) {
+  dotenv.config({ path: envPath });
+}
 
 // Import required modules
 import { supabase } from '../src/utils/supabaseClient.js';
