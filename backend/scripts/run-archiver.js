@@ -122,21 +122,40 @@ async function archivePolicy(policy, retryCount = 0) {
       policy_type,
       { domain }   // Pass domain in options
     );
-    
+
     if (!crawlResult || crawlResult.error) {
       throw new Error(crawlResult?.error || 'Crawl failed');
     }
-    
+
+    // Resolve the policy UUID (upsertDeepVersion keys off policies.id, not the domain)
+    const { data: policyRow, error: policyError } = await supabase
+      .from('policies')
+      .upsert(
+        { domain_name: domain, policy_type, url: policy_url },
+        { onConflict: 'domain_name,policy_type' }
+      )
+      .select('id')
+      .single();
+
+    if (policyError || !policyRow) {
+      throw new Error(`Failed to resolve policy row for ${domain}: ${policyError?.message || 'no row returned'}`);
+    }
+
     // Process and store the version
     const versionResult = await upsertDeepVersion({
-      policyId: domain,
+      policyId: policyRow.id,
+      domainName: domain,
       policyType: policy_type,
-      fetchedAt: new Date().toISOString(),
+      rootUrl: policy_url,
+      allFetchedAssets: crawlResult.allFetchedAssets,
       snapshotData: crawlResult.snapshotData,
-      rawHtmlAssets: crawlResult.allFetchedAssets,  // Use allFetchedAssets not rawAssets
       suppressAlert: false
     });
-    
+
+    if (versionResult.error) {
+      throw new Error(`Versioner error for ${domain}: ${versionResult.error.message}`);
+    }
+
     if (versionResult.changed) {
       log(`✅ ${domain}: New version created (ID: ${versionResult.versionId})`);
     } else {

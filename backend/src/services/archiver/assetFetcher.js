@@ -67,7 +67,12 @@ export async function fetchAsset(url, options = {}) {
 
   try {
     const response = await axiosInstance.get(url, {
-      headers: { 'User-Agent': userAgent },
+      headers: {
+        'User-Agent': userAgent,
+        // Keep locale deterministic so identical content hashes identically
+        // across crawls (geo/accept-language variants otherwise churn versions)
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
       timeout: timeout,
       responseType: 'arraybuffer', // Fetch as arraybuffer to handle binary data (like PDFs) and text
       maxRedirects: 5,

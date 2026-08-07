@@ -273,13 +273,19 @@ export async function upsertDeepVersion({
         };
     }).filter(Boolean); // Remove nulls if any critical error occurred
 
-    const { updatedNewVersionAssets } = markChangedAssets(previousVersionAssets, assetsToInsertInDb);
+    // markChangedAssets keys on `url`, but our objects use the DB column name
+    // `asset_url` — adapt in both directions and strip `url` before inserting.
+    const prevForMarker = previousVersionAssets.map(a => ({ ...a, url: a.asset_url }));
+    const newForMarker = assetsToInsertInDb.map(a => ({ ...a, url: a.asset_url }));
+    const { updatedNewVersionAssets } = markChangedAssets(prevForMarker, newForMarker);
     // `updatedNewVersionAssets` now has the 'changed' flag set correctly.
 
-    if (updatedNewVersionAssets.length > 0) {
+    const assetsForInsert = updatedNewVersionAssets.map(({ url, ...rest }) => rest);
+
+    if (assetsForInsert.length > 0) {
       const { error: insertAssetsError } = await supabase
         .from("policy_assets")
-        .insert(updatedNewVersionAssets);
+        .insert(assetsForInsert);
 
       if (insertAssetsError) {
         console.error(`[VersionerDeep] Error inserting policy_assets for version ${newPolicyVersion.id}:`, insertAssetsError);
