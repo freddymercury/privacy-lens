@@ -3,7 +3,15 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import * as db from '../utils/db.cjs';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
+// Read lazily: ESM imports are hoisted, so dotenv.config() in the entry point
+// has not run yet when this module is first evaluated.
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+  return secret;
+};
 const FREE_TOKEN_VALIDITY_DAYS = 30;
 const PREMIUM_TOKEN_VALIDITY_DAYS = 7;
 const MAX_ACTIVE_TOKENS = 5;
@@ -39,7 +47,7 @@ const generateToken = async (user, deviceId, tier = 'free') => {
   };
   
   // Sign token
-  const token = jwt.sign(payload, JWT_SECRET);
+  const token = jwt.sign(payload, getJwtSecret());
   
   // Store token in database
   const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
@@ -83,7 +91,7 @@ const generateToken = async (user, deviceId, tier = 'free') => {
 const validateToken = async (token) => {
   try {
     // Verify token signature and expiration
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, getJwtSecret());
     
     // Check if token is revoked
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
@@ -111,7 +119,7 @@ const validateToken = async (token) => {
 const refreshToken = async (token) => {
   try {
     // Verify current token (ignoring expiration)
-    const decoded = jwt.verify(token, JWT_SECRET, { ignoreExpiration: true });
+    const decoded = jwt.verify(token, getJwtSecret(), { ignoreExpiration: true });
     
     // Check if token is revoked
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');

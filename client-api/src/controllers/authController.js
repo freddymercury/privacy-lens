@@ -11,7 +11,10 @@ const { db, auth } = require('@privacy-lens/shared');
 const { createLogger } = require('../middleware/logging.js');
 const logger = createLogger('AuthController');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 
 /**
  * Register a new user
@@ -19,8 +22,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'privacy-lens-jwt-secret';
  * @param {Object} res - Express response object
  */
 const register = async (req, res) => {
+  const { email, password, name, deviceId } = req.body;
   try {
-    const { email, password, name, deviceId } = req.body;
 
     logger.info('User registration attempt', { 
       email, 
@@ -121,8 +124,8 @@ const register = async (req, res) => {
  * @param {Object} res - Express response object
  */
 const login = async (req, res) => {
+  const { email, password, deviceId } = req.body;
   try {
-    const { email, password, deviceId } = req.body;
 
     logger.info('User login attempt', { 
       email, 

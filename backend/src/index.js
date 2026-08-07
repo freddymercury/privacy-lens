@@ -43,9 +43,12 @@ app.use(contextMiddleware());
 app.use(requestLogger());
 
 // Session configuration
+if (!process.env.SESSION_SECRET) {
+  throw new Error("SESSION_SECRET environment variable is required");
+}
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "privacy-guard-secret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
