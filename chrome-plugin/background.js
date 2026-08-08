@@ -43,7 +43,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
       // Show update notification
       chrome.notifications.create({
         type: 'basic',
-        iconUrl: 'icons/icon16.svg',
+        iconUrl: 'icons/detective_48.png',
         title: 'PrivacyLens Update Available',
         message: `Version ${updateInfo.version} is available. Open the extension to update.`,
         priority: 2

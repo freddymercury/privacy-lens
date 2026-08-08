@@ -292,7 +292,7 @@ async function applyUpdate(updateId, deviceId, storage = null) {
     
     const data = await response.json();
     
-    if (!data.status === 'success' || !data.update || !data.update.success) {
+    if (data.status !== 'success' || !data.update || !data.update.success) {
       throw new Error(data.update?.error || 'Update application failed');
     }
     

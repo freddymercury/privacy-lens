@@ -8,7 +8,8 @@
     "activeTab",
     "identity",
     "alarms",
-    "tabs"
+    "tabs",
+    "notifications"
   ],
   "host_permissions": [
     "https://api.privacy-lens.example.com/*"

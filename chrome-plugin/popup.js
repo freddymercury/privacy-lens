@@ -312,7 +312,13 @@ async function fetchFromServer(domain, tabId) {
     );
     
     const response = await fetchWithRetry(
-      `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
+      `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${await getAuthToken()}`
+        }
+      }
     );
     const data = await response.json();
     
@@ -715,8 +721,15 @@ async function checkPrivacyAssessment(url, tabId) {
         domain
       )}`
     );
+    const token = await getAuthToken();
     const response = await fetchWithRetry(
-      `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`
+      `${API_BASE_URL}/assessment?url=${encodeURIComponent(domain)}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      }
     );
     const data = await response.json();
     console.log(`[PrivacyLens] Assessment API response:`, data);
@@ -753,6 +766,7 @@ async function checkPrivacyAssessment(url, tabId) {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify({ url: domain }),
           }
@@ -771,6 +785,7 @@ async function checkPrivacyAssessment(url, tabId) {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
               },
             }
           );
