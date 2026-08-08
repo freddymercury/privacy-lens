@@ -137,8 +137,16 @@ async function main() {
       // Try to fetch from server
       assessments = await fetchAllAssessments();
     } catch (error) {
-      console.warn('Failed to fetch from server, using sample data instead');
-      assessments = generateSampleData();
+      // Never silently ship fabricated risk levels. Sample data is only allowed
+      // when explicitly requested (local UI development with no backend).
+      if (process.env.ALLOW_SAMPLE_DATA === '1') {
+        console.warn('Failed to fetch from server, using sample data instead (ALLOW_SAMPLE_DATA=1)');
+        assessments = generateSampleData();
+      } else {
+        console.error('Failed to fetch assessments from server and ALLOW_SAMPLE_DATA is not set.');
+        console.error('Refusing to write sample data to assessments.json (fake risk levels must never ship).');
+        throw error;
+      }
     }
     
     // Generate the pre-packaged database
