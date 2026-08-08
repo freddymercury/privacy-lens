@@ -1,6 +1,8 @@
 const request = require('supertest');
 const express = require('express');
-const subscriptionController = require('../../src/controllers/subscriptionController');
+// NOTE: the controller is required further below, after mockStripe is defined —
+// requiring it here would invoke the stripe mock factory before initialization
+// (the controller calls Stripe() at load when STRIPE_SECRET_KEY is set).
 
 // Mock the shared subscription modules
 jest.mock('@privacy-lens/shared/subscription/index.cjs', () => ({
@@ -65,6 +67,8 @@ const mockStripe = {
 jest.mock('stripe', () => {
   return jest.fn(() => mockStripe);
 });
+
+const subscriptionController = require('../../src/controllers/subscriptionController');
 
 const subscriptionCore = require('@privacy-lens/shared/subscription/index.cjs');
 const { db } = require('@privacy-lens/shared');

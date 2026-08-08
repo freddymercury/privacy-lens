@@ -1,6 +1,9 @@
 // Subscription Controller for Client API
 // Uses shared pure functions and handles side effects through wrapper functions
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 const subscriptionCore = require('@privacy-lens/shared/subscription/index.cjs');
 const { db } = require('@privacy-lens/shared');
 const Stripe = require('stripe');
@@ -358,7 +361,8 @@ const handleWebhook = async (req, res) => {
     
     let event;
     
-    // Verify webhook signature
+    // Verify webhook signature. req.rawBody is the raw Buffer set up by
+    // express.raw() for this route (see app.js) and rawBodyMiddleware.
     if (endpointSecret) {
       try {
         event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
@@ -369,9 +373,16 @@ const handleWebhook = async (req, res) => {
           message: `Webhook signature verification failed: ${err.message}`
         });
       }
+    } else if (process.env.NODE_ENV === 'production') {
+      // Never process unverified webhooks in production
+      console.error('STRIPE_WEBHOOK_SECRET is not configured in production');
+      return res.status(500).json({
+        status: 'error',
+        message: 'Webhook endpoint is not configured'
+      });
     } else {
-      // For development without signature verification
-      event = req.body;
+      // Development only: accept unverified payloads
+      event = Buffer.isBuffer(req.rawBody) ? JSON.parse(req.rawBody.toString('utf8')) : req.body;
     }
     
     // Validate event structure using pure function

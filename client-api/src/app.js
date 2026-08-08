@@ -31,6 +31,10 @@ app.use(cors({
   credentials: true
 }));
 
+// Stripe webhook needs the raw (unparsed) body for signature verification.
+// Must be registered BEFORE express.json so the body is not consumed first.
+app.use('/api/subscription/webhook', express.raw({ type: 'application/json' }));
+
 app.use(express.json({ limit: '10mb' }));
 
 // Add context middleware first to enable request tracing

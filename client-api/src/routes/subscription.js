@@ -2,40 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const subscriptionController = require('../controllers/subscriptionController');
-
-// For now, create a simple auth middleware that mimics the ES module one
-// This is a temporary solution until we can properly resolve the ES module issue
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ 
-      error: 'Access denied',
-      message: 'No token provided' 
-    });
-  }
-  
-  const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-  
-  // For now, we'll do basic validation and add user context
-  // In a real implementation, this would validate the JWT token
-  try {
-    // Mock user context for development
-    req.user = {
-      id: '346b039e-b98e-422b-8140-d59b275b68de', // This would come from JWT validation - using proper UUID format
-      deviceId: 'device_123',
-      tier: 'free',
-      features: []
-    };
-    next();
-  } catch (err) {
-    console.error('Token validation error:', err);
-    res.status(500).json({ 
-      error: 'Authentication error',
-      message: 'Token validation failed' 
-    });
-  }
-};
+const { authenticateToken } = require('../middleware/auth');
 
 // Middleware for parsing raw body for webhooks
 const rawBodyMiddleware = (req, res, next) => {
@@ -88,14 +55,23 @@ const validateSubscriptionUpdate = (req, res, next) => {
 
 // Rate limiting middleware (simple implementation)
 const rateLimitMap = new Map();
+// Periodically purge expired entries so the map doesn't grow unbounded
+const sweepRateLimitMap = () => {
+  const now = Date.now();
+  for (const [key, limit] of rateLimitMap) {
+    if (now > limit.resetTime) rateLimitMap.delete(key);
+  }
+};
+setInterval(sweepRateLimitMap, 60000).unref();
 const rateLimit = (maxRequests = 10, windowMs = 60000) => {
   return (req, res, next) => {
     // In development, be more permissive with rate limiting
     if (process.env.NODE_ENV === 'development') {
       return next(); // Skip rate limiting in development
     }
-    
+
     const key = req.ip + req.user?.id;
+    if (rateLimitMap.size > 10000) sweepRateLimitMap();
     const now = Date.now();
     
     if (!rateLimitMap.has(key)) {

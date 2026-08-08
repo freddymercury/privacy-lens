@@ -1,6 +1,11 @@
 // Integration tests for subscription routes
 const request = require('supertest');
 const express = require('express');
+
+// Use development mode so the in-memory rate limiter (which skips in
+// development) doesn't leak state between tests
+process.env.NODE_ENV = 'development';
+
 const subscriptionRoutes = require('./subscription');
 
 // Mock the subscription controller
@@ -45,19 +50,18 @@ const subscriptionController = require('../controllers/subscriptionController');
 const app = express();
 app.use(express.json());
 
-// Mock authentication middleware for testing
-const mockAuthMiddleware = (req, res, next) => {
-  req.user = {
-    id: 'user_123',
-    email: 'test@example.com'
-  };
-  req.headers.authorization = 'Bearer valid_token';
-  next();
-};
-
-// Replace the auth middleware in routes with our mock
+// Replace the auth middleware in routes with our mock.
+// NOTE: jest.mock is hoisted above const declarations, so the mock middleware
+// must be defined inline inside the factory (referencing an outer const throws
+// "Cannot access before initialization" now that the route actually imports this module).
 jest.mock('../middleware/auth', () => ({
-  authenticateToken: mockAuthMiddleware
+  authenticateToken: (req, res, next) => {
+    req.user = {
+      id: 'user_123',
+      email: 'test@example.com'
+    };
+    next();
+  }
 }));
 
 // Mount subscription routes
@@ -318,8 +322,8 @@ describe('Subscription Routes Integration', () => {
 
   describe('Error Handling', () => {
     test('should handle controller errors gracefully', async () => {
-      // Mock controller to throw error
-      subscriptionController.createSubscription.mockImplementation((req, res) => {
+      // Mock controller to throw error (once, so it doesn't leak into later tests)
+      subscriptionController.createSubscription.mockImplementationOnce((req, res) => {
         throw new Error('Controller error');
       });
 

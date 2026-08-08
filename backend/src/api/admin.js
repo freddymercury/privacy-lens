@@ -8,7 +8,7 @@ import * as authController from "../controllers/authController.js";
 import * as adminController from "../controllers/adminController.js";
 
 // Import middleware
-import { isAuthenticated } from "../middleware/auth.js";
+import { isAuthenticated, isAdmin } from "../middleware/auth.js";
 
 /**
  * Authentication routes
@@ -75,10 +75,10 @@ router.get("/analytics", isAuthenticated, adminController.analytics);
 /**
  * User management routes (protected)
  */
-router.get("/users", isAuthenticated, adminController.listUsers);
-router.post("/users", isAuthenticated, adminController.createUser);
-router.put("/users/:id", isAuthenticated, adminController.updateUser);
-router.delete("/users/:id", isAuthenticated, adminController.deleteUser);
+router.get("/users", isAuthenticated, isAdmin, adminController.listUsers);
+router.post("/users", isAuthenticated, isAdmin, adminController.createUser);
+router.put("/users/:id", isAuthenticated, isAdmin, adminController.updateUser);
+router.delete("/users/:id", isAuthenticated, isAdmin, adminController.deleteUser);
 
 /**
  * Audit log routes (protected)
