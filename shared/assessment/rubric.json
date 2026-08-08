@@ -1,0 +1,81 @@
+{
+  "version": "2.0.0",
+  "riskLevels": [
+    {
+      "name": "High",
+      "definition": "Severe privacy concerns: the policy permits practices that expose users to significant harm, with little or no user control."
+    },
+    {
+      "name": "Medium",
+      "definition": "Moderate privacy concerns: potentially intrusive practices are present but are limited, disclosed, or accompanied by opt-outs."
+    },
+    {
+      "name": "Low",
+      "definition": "Privacy-friendly: practices are limited to what is necessary, transparently disclosed, and give users meaningful control."
+    },
+    {
+      "name": "Unknown",
+      "definition": "The policy does not address this category, or the text is too ambiguous to assess."
+    }
+  ],
+  "categories": [
+    {
+      "name": "Data Collection & Use",
+      "definition": "What personal data the service collects and how it uses that data for its own purposes.",
+      "anchors": {
+        "High": "Collects sensitive data (e.g. precise location, health, biometric) beyond what the service needs, or uses personal data for advertising/profiling by default.",
+        "Medium": "Collects standard account and usage data for personalization or analytics; some uses can be limited via settings.",
+        "Low": "Collects only data needed to provide the service; uses are clearly described and limited to operating and improving the service."
+      }
+    },
+    {
+      "name": "Third-Party Sharing & Selling",
+      "definition": "Whether personal data is shared with, sold to, or monetized through third parties.",
+      "anchors": {
+        "High": "Sells personal data or shares it with data brokers/advertisers for their own use.",
+        "Medium": "Shares data with categories of partners (e.g. analytics, advertising); opt-out or 'do not sell' controls are offered.",
+        "Low": "Sharing is limited to processors/service providers acting on the service's behalf, or to legal requirements."
+      }
+    },
+    {
+      "name": "Data Storage & Security",
+      "definition": "How long personal data is retained and how it is protected.",
+      "anchors": {
+        "High": "No retention limits or keeps data indefinitely; no meaningful description of security safeguards.",
+        "Medium": "Retention described vaguely (e.g. 'as long as necessary'); standard security measures mentioned without specifics.",
+        "Low": "Concrete retention limits or deletion schedules; specific safeguards (encryption in transit/at rest, access controls) described."
+      }
+    },
+    {
+      "name": "User Rights & Control",
+      "definition": "What rights users have over their data (access, correction, deletion, portability, opt-outs) and how they can exercise them.",
+      "anchors": {
+        "High": "No mechanism to access, correct, or delete data; opt-outs absent or non-functional.",
+        "Medium": "Rights exist but are limited (e.g. only where legally required) or exercising them is cumbersome.",
+        "Low": "Clear, easy-to-use controls for access, deletion, export, and consent/opt-out, available to all users."
+      }
+    },
+    {
+      "name": "AI & Automated Decision-Making",
+      "definition": "Use of personal data for automated decisions, profiling, or AI/ML, including model training.",
+      "anchors": {
+        "High": "Uses personal data to train AI models or make consequential automated decisions without opt-out or human review.",
+        "Medium": "Profiling or automated personalization disclosed; opt-out or human review available on request.",
+        "Low": "No automated decision-making with significant effects, or it is clearly disclosed with meaningful user control; personal data not used for model training."
+      }
+    },
+    {
+      "name": "Policy Changes & Updates",
+      "definition": "How the service notifies users of policy changes and whether changes apply to previously collected data.",
+      "anchors": {
+        "High": "May change the policy at any time without notice; continued use counts as consent; changes may apply retroactively.",
+        "Medium": "Notice of changes given (e.g. posting or email) but acceptance is implied by continued use.",
+        "Low": "Advance notice of material changes with clear effective dates; consent obtained before significant changes apply."
+      }
+    }
+  ],
+  "aggregation": {
+    "categoryAcrossChunks": "max",
+    "overall": "max"
+  }
+}

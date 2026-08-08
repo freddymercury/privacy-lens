@@ -4,7 +4,7 @@
  */
 
 const crypto = require('crypto');
-const { PRIVACY_CATEGORIES, RISK_LEVELS, normalizeRiskLevel, getRiskPriority } = require('./core');
+const { PRIVACY_CATEGORIES, RISK_LEVELS, normalizeRiskLevel, getRiskPriority, getRubric } = require('./core');
 
 /**
  * Pure function to estimate token count for text
@@ -130,6 +130,48 @@ function computeTextHash(text) {
 }
 
 /**
+ * Pure function to build the rubric section of an assessment prompt
+ * Categories, definitions, anchor criteria, and risk level definitions
+ * are all derived from rubric.json
+ * @returns {string} Rubric section text for prompts
+ */
+function buildRubricSection() {
+  const rubric = getRubric();
+
+  const categorySections = rubric.categories.map((category) => {
+    const anchors = Object.entries(category.anchors)
+      .map(([level, criteria]) => `  - ${level}: ${criteria}`)
+      .join("\n");
+    return `${category.name}\n${category.definition}\n${anchors}`;
+  }).join("\n\n");
+
+  const riskDefinitions = rubric.riskLevels
+    .map((level) => `- ${level.name}: ${level.definition}`)
+    .join("\n");
+
+  return { categorySections, riskDefinitions };
+}
+
+/**
+ * Pure function to build the response format section of an assessment prompt
+ * @returns {string} Response format instructions
+ */
+function buildResponseFormatSection() {
+  return `Respond with JSON:
+{
+  "categories": {
+    "Category Name": {
+      "risk": "High/Medium/Low/Unknown",
+      "explanation": "Brief explanation",
+      "evidence": "Verbatim quote from the policy supporting this risk rating"
+    }
+  },
+  "overallRisk": "High/Medium/Low/Unknown",
+  "summary": "Brief overall summary"
+}`;
+}
+
+/**
  * Pure function to create assessment prompt for LLM
  * @param {string} policyText - Privacy policy text
  * @param {string} domain - Domain being assessed (for context)
@@ -139,32 +181,23 @@ function createAssessmentPrompt(policyText, domain = "unknown") {
   if (!policyText || typeof policyText !== 'string') {
     throw new Error('Valid policy text is required');
   }
-  
+
+  const { categorySections, riskDefinitions } = buildRubricSection();
+
   return `Analyze this privacy policy and assess risks for users.
 
-Categories to evaluate (High/Medium/Low/Unknown risk):
-${PRIVACY_CATEGORIES.map((category) => `- ${category}`).join("\n")}
+Categories to evaluate (assign exactly one of High/Medium/Low/Unknown per category):
+${categorySections}
 
 Risk definitions:
-- High: Severe concerns (selling data, minimal control)
-- Medium: Moderate concerns with opt-outs
-- Low: User-friendly, privacy-conscious
-- Unknown: Not mentioned
+${riskDefinitions}
+
+For each category, quote the policy text that supports your rating in the "evidence" field (use an empty string if the category is Unknown).
 
 Privacy Policy:
 ${policyText}
 
-Respond with JSON:
-{
-  "categories": {
-    "Category Name": {
-      "risk": "High/Medium/Low/Unknown",
-      "explanation": "Brief explanation"
-    }
-  },
-  "overallRisk": "High/Medium/Low/Unknown",
-  "summary": "Brief overall summary"
-}`;
+${buildResponseFormatSection()}`;
 }
 
 /**
@@ -179,36 +212,27 @@ function createChunkAssessmentPrompt(chunkText, chunkNumber, totalChunks, domain
   if (!chunkText || typeof chunkText !== 'string') {
     throw new Error('Valid chunk text is required');
   }
-  
+
   if (typeof chunkNumber !== 'number' || typeof totalChunks !== 'number') {
     throw new Error('Valid chunk numbers are required');
   }
-  
+
+  const { categorySections, riskDefinitions } = buildRubricSection();
+
   return `Analyze CHUNK ${chunkNumber}/${totalChunks} of this privacy policy.
 
-Only assess categories addressed in this chunk (High/Medium/Low/Unknown risk):
-${PRIVACY_CATEGORIES.map((category) => `- ${category}`).join("\n")}
+Only assess categories addressed in this chunk (assign exactly one of High/Medium/Low/Unknown per category):
+${categorySections}
 
 Risk definitions:
-- High: Severe concerns (selling data, minimal control)
-- Medium: Moderate concerns with opt-outs
-- Low: User-friendly, privacy-conscious
-- Unknown: Not mentioned
+${riskDefinitions}
+
+For each category you assess, quote the chunk text that supports your rating in the "evidence" field (use an empty string if the category is Unknown).
 
 Privacy Policy Chunk ${chunkNumber}/${totalChunks}:
 ${chunkText}
 
-Respond with JSON:
-{
-  "categories": {
-    "Category Name": {
-      "risk": "High/Medium/Low/Unknown",
-      "explanation": "Brief explanation"
-    }
-  },
-  "overallRisk": "High/Medium/Low/Unknown",
-  "summary": "Brief summary of this chunk's content"
-}`;
+${buildResponseFormatSection()}`;
 }
 
 /**
@@ -267,9 +291,14 @@ function parseAssessmentResponse(responseText) {
     const normalizedCategories = {};
     for (const category in assessment.categories) {
       if (assessment.categories[category] && assessment.categories[category].risk) {
+        const categoryData = assessment.categories[category];
         normalizedCategories[category] = {
-          risk: normalizeRiskLevel(assessment.categories[category].risk),
-          explanation: assessment.categories[category].explanation || "No explanation provided"
+          risk: normalizeRiskLevel(categoryData.risk),
+          explanation: categoryData.explanation || "No explanation provided",
+          // Carry the verbatim evidence quote through when present
+          ...(typeof categoryData.evidence === 'string' && categoryData.evidence.trim()
+            ? { evidence: categoryData.evidence }
+            : {})
         };
       }
     }
@@ -285,22 +314,52 @@ function parseAssessmentResponse(responseText) {
 }
 
 /**
+ * Pure function to pick the majority risk from a list of risks
+ * Most common non-Unknown risk wins; ties break toward higher risk
+ * @param {Array<string>} risks - Risk levels to aggregate
+ * @returns {string} Majority risk level (Unknown if none are known)
+ */
+function majorityRisk(risks) {
+  const counts = {};
+  for (const risk of risks) {
+    const normalized = normalizeRiskLevel(risk);
+    if (normalized === RISK_LEVELS.UNKNOWN) continue;
+    counts[normalized] = (counts[normalized] || 0) + 1;
+  }
+
+  let best = null;
+  for (const risk in counts) {
+    if (best === null ||
+        counts[risk] > counts[best] ||
+        (counts[risk] === counts[best] && getRiskPriority(risk) > getRiskPriority(best))) {
+      best = risk;
+    }
+  }
+
+  return best || RISK_LEVELS.UNKNOWN;
+}
+
+/**
  * Pure function to combine multiple chunk assessments into final assessment
+ * Aggregation strategies are read from the rubric (aggregation.categoryAcrossChunks
+ * and aggregation.overall); supported strategies are "max" and "majority"
  * @param {Array<Object>} chunkAssessments - Array of chunk assessments
+ * @param {Object} [aggregationOverrides] - Optional overrides for the rubric's aggregation settings
  * @returns {Object} Combined assessment
  */
-function combineChunkAssessments(chunkAssessments) {
+function combineChunkAssessments(chunkAssessments, aggregationOverrides = {}) {
   if (!Array.isArray(chunkAssessments) || chunkAssessments.length === 0) {
     throw new Error('Valid chunk assessments array is required');
   }
-  
-  // Initialize combined categories with Unknown risk
-  const combinedCategories = {};
+
+  const aggregation = { ...(getRubric().aggregation || {}), ...aggregationOverrides };
+  const categoryStrategy = aggregation.categoryAcrossChunks || "max";
+  const overallStrategy = aggregation.overall || "max";
+
+  // Collect per-category entries (risk + explanation + evidence) across chunks
+  const categoryEntries = {};
   for (const category of PRIVACY_CATEGORIES) {
-    combinedCategories[category] = {
-      risk: RISK_LEVELS.UNKNOWN,
-      explanation: "Not addressed in the policy",
-    };
+    categoryEntries[category] = [];
   }
 
   // Combine chunk summaries
@@ -308,55 +367,66 @@ function combineChunkAssessments(chunkAssessments) {
     .map(a => a.summary || "No summary available")
     .filter(s => s.length > 0);
 
-  // Track risk levels found for each category
-  const categoryRiskCounts = {};
-  PRIVACY_CATEGORIES.forEach((category) => {
-    categoryRiskCounts[category] = {
-      [RISK_LEVELS.HIGH]: 0,
-      [RISK_LEVELS.MEDIUM]: 0,
-      [RISK_LEVELS.LOW]: 0,
-      [RISK_LEVELS.UNKNOWN]: 0,
-    };
-  });
-
   // Process each chunk assessment
   for (const assessment of chunkAssessments) {
     if (!assessment || !assessment.categories) continue;
-    
-    // Update categories based on this chunk
+
     for (const category in assessment.categories) {
       const chunkCategoryData = assessment.categories[category];
-      
-      if (!chunkCategoryData || !chunkCategoryData.risk) continue;
+      if (!chunkCategoryData || !chunkCategoryData.risk || !(category in categoryEntries)) continue;
 
-      // Count the risk level for this category
       const normalizedRisk = normalizeRiskLevel(chunkCategoryData.risk);
-      if (normalizedRisk in categoryRiskCounts[category]) {
-        categoryRiskCounts[category][normalizedRisk]++;
-      }
+      if (normalizedRisk === RISK_LEVELS.UNKNOWN) continue;
 
-      // If this chunk has a non-Unknown risk for a category, use its data
-      if (normalizedRisk !== RISK_LEVELS.UNKNOWN &&
-          (combinedCategories[category].risk === RISK_LEVELS.UNKNOWN ||
-           getRiskPriority(normalizedRisk) > getRiskPriority(combinedCategories[category].risk))) {
-        combinedCategories[category] = {
-          risk: normalizedRisk,
-          explanation: chunkCategoryData.explanation || "No explanation provided"
-        };
-      }
+      categoryEntries[category].push({
+        risk: normalizedRisk,
+        explanation: chunkCategoryData.explanation || "No explanation provided",
+        // Carry the verbatim evidence quote through when present
+        ...(typeof chunkCategoryData.evidence === 'string' && chunkCategoryData.evidence.trim()
+          ? { evidence: chunkCategoryData.evidence }
+          : {})
+      });
     }
   }
 
-  // Determine overall risk level (prioritize higher risks)
-  let overallRisk = RISK_LEVELS.UNKNOWN;
-  for (const category in combinedCategories) {
-    if (getRiskPriority(combinedCategories[category].risk) > getRiskPriority(overallRisk)) {
-      overallRisk = combinedCategories[category].risk;
+  // Reduce each category's entries to a single assessment
+  const combinedCategories = {};
+  for (const category of PRIVACY_CATEGORIES) {
+    const entries = categoryEntries[category];
+
+    if (entries.length === 0) {
+      combinedCategories[category] = {
+        risk: RISK_LEVELS.UNKNOWN,
+        explanation: "Not addressed in the policy",
+      };
+      continue;
     }
+
+    let winningEntry;
+    if (categoryStrategy === "majority") {
+      // Majority vote across chunks; keep evidence from a chunk that voted for it
+      const majority = majorityRisk(entries.map(e => e.risk));
+      winningEntry = entries.find(e => e.risk === majority);
+    } else {
+      // "max" (default): highest risk wins; keep evidence from the winning chunk
+      winningEntry = entries.reduce((best, entry) =>
+        getRiskPriority(entry.risk) > getRiskPriority(best.risk) ? entry : best
+      );
+    }
+
+    combinedCategories[category] = { ...winningEntry };
   }
+
+  // Determine overall risk level from the combined categories
+  const categoryRisks = PRIVACY_CATEGORIES.map(c => combinedCategories[c].risk);
+  const overallRisk = overallStrategy === "majority"
+    ? majorityRisk(categoryRisks)
+    : categoryRisks.reduce((maxRisk, risk) =>
+        getRiskPriority(risk) > getRiskPriority(maxRisk) ? risk : maxRisk,
+      RISK_LEVELS.UNKNOWN);
 
   // Create comprehensive summary
-  const summary = chunkSummaries.length > 0 
+  const summary = chunkSummaries.length > 0
     ? `This privacy policy assessment is based on analysis of multiple sections. ${chunkSummaries.join(" ")}`
     : "Assessment completed but no detailed summary available.";
 

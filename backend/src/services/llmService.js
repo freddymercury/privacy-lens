@@ -3,6 +3,24 @@
 import * as db from '../utils/db.cjs';
 import crypto from 'crypto'; // Added for computeTextHash
 import axios from 'axios'; // Added for extractUserAgreement
+import shared from '@privacy-lens/shared';
+
+// Rubric-driven assessment logic lives in the shared package
+const {
+  createAssessmentPrompt,
+  createChunkAssessmentPrompt,
+  parseAssessmentResponse,
+  combineChunkAssessments,
+} = shared.assessment.llm;
+const {
+  PRIVACY_CATEGORIES,
+  RISK_LEVELS,
+  getRiskPriority,
+  RUBRIC_VERSION,
+} = shared.assessment.core;
+
+// Model used for assessments (stamped on results for provenance)
+const LLM_MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
 
 // Check if we're running in a test environment
 const isTestEnvironment =
@@ -21,8 +39,8 @@ const initializeLLM = async () => {
       // Initialize OpenAI as the LLM provider
       llm = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
-        model: process.env.LLM_MODEL || "gpt-4",
-        temperature: 0.2, // Lower temperature for more consistent results
+        model: LLM_MODEL,
+        temperature: 0, // Deterministic output for consistent, comparable assessments
       });
     } catch (error) {
       console.error("Error initializing LLM:", error);
@@ -47,28 +65,6 @@ const initializeLLM = async () => {
 initializeLLM().catch(err => {
   console.error("Failed to initialize LLM:", err);
 });
-
-/**
- * Privacy risk categories
- */
-const PRIVACY_CATEGORIES = [
-  "Data Collection & Use",
-  "Third-Party Sharing & Selling",
-  "Data Storage & Security",
-  "User Rights & Control",
-  "AI & Automated Decision-Making",
-  "Policy Changes & Updates",
-];
-
-/**
- * Risk levels
- */
-const RISK_LEVELS = {
-  HIGH: "High",
-  MEDIUM: "Medium",
-  LOW: "Low",
-  UNKNOWN: "Unknown",
-};
 
 /**
  * More accurate token estimation function
@@ -196,7 +192,7 @@ const callLLMWithRetry = async (
       console.log(`[LLM Service] API call attempt ${attempt + 1}/${maxRetries + 1} for ${contextStr}`);
       const response = await llm.complete({
         prompt,
-        temperature: 0.2,
+        temperature: 0,
         maxTokens: 1500, // Reduced from 2000
       });
       console.log(`[LLM Service] Successfully completed API call for ${contextStr}`);
@@ -228,76 +224,6 @@ const callLLMWithRetry = async (
       }
     }
   }
-};
-
-/**
- * Create assessment prompt for LLM
- * @param {string} policyText - The privacy policy text
- * @param {string} domain - The domain being assessed
- * @returns {string} - Formatted prompt
- */
-const createAssessmentPrompt = (policyText, domain = "unknown") => {
-  return `Analyze this privacy policy and assess risks for users.
-
-Categories to evaluate (High/Medium/Low/Unknown risk):
-${PRIVACY_CATEGORIES.map((category) => `- ${category}`).join("\n")}
-
-Risk definitions:
-- High: Severe concerns (selling data, minimal control)
-- Medium: Moderate concerns with opt-outs
-- Low: User-friendly, privacy-conscious
-- Unknown: Not mentioned
-
-Privacy Policy:
-${policyText}
-
-Respond with JSON:
-{
-  "categories": {
-    "Category Name": {
-      "risk": "High/Medium/Low/Unknown",
-      "explanation": "Brief explanation"
-    }
-  },
-  "overallRisk": "High/Medium/Low/Unknown",
-  "summary": "Brief overall summary"
-}`;
-};
-
-/**
- * Create assessment prompt for a chunk of the privacy policy
- * @param {string} chunkText - The chunk of privacy policy text
- * @param {number} chunkNumber - Current chunk number
- * @param {number} totalChunks - Total number of chunks
- * @param {string} domain - The domain being assessed
- * @returns {string} - Formatted prompt
- */
-const createChunkAssessmentPrompt = (chunkText, chunkNumber, totalChunks, domain = "unknown") => {
-  return `Analyze CHUNK ${chunkNumber}/${totalChunks} of this privacy policy.
-
-Only assess categories addressed in this chunk (High/Medium/Low/Unknown risk):
-${PRIVACY_CATEGORIES.map((category) => `- ${category}`).join("\n")}
-
-Risk definitions:
-- High: Severe concerns (selling data, minimal control)
-- Medium: Moderate concerns with opt-outs
-- Low: User-friendly, privacy-conscious
-- Unknown: Not mentioned
-
-Privacy Policy Chunk ${chunkNumber}/${totalChunks}:
-${chunkText}
-
-Respond with JSON:
-{
-  "categories": {
-    "Category Name": {
-      "risk": "High/Medium/Low/Unknown",
-      "explanation": "Brief explanation"
-    }
-  },
-  "overallRisk": "High/Medium/Low/Unknown",
-  "summary": "Brief summary of this chunk's content"
-}`;
 };
 
 /**
@@ -349,7 +275,9 @@ const llmService = {
   estimateTokens,
   splitTextIntoChunks,
   computeTextHash,
-  
+  getRiskPriority,
+  combineChunkAssessments,
+
   // Assess privacy policy with improved chunking
   async assessPrivacyPolicy(policyText, domain = "unknown") {
     try {
@@ -365,7 +293,7 @@ const llmService = {
         );
         const prompt = createAssessmentPrompt(policyText, domain);
         const response = await callLLMWithRetry(prompt, 5, 5000, { domain });
-        return parseAssessmentResponse(response.text);
+        return stampProvenance(parseAssessmentResponse(response.text));
       }
 
       // For larger policies, split into chunks and process each chunk
@@ -411,7 +339,7 @@ const llmService = {
       }
 
       // Combine chunk assessments into a final assessment
-      return combineChunkAssessments(chunkAssessments);
+      return stampProvenance(combineChunkAssessments(chunkAssessments));
     } catch (error) {
       console.error("Error assessing privacy policy:", error);
       throw new Error("Failed to assess privacy policy");
@@ -419,167 +347,23 @@ const llmService = {
   }
 };
 
+/**
+ * Stamp provenance metadata onto a final assessment so saved scores can be
+ * traced back to the rubric version and model that produced them
+ * @param {Object} assessment - Final assessment object
+ * @returns {Object} Assessment with rubricVersion and model fields
+ */
+function stampProvenance(assessment) {
+  return {
+    ...assessment,
+    rubricVersion: RUBRIC_VERSION,
+    model: LLM_MODEL,
+  };
+}
+
 // Add missing functions to the exported object
 llmService.extractUserAgreement = extractUserAgreement;
 llmService.callLLMWithRetry = callLLMWithRetry;
-
-/**
- * Parse LLM response into structured assessment
- * @param {string} responseText - LLM response text
- * @returns {Object} - Structured assessment
- */
-function parseAssessmentResponse(responseText) {
-  try {
-    // Extract JSON from response (in case there's additional text)
-    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error("No valid JSON found in response");
-    }
-
-    const assessment = JSON.parse(jsonMatch[0]);
-
-    // Validate assessment structure
-    if (
-      !assessment.categories ||
-      !assessment.overallRisk ||
-      !assessment.summary
-    ) {
-      throw new Error("Invalid assessment structure");
-    }
-
-    // Normalize risk levels
-    for (const category in assessment.categories) {
-      const riskLevel = assessment.categories[category].risk;
-      assessment.categories[category].risk = normalizeRiskLevel(riskLevel);
-    }
-
-    assessment.overallRisk = normalizeRiskLevel(assessment.overallRisk);
-
-    return {
-      categories: assessment.categories,
-      riskLevel: assessment.overallRisk,
-      summary: assessment.summary,
-    };
-  } catch (error) {
-    console.error("Error parsing assessment response:", error);
-    throw new Error("Failed to parse assessment response");
-  }
-}
-
-/**
- * Normalize risk level to standard values
- * @param {string} riskLevel - Risk level from LLM
- * @returns {string} - Normalized risk level
- */
-function normalizeRiskLevel(riskLevel) {
-  const level = riskLevel.toLowerCase();
-
-  if (level.includes("high")) return RISK_LEVELS.HIGH;
-  if (level.includes("medium") || level.includes("moderate"))
-    return RISK_LEVELS.MEDIUM;
-  if (level.includes("low")) return RISK_LEVELS.LOW;
-
-  return RISK_LEVELS.UNKNOWN;
-}
-
-/**
- * Get priority value for risk levels (for comparison)
- * @param {string} riskLevel - Risk level
- * @returns {number} - Priority value (higher = more severe)
- */
-function getRiskPriority(riskLevel) {
-  switch (riskLevel) {
-    case RISK_LEVELS.HIGH:
-      return 3;
-    case RISK_LEVELS.MEDIUM:
-      return 2;
-    case RISK_LEVELS.LOW:
-      return 1;
-    case RISK_LEVELS.UNKNOWN:
-    default:
-      return 0;
-  }
-}
-
-/**
- * Combine multiple chunk assessments into a final assessment
- * @param {Array<Object>} chunkAssessments - Array of chunk assessments
- * @returns {Object} - Combined assessment
- */
-function combineChunkAssessments(chunkAssessments) {
-  // Initialize combined categories with Unknown risk
-  const combinedCategories = {};
-  for (const category of PRIVACY_CATEGORIES) {
-    combinedCategories[category] = {
-      risk: RISK_LEVELS.UNKNOWN,
-      explanation: "Not addressed in the policy",
-    };
-  }
-
-  // Combine chunk summaries
-  const chunkSummaries = chunkAssessments.map(
-    (a) => a.summary || "No summary available"
-  );
-
-  // Track risk levels found for each category
-  const categoryRiskCounts = {};
-  PRIVACY_CATEGORIES.forEach((category) => {
-    categoryRiskCounts[category] = {
-      [RISK_LEVELS.HIGH]: 0,
-      [RISK_LEVELS.MEDIUM]: 0,
-      [RISK_LEVELS.LOW]: 0,
-      [RISK_LEVELS.UNKNOWN]: 0,
-    };
-  });
-
-  // Process each chunk assessment
-  for (const assessment of chunkAssessments) {
-    // Update categories based on this chunk
-    for (const category in assessment.categories) {
-      const chunkCategoryData = assessment.categories[category];
-
-      // Count the risk level for this category
-      if (chunkCategoryData.risk in categoryRiskCounts[category]) {
-        categoryRiskCounts[category][chunkCategoryData.risk]++;
-      }
-
-      // If this chunk has a non-Unknown risk for a category, use its data
-      if (
-        chunkCategoryData.risk !== RISK_LEVELS.UNKNOWN &&
-        (combinedCategories[category].risk === RISK_LEVELS.UNKNOWN ||
-          getRiskPriority(chunkCategoryData.risk) >
-            getRiskPriority(combinedCategories[category].risk))
-      ) {
-        combinedCategories[category] = {
-          risk: chunkCategoryData.risk,
-          explanation: chunkCategoryData.explanation,
-        };
-      }
-    }
-  }
-
-  // Determine overall risk level (prioritize higher risks)
-  let overallRisk = RISK_LEVELS.UNKNOWN;
-  for (const category in combinedCategories) {
-    if (
-      getRiskPriority(combinedCategories[category].risk) >
-      getRiskPriority(overallRisk)
-    ) {
-      overallRisk = combinedCategories[category].risk;
-    }
-  }
-
-  // Create a comprehensive summary
-  const summary = `This privacy policy assessment is based on analysis of multiple sections. ${chunkSummaries.join(
-    " "
-  )}`;
-
-  return {
-    categories: combinedCategories,
-    riskLevel: overallRisk,
-    summary: summary,
-  };
-}
 
 // Add extractUserAgreement function with proper implementation
 async function extractUserAgreement(url) {

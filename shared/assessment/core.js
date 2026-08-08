@@ -1,29 +1,74 @@
 /**
  * Core assessment data structures and constants
  * Pure data definitions and validation functions for privacy assessments
+ *
+ * The assessment rubric (categories, risk levels, aggregation) is loaded
+ * from rubric.json so it can be versioned and updated without code changes.
  */
 
 /**
- * Privacy risk categories for assessment
+ * Load and validate the assessment rubric from rubric.json
+ * @returns {Object} Parsed rubric definition
  */
-const PRIVACY_CATEGORIES = [
-  "Data Collection & Use",
-  "Third-Party Sharing & Selling",
-  "Data Storage & Security", 
-  "User Rights & Control",
-  "AI & Automated Decision-Making",
-  "Policy Changes & Updates",
-];
+function loadRubric() {
+  let rubric;
+  try {
+    // eslint-disable-next-line global-require
+    rubric = require('./rubric.json');
+  } catch (error) {
+    throw new Error(`Failed to load assessment rubric (rubric.json): ${error.message}`);
+  }
+
+  if (!rubric || typeof rubric !== 'object') {
+    throw new Error('Invalid assessment rubric: rubric.json must contain an object');
+  }
+  if (typeof rubric.version !== 'string' || !/^\d+\.\d+\.\d+$/.test(rubric.version)) {
+    throw new Error('Invalid assessment rubric: "version" must be a semver string (e.g. "2.0.0")');
+  }
+  if (!Array.isArray(rubric.riskLevels) || rubric.riskLevels.length !== 4 ||
+      rubric.riskLevels.some(l => !l || typeof l.name !== 'string' || typeof l.definition !== 'string')) {
+    throw new Error('Invalid assessment rubric: "riskLevels" must be an array of 4 { name, definition } objects');
+  }
+  if (!Array.isArray(rubric.categories) || rubric.categories.length === 0 ||
+      rubric.categories.some(c => !c || typeof c.name !== 'string' || typeof c.definition !== 'string' ||
+        !c.anchors || typeof c.anchors.High !== 'string' ||
+        typeof c.anchors.Medium !== 'string' || typeof c.anchors.Low !== 'string')) {
+    throw new Error('Invalid assessment rubric: "categories" must be a non-empty array of { name, definition, anchors: { High, Medium, Low } } objects');
+  }
+  if (!rubric.aggregation || typeof rubric.aggregation !== 'object') {
+    throw new Error('Invalid assessment rubric: "aggregation" settings are required');
+  }
+
+  return rubric;
+}
+
+const RUBRIC = loadRubric();
 
 /**
- * Risk levels enumeration
+ * Version of the currently loaded rubric
  */
-const RISK_LEVELS = {
-  HIGH: "High",
-  MEDIUM: "Medium", 
-  LOW: "Low",
-  UNKNOWN: "Unknown",
-};
+const RUBRIC_VERSION = RUBRIC.version;
+
+/**
+ * Pure function to get the parsed assessment rubric
+ * @returns {Object} Rubric definition from rubric.json
+ */
+function getRubric() {
+  return RUBRIC;
+}
+
+/**
+ * Privacy risk categories for assessment (derived from rubric.json)
+ */
+const PRIVACY_CATEGORIES = RUBRIC.categories.map(c => c.name);
+
+/**
+ * Risk levels enumeration (derived from rubric.json)
+ */
+const RISK_LEVELS = RUBRIC.riskLevels.reduce((levels, level) => {
+  levels[level.name.toUpperCase()] = level.name;
+  return levels;
+}, {});
 
 /**
  * Assessment status enumeration
@@ -172,7 +217,11 @@ function validateCategories(categories) {
         categories[category].explanation) {
       validatedCategories[category] = {
         risk: normalizeRiskLevel(categories[category].risk),
-        explanation: categories[category].explanation
+        explanation: categories[category].explanation,
+        // Carry the verbatim evidence quote through when present
+        ...(typeof categories[category].evidence === 'string' && categories[category].evidence.trim()
+          ? { evidence: categories[category].evidence }
+          : {})
       };
     }
   }
@@ -268,6 +317,10 @@ module.exports = {
   PRIVACY_CATEGORIES,
   RISK_LEVELS,
   ASSESSMENT_STATUS,
+  RUBRIC_VERSION,
+
+  // Rubric access
+  getRubric,
   
   // Pure assessment creation functions
   createAssessment,
