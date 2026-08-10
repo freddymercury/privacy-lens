@@ -19,52 +19,99 @@ const {
   RUBRIC_VERSION,
 } = shared.assessment.core;
 
-// Model used for assessments (stamped on results for provenance)
-const LLM_MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
+// LLM provider configuration. Any OpenAI-compatible chat-completions endpoint
+// works. Resolution order:
+//   1. LLM_BASE_URL + LLM_API_KEY (+ optional LLM_MODEL) — explicit override
+//   2. GROQ_API_KEY — Groq (free tier), default model llama-3.3-70b-versatile
+//   3. OPENAI_API_KEY — OpenAI, default model gpt-4o-mini
+// Resolved lazily (not at module load) because ESM import hoisting means the
+// entry point's dotenv.config() may not have run when this module evaluates.
+const resolveProvider = () => {
+  if (process.env.LLM_BASE_URL) {
+    return {
+      baseURL: process.env.LLM_BASE_URL,
+      apiKey: process.env.LLM_API_KEY,
+      model: process.env.LLM_MODEL || "gpt-4o-mini",
+    };
+  }
+  if (process.env.GROQ_API_KEY) {
+    return {
+      baseURL: "https://api.groq.com/openai/v1",
+      apiKey: process.env.GROQ_API_KEY,
+      model: process.env.LLM_MODEL || "llama-3.3-70b-versatile",
+    };
+  }
+  return {
+    baseURL: "https://api.openai.com/v1",
+    apiKey: process.env.OPENAI_API_KEY,
+    model: process.env.LLM_MODEL || "gpt-4o-mini",
+  };
+};
+
+// Model used for assessments (stamped on results for provenance).
+// Resolved lazily via getProvider(); this top-level value is only a fallback
+// for provenance stamping before the first real call.
+let LLM_MODEL = process.env.LLM_MODEL || "gpt-4o-mini";
 
 // Check if we're running in a test environment
 const isTestEnvironment =
   process.env.NODE_ENV === "test" || process.env.JEST_WORKER_ID !== undefined;
 
-let OpenAI, llm;
-
-// Initialize LLM
-const initializeLLM = async () => {
-  if (!isTestEnvironment) {
-    try {
-      // Only import and initialize OpenAI in non-test environments
-      const llamaindex = await import("llamaindex");
-      OpenAI = llamaindex.OpenAI;
-
-      // Initialize OpenAI as the LLM provider
-      llm = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-        model: LLM_MODEL,
-        temperature: 0, // Deterministic output for consistent, comparable assessments
-      });
-    } catch (error) {
-      console.error("Error initializing LLM:", error);
-      // Provide a minimal mock for development without API keys
-      llm = {
-        complete: async () => ({
-          text: '{"categories":{},"overallRisk":"Unknown","summary":"Mock response"}',
-        }),
-      };
-    }
-  } else {
-    // Provide a minimal mock for tests
-    llm = {
-      complete: async () => ({
-        text: '{"categories":{},"overallRisk":"Unknown","summary":"Mock response"}',
+/**
+ * Minimal OpenAI-compatible chat client. Mirrors the { complete({prompt}) =>
+ * {text} } shape the rest of this service was written against (previously
+ * provided by llamaindex, now removed).
+ */
+const createLLMClient = (provider) => ({
+  complete: async ({ prompt, temperature = 0, maxTokens = 1500 }) => {
+    const res = await fetch(`${provider.baseURL}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${provider.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: provider.model,
+        messages: [{ role: "user", content: prompt }],
+        temperature,
+        max_tokens: maxTokens,
       }),
-    };
-  }
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      const error = new Error(`LLM API error ${res.status}: ${body}`);
+      error.status = res.status;
+      throw error;
+    }
+    const data = await res.json();
+    return { text: data.choices?.[0]?.message?.content ?? "" };
+  },
+});
+
+const MOCK_LLM = {
+  complete: async () => ({
+    text: '{"categories":{},"overallRisk":"Unknown","summary":"Mock response"}',
+  }),
 };
 
-// Initialize LLM immediately
-initializeLLM().catch(err => {
-  console.error("Failed to initialize LLM:", err);
-});
+let llm = null;
+const getLLM = () => {
+  if (llm) return llm;
+  if (isTestEnvironment) {
+    llm = MOCK_LLM;
+    return llm;
+  }
+  const provider = resolveProvider();
+  if (!provider.apiKey) {
+    console.warn("[LLM Service] No LLM API key configured (GROQ_API_KEY/OPENAI_API_KEY/LLM_API_KEY); using mock");
+    llm = MOCK_LLM;
+    return llm;
+  }
+  LLM_MODEL = provider.model; // keep provenance stamping accurate
+  console.log(`[LLM Service] Using provider ${provider.baseURL} with model ${provider.model}`);
+  llm = createLLMClient(provider);
+  return llm;
+};
 
 /**
  * More accurate token estimation function
@@ -190,7 +237,7 @@ const callLLMWithRetry = async (
   while (attempt <= maxRetries) {
     try {
       console.log(`[LLM Service] API call attempt ${attempt + 1}/${maxRetries + 1} for ${contextStr}`);
-      const response = await llm.complete({
+      const response = await getLLM().complete({
         prompt,
         temperature: 0,
         maxTokens: 1500, // Reduced from 2000
