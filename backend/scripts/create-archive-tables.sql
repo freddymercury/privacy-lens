@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS policies (
     domain_name TEXT NOT NULL,
     policy_type TEXT NOT NULL, -- e.g., 'privacy', 'tos', 'api_terms'
     url TEXT NOT NULL,         -- The specific URL of the policy document
+    is_active BOOLEAN DEFAULT TRUE,  -- Whether the archiver should track this policy
+    last_updated TIMESTAMPTZ,   -- Last time the policy entry was (re)confirmed
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     CONSTRAINT unique_policy UNIQUE (domain_name, policy_type)
